@@ -11,5 +11,6 @@ export const colors = {
     destructive: "#EA4848",
     lightRed: "#FFCCCC",
     darkRed: "#C22020",
-    objects: "#F4FAFF"
+    objects: "#F4FAFF",
+    inputBorder: "#0E204280"
 }

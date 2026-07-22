@@ -1,0 +1,23 @@
+/* App.css or your global stylesheet */
+
+/* 1. Changes the color of the checkmark tick */
+.ant-checkbox-checked .ant-checkbox-inner::after {
+    border-color: #ff4d4f !important; /* Your custom tick color (e.g., Red) */
+}
+
+/* 2. Changes the background color of the checkbox container when checked */
+.ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #ffffff !important; /* Background behind the tick */
+    border-color: #ff4d4f !important;     /* Border around the checked box */
+}
+
+/* 3. Optional: Changes the color of the dash icon (Indeterminate/Partial state) */
+.ant-checkbox-indeterminate .ant-checkbox-inner::after {
+    background-color: #ff4d4f !important; /* Matches the custom tick color */
+}
+
+/* 4. Optional: Changes the border color when hovering over an unchecked box */
+.ant-checkbox-wrapper:hover .ant-checkbox-inner,
+.ant-checkbox:hover .ant-checkbox-inner {
+    border-color: #ff4d4f !important;
+}
