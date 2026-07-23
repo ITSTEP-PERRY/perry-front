@@ -5,7 +5,7 @@ import type {CSSProperties} from "react";
 
 export const loginFormStyles: FormDeepStylesType = {
     help: {
-        padding: "0 20px",
+        padding: "5px 20px",
     },
 }
 export const loginFormStyle: CSSProperties = {
