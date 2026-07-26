@@ -6,8 +6,8 @@ import {inputErrorStyles, loginFormItemStyles, loginFormStyle, loginFormStyles} 
 import {useState} from "react";
 import {colors} from "../theme/colors.ts";
 import Text from "antd/es/typography/Text";
-import {titleMainStyles, titleSecondStyles} from "../widgets/css/loginStyles.ts";
 import Title from "antd/es/typography/Title";
+import {header1, header3} from "../theme/headerStyles.ts";
 
 export const LoginForm = () => {
     const [form] = Form.useForm();
@@ -32,8 +32,8 @@ export const LoginForm = () => {
             <Flex vertical gap={4} justify={"space-between"} style={loginFormStyle} align={"center"}>
                 {/* Welcome title block*/}
                 <Flex vertical align={"center"} gap={6}>
-                    <Title styles={titleMainStyles}>Welcome back</Title>
-                    <Title styles={titleSecondStyles}>Login into your account</Title>
+                    <Title style={header1}>Welcome back</Title>
+                    <Title style={header3}>Login into your account</Title>
                 </Flex>
                 <Flex vertical style={{width: "100%"}} justify={"center"} gap={8}>
                     <Form.Item  name="email" rules={[{required: true, type: "email", message: "Wrong or invalid email address"}]} style={loginFormItemStyles} validateTrigger={"onSubmit"}>

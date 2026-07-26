@@ -4,8 +4,10 @@ import {PasswordInput} from "../Components/Inputs/PasswordInput.tsx";
 import {Button} from "../Components/Buttons/Button.tsx";
 import {inputErrorStyles, loginFormItemStyles, loginFormStyle, loginFormStyles} from "./css/loginFormStyles.ts";
 import {useState} from "react";
-import {titleMainStyles, titleSecondStyles} from "../widgets/css/loginStyles.ts";
 import Title from "antd/es/typography/Title";
+import {useAppDispatch} from "../app/hooks.ts";
+import {setAuthStatus} from "../app/slices/authSlice.ts";
+import {header1, header3} from "../theme/headerStyles.ts";
 
 export const RegisterForm  = () => {
     const [hasErrors, setHasErrors] = useState<Record<string, boolean>>({
@@ -14,6 +16,7 @@ export const RegisterForm  = () => {
         confirmPassword: false,
     });
     const [form] = Form.useForm();
+    const dispatch = useAppDispatch();
 
     const onFinishFailed = () => {
         const er = form.getFieldsError();
@@ -25,13 +28,17 @@ export const RegisterForm  = () => {
         })
     }
 
+    const onFinish = () => {
+        dispatch(setAuthStatus({status: "code", next: "signIn"}));
+    }
+
     return (
-        <Form styles={loginFormStyles} form={form} onFinishFailed={onFinishFailed} style={{height: 520, width: 440}} >
+        <Form styles={loginFormStyles} form={form} onFinish={onFinish} onFinishFailed={onFinishFailed} style={{height: 520, width: 440}} preserve>
             <Flex vertical gap={4} justify={"space-between"} style={loginFormStyle} align={"center"}>
                 {/* Welcome title block*/}
                 <Flex vertical align={"center"} gap={6}>
-                    <Title styles={titleMainStyles}>Create account</Title>
-                    <Title styles={titleSecondStyles}>Shop in the marketplace while traveling</Title>
+                    <Title style={header1}>Create account</Title>
+                    <Title style={header3}>Shop in the marketplace while traveling</Title>
                 </Flex>
                 <Flex vertical style={{width: "100%"}} justify={"center"}>
                     <Form.Item  name="email" rules={[{required: true, type: "email", message: "Wrong or invalid email address"}]} style={loginFormItemStyles} validateTrigger={"onSubmit"}>
