@@ -2,12 +2,24 @@ import type {FormDeepStylesType} from "../../types/DeepStylesTypes/FormDeepStyle
 import type {InputDeepStylesType} from "../../types/DeepStylesTypes/InputDeepStylesType.ts";
 import {colors} from "../../theme/colors.ts";
 import type {CSSProperties} from "react";
+import {header3} from "../../theme/headerStyles.ts";
+import {text3} from "../../theme/textStyles.ts";
 
 export const loginFormStyles: FormDeepStylesType = {
     help: {
-        padding: "0 20px",
+        padding: "5px 20px",
+        ...text3
     },
 }
+
+export const otpFormStyles: FormDeepStylesType = {
+    help: {
+        textAlign: "center",
+        margin: "5px 0 0 0 ",
+        ...text3
+    },
+}
+
 export const loginFormStyle: CSSProperties = {
     height: "100%",
 }
@@ -21,5 +33,14 @@ export const inputErrorStyles: InputDeepStylesType = {
     },
     prefix: {
         color: colors.destructive,
+    }
+}
+
+export const optStyles = {
+    input: {
+        width: "42px",
+        height: "48px",
+        borderRadius: "4px",
+        ...header3
     }
 }
