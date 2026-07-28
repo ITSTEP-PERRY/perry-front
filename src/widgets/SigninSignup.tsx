@@ -1,18 +1,23 @@
 import {Button} from "../Components/Buttons/Button.tsx";
-import {Flex, Modal} from "antd";
+import {Flex, Modal, Space} from "antd";
 import {useState} from "react";
 import SignupImage from "../assets/images/SiginSignup.png"
 import {loginFormStyles, modalStyles} from "./css/loginStyles.ts";
-import {LoginForm} from "../forms/LoginForm.tsx";
+import {LoginForm} from "../forms/auth/LoginForm.tsx";
 import Text from "antd/es/typography/Text";
 import Link from "antd/es/typography/Link";
-import {RegisterForm} from "../forms/RegisterForm.tsx";
+import {RegisterForm} from "../forms/auth/RegisterForm.tsx";
 import {colors} from "../theme/colors.ts";
 import {useDispatch, useSelector} from "react-redux";
-import {selectAuthStatus, setAuthStatus, setPrevAuthStatus} from "../app/slices/authSlice.ts";
+import {selectAuthStatus, setAuthStatus, switchToPrevAuthStatus} from "../app/slices/authSlice.ts";
 import {ArrowLeft} from "../Components/Icon/ArrowLeft.tsx";
 import {text2} from "../theme/textStyles.ts";
-import {OtpForm} from "../forms/OtpForm.tsx";
+import {OtpForm} from "../forms/auth/OtpForm.tsx";
+import {FullNameForm} from "../forms/auth/FullNameForm.tsx";
+import Title from "antd/es/typography/Title";
+import {header1, header3} from "../theme/headerStyles.ts";
+import {ForgotPasswordForm} from "../forms/auth/ForgotPasswordForm.tsx";
+import {ResetPasswordForm} from "../forms/auth/ResetPasswordForm.tsx";
 
 
 export const SignInSignUp = () => {
@@ -40,7 +45,7 @@ export const SignInSignUp = () => {
                         : windowState === "code" ?
                                 <Flex vertical  style={loginFormStyles}>
                                     <Flex justify={"start"}>
-                                        <Button type={"tertiary"} onClick={() => dispatch(setPrevAuthStatus())}>
+                                        <Button type={"tertiary"} onClick={() => dispatch(switchToPrevAuthStatus())}>
                                             <Flex align={"center"} gap={6} justify={"end"}>
                                                 <ArrowLeft color={colors.secondary} size={31} width={1.5}/>
                                                 <Text style={text2}>Back</Text>
@@ -51,7 +56,30 @@ export const SignInSignUp = () => {
                                         <OtpForm />
                                     </Flex>
                                 </Flex>
-                        : <>test</>
+                        : windowState === "fullName" ?
+                                <Flex vertical  style={loginFormStyles} align={"center"} justify={"center"} gap={16}>
+                                    <FullNameForm />
+                                </Flex>
+                        : windowState === "finish" ?
+                                <Flex vertical  style={loginFormStyles} align={"center"} justify={"space-evenly"} gap={16}>
+                                    <Space vertical align="center">
+                                        <Title style={header1}>Congratulations!</Title>
+                                        <Title style={header3}>The registration was completed</Title>
+                                    </Space>
+                                    <Button type={"primary"}
+                                            onClick={() => setOpen(false)}
+                                            style={{width: '440px', height: '52px'}}
+                                    >Let's start shopping</Button>
+                                </Flex>
+                        : windowState === "forgotPassword" ?
+                                <Flex vertical  style={loginFormStyles} align={"center"} justify={"center"} gap={16}>
+                                    <ForgotPasswordForm />
+                                </Flex>
+                        : windowState === "resetPassword" ?
+                                <Flex vertical  style={loginFormStyles} align={"center"} justify={"center"} gap={16}>
+                                    <ResetPasswordForm />
+                                </Flex>
+                        : <></>
                     }
                     <div>
                         <img src={SignupImage} alt="Sign up" />

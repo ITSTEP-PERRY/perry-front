@@ -1,12 +1,12 @@
 import {Flex, Form, Input, Space, Statistic} from "antd";
 import {loginFormStyle, optStyles, otpFormStyles} from "./css/loginFormStyles.ts";
 import Title from "antd/es/typography/Title";
-import {Button} from "../Components/Buttons/Button.tsx";
+import {Button} from "../../Components/Buttons/Button.tsx";
 import Text from "antd/es/typography/Text";
-import {header1, header3} from "../theme/headerStyles.ts";
-import {text2} from "../theme/textStyles.ts";
-import {useAppDispatch} from "../app/hooks.ts";
-import {setNextAuthStatus} from "../app/slices/authSlice.ts";
+import {header1, header3} from "../../theme/headerStyles.ts";
+import {text2} from "../../theme/textStyles.ts";
+import {useAppDispatch} from "../../app/hooks.ts";
+import {switchToNextAuthStatus} from "../../app/slices/authSlice.ts";
 import {useState} from "react";
 import {useForm} from "antd/es/form/Form";
 
@@ -29,7 +29,7 @@ export const OtpForm = () => {
 
 
     const onFinish = () => {
-        dispatch(setNextAuthStatus())
+        dispatch(switchToNextAuthStatus())
     }
 
     const onTimerFinish = () => {
@@ -38,7 +38,7 @@ export const OtpForm = () => {
     }
 
     return (
-        <Form styles={otpFormStyles} onFinish={onFinish} style={{height: 520, width: 440}} form={form}>
+        <Form styles={otpFormStyles} onFinish={onFinish}  form={form}>
             <Flex vertical gap={4} justify={"space-between"} style={loginFormStyle}  align={"center"} >
                 {/* Welcome title block*/}
                 <Flex vertical align={"center"} gap={0}>

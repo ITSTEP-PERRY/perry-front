@@ -2,7 +2,7 @@ import {createSlice} from "@reduxjs/toolkit";
 import type {RootState} from "../store.ts";
 
 
-export type AuthStatusType = "signIn" | "signUp" | "code" | "forgotPassword" | "finish";
+export type AuthStatusType = "signIn" | "signUp" | "code" | "forgotPassword" | "finish" | "fullName" | "resetPassword";
 
 export type AuthType = {
     status: AuthStatusType;
@@ -23,16 +23,16 @@ export const authSlice = createSlice({
             state.status = action.payload.status;
             state.next = action.payload.next;
         },
-        setPrevAuthStatus: (state) => {
+        switchToPrevAuthStatus: (state) => {
             state.status = state.prev ?? "signIn";
         },
-        setNextAuthStatus: (state) => {
+        switchToNextAuthStatus: (state) => {
             state.status = state.next ?? "signIn";
         }
     }
 })
 
-export const {setAuthStatus, setPrevAuthStatus, setNextAuthStatus} = authSlice.actions;
+export const {setAuthStatus, switchToPrevAuthStatus, switchToNextAuthStatus} = authSlice.actions;
 
 export const selectAuthStatus = (state: RootState): AuthStatusType => state.auth.status;
 export const selectAuthState = (state: RootState): AuthType => state.auth;
