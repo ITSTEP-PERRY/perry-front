@@ -7,6 +7,8 @@ import {config} from "./theme/antdGlobalConfig.ts";
 import {buttonConfig} from "./theme/antdButtonConfig.ts";
 import {Provider} from "react-redux";
 import {store} from "./app/store.ts";
+import './utils/extentions/fieldErrorExtentions.ts'
+
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

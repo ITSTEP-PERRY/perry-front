@@ -1,13 +1,13 @@
 import {Flex, Form} from "antd";
-import {TextInput} from "../Components/Inputs/TextInput.tsx";
-import {PasswordInput} from "../Components/Inputs/PasswordInput.tsx";
-import {Button} from "../Components/Buttons/Button.tsx";
+import {TextInput} from "../../Components/Inputs/TextInput.tsx";
+import {PasswordInput} from "../../Components/Inputs/PasswordInput.tsx";
+import {Button} from "../../Components/Buttons/Button.tsx";
 import {inputErrorStyles, loginFormItemStyles, loginFormStyle, loginFormStyles} from "./css/loginFormStyles.ts";
 import {useState} from "react";
 import Title from "antd/es/typography/Title";
-import {useAppDispatch} from "../app/hooks.ts";
-import {setAuthStatus} from "../app/slices/authSlice.ts";
-import {header1, header3} from "../theme/headerStyles.ts";
+import {useAppDispatch} from "../../app/hooks.ts";
+import {setAuthStatus} from "../../app/slices/authSlice.ts";
+import {header1, header3} from "../../theme/headerStyles.ts";
 
 export const RegisterForm  = () => {
     const [hasErrors, setHasErrors] = useState<Record<string, boolean>>({
@@ -20,20 +20,15 @@ export const RegisterForm  = () => {
 
     const onFinishFailed = () => {
         const er = form.getFieldsError();
-        er.forEach(error => {
-            hasErrors[error.name[0]] = error.errors.length > 0
-            setHasErrors({
-                ...hasErrors,
-            });
-        })
+        setHasErrors({...er.hasErrorsOf()})
     }
 
     const onFinish = () => {
-        dispatch(setAuthStatus({status: "code", next: "signIn"}));
+        dispatch(setAuthStatus({status: "code", next: "fullName"}));
     }
 
     return (
-        <Form styles={loginFormStyles} form={form} onFinish={onFinish} onFinishFailed={onFinishFailed} style={{height: 520, width: 440}} preserve>
+        <Form styles={loginFormStyles} form={form} onFinish={onFinish} onFinishFailed={onFinishFailed} preserve>
             <Flex vertical gap={4} justify={"space-between"} style={loginFormStyle} align={"center"}>
                 {/* Welcome title block*/}
                 <Flex vertical align={"center"} gap={6}>

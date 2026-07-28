@@ -1,13 +1,17 @@
 import {Checkbox, Flex, Form} from "antd";
-import {TextInput} from "../Components/Inputs/TextInput.tsx";
-import {PasswordInput} from "../Components/Inputs/PasswordInput.tsx";
-import {Button} from "../Components/Buttons/Button.tsx";
+import {TextInput} from "../../Components/Inputs/TextInput.tsx";
+import {PasswordInput} from "../../Components/Inputs/PasswordInput.tsx";
+import {Button} from "../../Components/Buttons/Button.tsx";
 import {inputErrorStyles, loginFormItemStyles, loginFormStyle, loginFormStyles} from "./css/loginFormStyles.ts";
 import {useState} from "react";
-import {colors} from "../theme/colors.ts";
+import {colors} from "../../theme/colors.ts";
 import Text from "antd/es/typography/Text";
 import Title from "antd/es/typography/Title";
-import {header1, header3} from "../theme/headerStyles.ts";
+import {header1, header3} from "../../theme/headerStyles.ts";
+import {useAppDispatch} from "../../app/hooks.ts";
+import {setAuthStatus} from "../../app/slices/authSlice.ts";
+import Link from "antd/es/typography/Link";
+import {text2, text3} from "../../theme/textStyles.ts";
 
 export const LoginForm = () => {
     const [form] = Form.useForm();
@@ -16,19 +20,18 @@ export const LoginForm = () => {
         password: false,
         remember: false,
     });
-
+    const dispatch = useAppDispatch();
     const onFinishFailed = () => {
         const er = form.getFieldsError();
-        er.forEach(error => {
-            hasErrors[error.name[0]] = error.errors.length > 0
-            setHasErrors({
-                ...hasErrors,
-            });
-        })
+        setHasErrors({...er.hasErrorsOf()})
+    }
+
+    const onForgotPasswordClick = () => {
+        dispatch(setAuthStatus({status: "forgotPassword"}));
     }
 
     return (
-        <Form styles={loginFormStyles} form={form} onFinishFailed={onFinishFailed} style={{height: 520, width: 440}} >
+        <Form styles={loginFormStyles} form={form} onFinishFailed={onFinishFailed}>
             <Flex vertical gap={4} justify={"space-between"} style={loginFormStyle} align={"center"}>
                 {/* Welcome title block*/}
                 <Flex vertical align={"center"} gap={6}>
@@ -44,8 +47,8 @@ export const LoginForm = () => {
                     </Form.Item>
                     <Form.Item name="remember" valuePropName="checked" style={loginFormItemStyles}>
                         <Flex justify="space-between" >
-                            <Checkbox>Stay signed in</Checkbox>
-                            <Text color={colors.darkText}>Forgot password?</Text>
+                            <Checkbox style={text3}>Stay signed in</Checkbox>
+                            <Link style={text3} onClick={onForgotPasswordClick}>Forgot password?</Link>
                         </Flex>
                     </Form.Item>
                 </Flex>
