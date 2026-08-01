@@ -1,1 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+.App{
+    min-height: 100vh;
+    background-color: #f3f6fc;
+}
+
+.main-content {
+    width: calc(100% - 64px);
+    margin: 0 auto;
+    padding: 32px 0;
+}

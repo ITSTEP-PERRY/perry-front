@@ -1,0 +1,100 @@
+.hero-banner {
+  position: relative;
+
+  width: 100%;
+  overflow: hidden;
+
+  background-color: #172b4d;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgb(23 43 77 / 10%);
+}
+
+.hero-banner .ant-image {
+  display: block;
+  width: 100%;
+}
+
+.hero-banner__image.ant-image-img {
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  object-fit: cover;
+}
+
+.hero-banner__arrow.ant-btn {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 8px !important;
+
+  color: #4a7bd9;
+  background-color: #f4faff;
+  border: none;
+  border-radius: 4px;
+  box-shadow: none;
+
+  transform: translateY(-50%);
+}
+
+.hero-banner__arrow.ant-btn:hover {
+  color: #326bcf !important;
+  background-color: #ffffff !important;
+}
+
+.hero-banner__arrow .ant-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+.hero-banner__arrow svg {
+  width: 24px;
+  height: 24px;
+}
+
+.hero-banner__arrow--left {
+  left: 20px;
+}
+
+.hero-banner__arrow--right {
+  right: 20px;
+}
+
+@media (max-width: 768px) {
+  .hero-banner {
+    border-radius: 6px;
+  }
+
+  .hero-banner__arrow.ant-btn {
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+    min-height: 32px;
+    padding: 6px !important;
+  }
+
+  .hero-banner__arrow--left {
+    left: 8px;
+  }
+
+  .hero-banner__arrow--right {
+    right: 8px;
+  }
+
+  .hero-banner__arrow svg {
+    width: 20px;
+    height: 20px;
+  }
+}

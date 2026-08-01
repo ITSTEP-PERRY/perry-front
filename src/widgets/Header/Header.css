@@ -1,0 +1,248 @@
+.header {
+  width: 100%;
+  height: 64px;
+  background-color: #4a7bd9;
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+
+  width: min(calc(100% - 64px), 1600px);
+  height: 64px;
+  margin: 0 auto;
+  padding: 12px 0;
+}
+
+/* Левая часть: burger + logo */
+
+.header__brand {
+  display: flex;
+  align-items: center;
+  flex: 0 0 153.7px;
+  gap: 12px;
+
+  width: 153.7px;
+  height: 40px;
+}
+
+.header__menu-button.ant-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 40px;
+
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 9px !important;
+
+  color: #f4faff;
+  background-color: transparent;
+  border: none;
+  border-radius: 3px;
+  box-shadow: none;
+}
+
+.header__menu-button.ant-btn:hover {
+  color: #f4faff !important;
+  background-color: rgb(255 255 255 / 10%) !important;
+}
+
+.header__menu-button .ant-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+.header__menu-button svg {
+  width: 22px;
+  height: 22px;
+}
+
+.header__logo-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 40px;
+  text-decoration: none;
+}
+
+.header__logo-image {
+  display: block;
+  width: 101.7px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Поиск */
+
+.header__search {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+
+  min-width: 0;
+  height: 40px;
+}
+
+.header__search-input.ant-input {
+  flex: 1;
+  min-width: 0;
+
+  height: 40px;
+  min-height: 40px;
+  padding: 0 20px;
+
+  color: #172b4d;
+  background-color: #f4faff;
+  border: none;
+  border-radius: 4px 0 0 4px;
+  box-shadow: none;
+}
+
+.header__search-input.ant-input:hover,
+.header__search-input.ant-input:focus {
+  border: none;
+  box-shadow: none;
+}
+
+.header__search-input.ant-input::placeholder {
+  color: #8798b1;
+}
+
+.header__search-button.ant-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 56px;
+
+  width: 56px;
+  min-width: 56px;
+  max-width: 56px;
+
+  height: 40px;
+  min-height: 40px;
+  max-height: 40px;
+
+  margin: 0;
+  padding: 8px 16px !important;
+
+  color: #172b4d;
+  background-color: #b8ea48;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  box-shadow: none;
+}
+
+.header__search-button.ant-btn:hover {
+  color: #172b4d !important;
+  background-color: #addf3e !important;
+}
+
+.header__search-button .ant-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+.header__search-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Правая часть: profile + cart */
+
+.header__actions {
+  display: flex;
+  align-items: center;
+  flex: 0 0 88px;
+  gap: 8px;
+
+  width: 88px;
+  height: 40px;
+}
+
+.header__action-button.ant-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 40px;
+
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 8px !important;
+
+  color: #f4faff;
+  background-color: transparent;
+  border: none;
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+.header__action-button.ant-btn:hover {
+  color: #f4faff !important;
+  background-color: rgb(255 255 255 / 10%) !important;
+}
+
+.header__action-button .ant-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+.header__action-button svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Адаптивность */
+
+@media (min-width: 1920px) {
+  .header__inner {
+    width: calc(100% - 320px);
+    max-width: 1600px;
+  }
+}
+
+@media (max-width: 900px) {
+  .header__inner {
+    width: calc(100% - 32px);
+    gap: 16px;
+  }
+
+  .header__brand {
+    flex-basis: auto;
+    width: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .header__inner {
+    width: calc(100% - 24px);
+    gap: 8px;
+  }
+
+
+
+  .header__brand {
+    flex: 0 0 40px;
+  }
+
+  .header__actions {
+    flex: 0 0 40px;
+    width: 40px;
+  }
+
+  .header__actions .header__action-button:first-child {
+    display: none;
+  }
+}

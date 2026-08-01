@@ -1,13 +1,10 @@
-import {Flex} from "antd";
-import './App.css'
-import {SigninSignup} from "./widgets/SigninSignup.tsx";
+//import {Flex} from "antd";
+import { HomePage } from './pages/HomePage/HomePage';
 
-const App = () => (
-    <div className="App">
-        <Flex vertical gap={4} style={{width:'20%', paddingLeft:'100px'}} >
-            <SigninSignup />
-        </Flex>
-    </div>
-);
+import './App.css';
 
-export default App
+const App = () => {
+    return <HomePage />;
+};
+
+export default App;

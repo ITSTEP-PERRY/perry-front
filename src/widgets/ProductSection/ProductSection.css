@@ -1,0 +1,135 @@
+.product-section {
+  width: 100%;
+  padding-top: 16px;
+
+  border-top: 1px solid #b9d0f7;
+}
+
+.product-section__header {
+  width: 100%;
+  min-height: 32px;
+  margin-bottom: 16px;
+}
+
+.product-section__title.ant-typography {
+  margin: 0;
+
+  color: #172b4d;
+  font-family: 'Mulish', Arial, sans-serif;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 28px;
+}
+
+.product-section__see-all.ant-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  width: auto;
+  min-width: 0;
+  height: 24px;
+  padding: 0 !important;
+
+  color: #172b4d;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.product-section__see-all.ant-btn:hover {
+  color: #4a7bd9 !important;
+  background: transparent !important;
+}
+
+.product-section__see-all-text.ant-typography {
+  color: inherit;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.product-section__see-all svg {
+  width: 16px;
+  height: 16px;
+  color: #4a7bd9;
+}
+
+.product-section__carousel {
+  position: relative;
+  width: 100%;
+}
+
+.product-section__list {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 24px;
+
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.product-section__list::-webkit-scrollbar {
+  display: none;
+}
+
+.product-section__arrow.ant-btn {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  min-height: 32px;
+  padding: 4px !important;
+
+  color: #4a7bd9;
+  background-color: #f4faff;
+  border: 1px solid #8cb4ff;
+  border-radius: 4px;
+  box-shadow: none;
+
+  transform: translateY(-50%);
+}
+
+.product-section__arrow.ant-btn:hover {
+  color: #326bcf !important;
+  background-color: #ffffff !important;
+  border-color: #4a7bd9 !important;
+}
+
+.product-section__arrow--left {
+  left: -16px;
+}
+
+.product-section__arrow--right {
+  right: -16px;
+}
+
+.product-section__arrow svg {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 768px) {
+  .product-section__title.ant-typography {
+    font-size: 20px;
+    line-height: 28px;
+  }
+
+  .product-section__list {
+    gap: 12px;
+  }
+
+  .product-section__arrow.ant-btn {
+    display: none;
+  }
+}

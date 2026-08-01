@@ -1,0 +1,35 @@
+.home-page {
+  width: 100%;
+  min-height: 100vh;
+
+  background-color: #f3f6fc;
+}
+
+.home-page__content {
+  width: min(calc(100% - 64px), 1600px);
+  margin: 0 auto;
+  padding: 32px 0 24px;
+}
+
+.home-page__sections {
+  width: 100%;
+}
+
+.home-page__signin {
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 1920px) {
+  .home-page__content {
+    width: calc(100% - 320px);
+    max-width: 1600px;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-page__content {
+    width: calc(100% - 24px);
+    padding-top: 16px;
+  }
+}
