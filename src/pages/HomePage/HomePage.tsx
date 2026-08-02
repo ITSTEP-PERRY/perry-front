@@ -8,7 +8,7 @@ import { Header } from '../../widgets/Header/Header';
 import { HeroBanner } from '../../widgets/HeroBanner/HeroBanner';
 import { ProductSection } from '../../widgets/ProductSection/ProductSection';
 import { PromoSection } from '../../widgets/PromoSection/PromoSection';
-import { SigninSignup } from '../../widgets/SigninSignup';
+import { SignInSignUp } from '../../widgets/SigninSignup';
 
 import {
   bottomPromoItems,
@@ -72,7 +72,7 @@ export const HomePage = () => {
           />
 
           <div className="home-page__signin">
-            <SigninSignup />
+            <SignInSignUp />
           </div>
         </Flex>
       </main>

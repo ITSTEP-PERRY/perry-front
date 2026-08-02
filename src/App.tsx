@@ -1,5 +1,4 @@
-//import {Flex} from "antd";
-import { HomePage } from './pages/HomePage/HomePage';
+import { HomePage } from "./pages/HomePage/HomePage";
 
 import './App.css';
 
