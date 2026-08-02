@@ -1,0 +1,46 @@
+.scroll-to-top.ant-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 72px;
+  z-index: 20;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 8px !important;
+
+  color: #172b4d;
+  background-color: #b8ea48;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 4px 11.5px -3px rgb(44 93 187 / 25%);
+}
+
+.scroll-to-top.ant-btn:hover {
+  color: #172b4d !important;
+  background-color: #a9dc3c !important;
+}
+
+.scroll-to-top.ant-btn .ant-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+.scroll-to-top svg {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 768px) {
+  .scroll-to-top.ant-btn {
+    right: 16px;
+    bottom: 72px;
+  }
+}

@@ -4,14 +4,12 @@ import {PasswordInput} from "../../Components/Inputs/PasswordInput.tsx";
 import {Button} from "../../Components/Buttons/Button.tsx";
 import {inputErrorStyles, loginFormItemStyles, loginFormStyle, loginFormStyles} from "./css/loginFormStyles.ts";
 import {useState} from "react";
-import {colors} from "../../theme/colors.ts";
-import Text from "antd/es/typography/Text";
 import Title from "antd/es/typography/Title";
 import {header1, header3} from "../../theme/headerStyles.ts";
 import {useAppDispatch} from "../../app/hooks.ts";
 import {setAuthStatus} from "../../app/slices/authSlice.ts";
 import Link from "antd/es/typography/Link";
-import {text2, text3} from "../../theme/textStyles.ts";
+import {text3} from "../../theme/textStyles.ts";
 
 export const LoginForm = () => {
     const [form] = Form.useForm();
