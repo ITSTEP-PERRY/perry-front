@@ -1,3 +1,9 @@
+import { useState } from 'react';
+
+import { useAppDispatch } from '../../app/hooks';
+
+import { setAuthStatus, type AuthStatusType } from '../../app/slices/authSlice'; 
+
 import { Flex } from 'antd';
 
 import { ScrollToTop } from '../../Components/ScrollToTop/ScrollToTop';
@@ -20,12 +26,25 @@ import {
 import './HomePage.css';
 
 export const HomePage = () => {
-  const handleLogin = () => {
-    console.log('Open login form');
+  const [isAuthModalOpen, setIsAuthModalOpen] =
+    useState(false);
+
+  const dispatch = useAppDispatch();
+
+  const openAuthModal = (
+    status: AuthStatusType,
+  ) => {
+    dispatch(
+      setAuthStatus({
+        status,
+      }),
+    );
+
+    setIsAuthModalOpen(true);
   };
 
-  const handleSignUp = () => {
-    console.log('Open sign up form');
+  const closeAuthModal = () => {
+    setIsAuthModalOpen(false);
   };
 
   return (
@@ -33,7 +52,11 @@ export const HomePage = () => {
       className="home-page"
       vertical
     >
-      <Header />
+      <Header
+        onProfileClick={() =>
+          openAuthModal('signIn')
+        }
+      />
 
       <main className="home-page__content">
         <Flex
@@ -67,19 +90,24 @@ export const HomePage = () => {
           />
 
           <AuthBanner
-            onLogin={handleLogin}
-            onSignUp={handleSignUp}
+            onLogin={() =>
+              openAuthModal('signIn')
+            }
+            onSignUp={() =>
+              openAuthModal('signUp')
+            }
           />
-
-          <div className="home-page__signin">
-            <SignInSignUp />
-          </div>
         </Flex>
       </main>
 
       <Footer />
 
       <ScrollToTop />
+
+      <SignInSignUp
+        open={isAuthModalOpen}
+        onClose={closeAuthModal}
+      />
     </Flex>
   );
 };

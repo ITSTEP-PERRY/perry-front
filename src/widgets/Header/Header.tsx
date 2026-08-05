@@ -18,11 +18,29 @@ import perryLogo from '../../assets/logo/perry-logo.svg';
 
 import './Header.css';
 
-export const Header = () => {
+interface HeaderProps {
+  onProfileClick?: () => void;
+}
+
+export const Header = ({
+  onProfileClick,
+}: HeaderProps) => {
   const handleSearchSubmit = (
     event: FormEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const searchValue = formData
+      .get('search')
+      ?.toString()
+      .trim();
+
+    if (!searchValue) {
+      return;
+    }
+
+    console.log('Search:', searchValue);
   };
 
   return (
@@ -64,6 +82,7 @@ export const Header = () => {
         >
           <Input
             className="header__search-input"
+            name="search"
             placeholder="Search..."
             aria-label="Search products"
           />
@@ -85,14 +104,15 @@ export const Header = () => {
             className="header__action-button"
             type="text"
             icon={<FiUser />}
-            aria-label="Profile"
+            aria-label="Open login form"
+            onClick={onProfileClick}
           />
 
           <Button
             className="header__action-button"
             type="text"
             icon={<FiShoppingCart />}
-            aria-label="Cart"
+            aria-label="Open cart"
           />
         </Flex>
       </Flex>
