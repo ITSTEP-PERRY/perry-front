@@ -1,12 +1,8 @@
-import {
-  Button,
-  Card,
-  Flex,
-  Image,
-  Typography,
-} from 'antd';
+import { Button, Card, Flex, Image, Typography } from 'antd';
 
 import { FiChevronRight } from 'react-icons/fi';
+
+import { useNavigate } from 'react-router';
 
 import './PromoCard.css';
 
@@ -25,8 +21,10 @@ interface PromoCardProps {
 export const PromoCard = ({
   item,
 }: PromoCardProps) => {
+  const navigate = useNavigate();
+
   const handleSeeAll = () => {
-    console.log('Open promotion:', item.id);
+    navigate(`/category/${item.id}`);
   };
 
   return (

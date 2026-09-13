@@ -68,15 +68,17 @@
   align-items: center;
   justify-content: center;
 
-  height: 40px;
-  text-decoration: none;
+  margin: 0;
+  padding: 0;
+
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 
 .header__logo-image {
   display: block;
-  width: 101.7px;
-  height: auto;
-  object-fit: contain;
+  max-width: 100%;
 }
 
 /* Поиск */

@@ -1,18 +1,10 @@
 import type { FormEvent } from 'react';
 
-import {
-  Button,
-  Flex,
-  Image,
-  Input,
-} from 'antd';
+import { Button, Flex, Image, Input } from 'antd';
 
-import {
-  FiMenu,
-  FiSearch,
-  FiShoppingCart,
-  FiUser,
-} from 'react-icons/fi';
+import { FiMenu, FiSearch, FiShoppingCart, FiUser } from 'react-icons/fi';
+
+import { useNavigate } from 'react-router';
 
 import perryLogo from '../../assets/logo/perry-logo.svg';
 
@@ -25,6 +17,8 @@ interface HeaderProps {
 export const Header = ({
   onProfileClick,
 }: HeaderProps) => {
+  const navigate = useNavigate();
+
   const handleSearchSubmit = (
     event: FormEvent<HTMLFormElement>,
   ) => {
@@ -40,7 +34,17 @@ export const Header = ({
       return;
     }
 
-    console.log('Search:', searchValue);
+    navigate(
+      `/search?q=${encodeURIComponent(searchValue)}`,
+    );
+  };
+
+  const handleLogoClick = () => {
+    navigate('/');
+  };
+
+  const handleCartClick = () => {
+    navigate('/cart');
   };
 
   return (
@@ -62,10 +66,11 @@ export const Header = ({
             aria-label="Open menu"
           />
 
-          <a
+          <button
             className="header__logo-link"
-            href="/"
-            aria-label="Perry home"
+            type="button"
+            onClick={handleLogoClick}
+            aria-label="Go to Perry home page"
           >
             <Image
               className="header__logo-image"
@@ -73,7 +78,7 @@ export const Header = ({
               alt="Perry"
               preview={false}
             />
-          </a>
+          </button>
         </Flex>
 
         <form
@@ -113,6 +118,7 @@ export const Header = ({
             type="text"
             icon={<FiShoppingCart />}
             aria-label="Open cart"
+            onClick={handleCartClick}
           />
         </Flex>
       </Flex>
