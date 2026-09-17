@@ -11,6 +11,13 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
+.env.*
+!.env.example
+
+# Nested backend clone (separate repo)
+My_Amazon2/
+Back_end_for_our_poroject/
 
 # Editor directories and files
 .vscode/*

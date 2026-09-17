@@ -1,13 +1,14 @@
-import {Flex} from "antd";
-import './App.css'
-import {SigninSignup} from "./widgets/SigninSignup.tsx";
+import { RouterProvider } from "react-router-dom";
+import { AuthProvider } from "./app/AuthContext";
+import { CartProvider } from "./app/CartContext";
+import { router } from "./app/router";
 
-const App = () => (
-    <div className="App">
-        <Flex vertical gap={4} style={{width:'20%', paddingLeft:'100px'}} >
-            <SigninSignup />
-        </Flex>
-    </div>
-);
-
-export default App
+export default function App() {
+  return (
+    <AuthProvider>
+      <CartProvider>
+        <RouterProvider router={router} />
+      </CartProvider>
+    </AuthProvider>
+  );
+}

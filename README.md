@@ -1,75 +1,50 @@
-# React + TypeScript + Vite
+# Perry React storefront
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Vite + React 19 storefront, визуал по **Figma** / Razor `site.css`. API: `Perry.Api` (proxy `/api` → `http://localhost:5272`).
 
-Currently, two official plugins are available:
+Полный список изменений: [docs/ИЗМЕНЕНИЯ-2026-09-17.md](./docs/ИЗМЕНЕНИЯ-2026-09-17.md).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Run locally
 
-## React Compiler
+Terminal 1 — API:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+cd My_Amazon2/src/Perry.Api
+dotnet run --launch-profile http
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Swagger: http://localhost:5272/swagger
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Terminal 2 — React:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+cd D:/Perry
+npm install
+npm run dev
 ```
+
+App: http://localhost:3000
+
+## Demo accounts
+
+- Admin: `Admin` / `Admin` → `/admin/login`
+- Register a customer at `/register`
+
+## Routes
+
+| Path | Description |
+|------|-------------|
+| `/` | Home + categories |
+| `/products` | Catalog (filters, adaptive) |
+| `/products/:id` | Product page |
+| `/cart` | Cart + checkout |
+| `/orders` | Customer orders (JWT) |
+| `/login`, `/register` | Auth |
+| `/admin/*` | Admin Products / Categories / Orders / Users |
+
+## Notes
+
+- Cart guest session: `localStorage.perry_cart_session`
+- JWT: `localStorage.perry_token`
+- Category create fields: `description`, `imageUrl`, `iconUrl`, `isActive`
+- Product images: JSON `imageUrls` / `images` on create/update
