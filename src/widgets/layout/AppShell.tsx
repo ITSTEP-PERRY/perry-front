@@ -152,10 +152,9 @@ export function AppShell() {
 }
 
 export function AdminShell() {
-  const { logout, isAdmin, loading } = useAuth();
+  const { logout, isAdmin, loading, user } = useAuth();
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
-  const [open, setOpen] = useState(false);
+  const [drawer, setDrawer] = useState(false);
 
   useEffect(() => {
     if (!loading && !isAdmin) navigate("/admin/login", { replace: true });
@@ -163,34 +162,85 @@ export function AdminShell() {
 
   if (loading || !isAdmin) return <div className="shell-loading">Loading…</div>;
 
+  const close = () => setDrawer(false);
+
   return (
-    <div className="shell admin-shell">
-      <header className="site-header shell-header--admin">
-        <div className="header-inner">
-          <div className="header-brand">
-            {isMobile && (
-              <button type="button" className="header-menu" onClick={() => setOpen((v) => !v)}>
-                <img src="/icons/menu.svg" alt="" width={24} height={24} />
-              </button>
-            )}
-            <Link className="logo" to="/admin" style={{ color: "#0e2042" }}>
-              PERRY
+    <div className="admin-shell admin-body">
+      <header className="admin-header">
+        <div className="admin-header__inner">
+          <button
+            type="button"
+            className="admin-header__icon-btn"
+            aria-label="Menu"
+            aria-expanded={drawer}
+            onClick={() => setDrawer(true)}
+          >
+            <img src="/icons/menu.svg" alt="" width={24} height={24} />
+          </button>
+          <Link className="admin-header__logo" to="/admin">
+            PERRY
+          </Link>
+          <nav className="admin-header__nav">
+            <NavLink to="/admin/products" className="admin-header__link">
+              Products
+            </NavLink>
+            <NavLink to="/admin/categories" className="admin-header__link">
+              Categories
+            </NavLink>
+            <NavLink to="/admin/orders" className="admin-header__link">
+              Orders
+            </NavLink>
+            <NavLink to="/admin/users" className="admin-header__link">
+              Users
+            </NavLink>
+          </nav>
+          <div className="admin-header__right">
+            <Link className="admin-header__icon-btn" to="/" title="Store">
+              <img src="/icons/home.svg" alt="" width={22} height={22} />
             </Link>
-          </div>
-          {!isMobile && (
-            <nav className="header-actions" style={{ marginLeft: 0, flex: 1, justifyContent: "flex-start" }}>
-              <NavLink to="/admin/products" className="header-link">Products</NavLink>
-              <NavLink to="/admin/categories" className="header-link">Categories</NavLink>
-              <NavLink to="/admin/orders" className="header-link">Orders</NavLink>
-              <NavLink to="/admin/users" className="header-link">Users</NavLink>
-            </nav>
-          )}
-          <div className="header-actions">
-            <Link to="/" className="header-link">Store</Link>
             <button
               type="button"
-              className="header-link"
-              style={{ background: "transparent", border: 0, cursor: "pointer" }}
+              className="admin-header__icon-btn"
+              title="Logout"
+              onClick={() => {
+                logout();
+                navigate("/admin/login");
+              }}
+            >
+              <img src="/icons/account.svg" alt="" width={24} height={24} />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {drawer && (
+        <>
+          <div className="admin-drawer-backdrop" onClick={close} />
+          <aside className="admin-drawer" role="dialog" aria-label="Admin menu">
+            <div className="admin-drawer__user">
+              <strong>{user?.name || "Administrator"}</strong>
+              <span>Administrator</span>
+            </div>
+            <NavLink to="/admin/products" onClick={close}>
+              Products
+            </NavLink>
+            <NavLink to="/admin/categories" onClick={close}>
+              Category
+            </NavLink>
+            <NavLink to="/admin/orders" onClick={close}>
+              Orders
+            </NavLink>
+            <NavLink to="/admin/users" onClick={close}>
+              Users
+            </NavLink>
+            <NavLink to="/admin" end onClick={close}>
+              Dashboard
+            </NavLink>
+            <NavLink to="/" onClick={close}>
+              Store
+            </NavLink>
+            <button
+              type="button"
               onClick={() => {
                 logout();
                 navigate("/admin/login");
@@ -198,18 +248,11 @@ export function AdminShell() {
             >
               Logout
             </button>
-          </div>
-        </div>
-        {isMobile && open && (
-          <nav className="mobile-nav is-open" onClick={() => setOpen(false)}>
-            <NavLink to="/admin/products">Products</NavLink>
-            <NavLink to="/admin/categories">Categories</NavLink>
-            <NavLink to="/admin/orders">Orders</NavLink>
-            <NavLink to="/admin/users">Users</NavLink>
-          </nav>
-        )}
-      </header>
-      <main className="site-main shell-main--admin">
+          </aside>
+        </>
+      )}
+
+      <main className="admin-main">
         <Outlet />
       </main>
     </div>
