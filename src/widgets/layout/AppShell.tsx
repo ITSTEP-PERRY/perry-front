@@ -69,12 +69,17 @@ export function AppShell() {
 
           <nav className="header-actions">
             {user ? (
-              <Link to="/profile" className="header-icon" aria-label={user.name}>
+              <Link to="/account/orders" className="header-icon" aria-label={user.name}>
                 <img src="/icons/account.svg" alt="" width={24} height={24} />
               </Link>
             ) : (
               <Link to="/login" className="header-icon" aria-label="Sign in">
                 <img src="/icons/account.svg" alt="" width={24} height={24} />
+              </Link>
+            )}
+            {user && (
+              <Link to="/account/wishlist" className="header-icon" aria-label="Wishlist">
+                <img src="/icons/star.svg" alt="" width={22} height={22} />
               </Link>
             )}
             {isAdmin && (
@@ -93,8 +98,9 @@ export function AppShell() {
           <NavLink to="/">Home</NavLink>
           <NavLink to="/products">Catalog</NavLink>
           <NavLink to="/cart">Cart</NavLink>
-          {user && <NavLink to="/orders">Orders</NavLink>}
-          {user ? <NavLink to="/profile">Profile</NavLink> : <NavLink to="/login">Login</NavLink>}
+          {user && <NavLink to="/account/orders">Orders</NavLink>}
+          {user && <NavLink to="/account/wishlist">Wishlist</NavLink>}
+          {user ? <NavLink to="/account/settings">Account</NavLink> : <NavLink to="/login">Login</NavLink>}
           {isAdmin && <NavLink to="/admin/products">Admin</NavLink>}
           {user && (
             <button

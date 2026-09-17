@@ -3,7 +3,34 @@
 Vite + React 19 витрина маркетплейса **Perry**. Визуал по макету **Figma** (приоритет №1) и эталону Razor `site.css` / `auth.css`. Данные — из `Perry.Api` (proxy `/api` → `http://localhost:5272`).
 
 Backend: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_for_our_poroject)  
-Подробная сводка: [docs/ИЗМЕНЕНИЯ-2026-09-17.md](./docs/ИЗМЕНЕНИЯ-2026-09-17.md)
+Сводка (каталог/PDP/auth): [docs/ИЗМЕНЕНИЯ-2026-09-17.md](./docs/ИЗМЕНЕНИЯ-2026-09-17.md)  
+**Account (Wishlist / Orders / Settings):** [docs/ИЗМЕНЕНИЯ-Account-2026-09-17.md](./docs/ИЗМЕНЕНИЯ-Account-2026-09-17.md)  
+Скриншоты Account (14 шт.): [docs/screenshots/README.md](./docs/screenshots/README.md)
+
+---
+
+## Account — что сделано (17.09)
+
+Личный кабинет по макетным скринам:
+
+| Маршрут | Экран |
+|---------|--------|
+| `/account/orders` | My orders + модалка Details |
+| `/account/wishlist` | Wishlist + Remove confirm |
+| `/account/settings` | Settings + модалки name/password/email/logout/delete |
+
+- Сайдбар: аватар, Customer/Admin, навигация Account
+- Wishlist через API (`WishlistContext`)
+- Смена email: пароль + 6-значный код
+- Старые `/profile`, `/orders` → редирект на `/account/*`
+
+![Account settings](./docs/screenshots/account/07-account-settings.png)
+
+![Wishlist](./docs/screenshots/account/01-wishlist.png)
+
+![My orders](./docs/screenshots/account/03-my-orders.png)
+
+Полный набор из 14 фото с описаниями — в [docs/screenshots/README.md](./docs/screenshots/README.md).
 
 ---
 
@@ -85,8 +112,10 @@ npm run dev
 | `/products` | Каталог + фильтры |
 | `/products/:id` | PDP |
 | `/cart` | Корзина |
-| `/orders`, `/orders/:id` | Заказы (JWT) |
-| `/profile` | Профиль |
+| `/account/orders` | My orders (JWT) |
+| `/account/wishlist` | Wishlist (JWT) |
+| `/account/settings` | Account settings (JWT) |
+| `/orders`, `/profile` | Редирект → `/account/*` |
 | `/login` … `/auth/success` | Auth-поток |
 | `/terms`, `/privacy`, `/license` | Legal |
 | `/admin/*` | Админка |

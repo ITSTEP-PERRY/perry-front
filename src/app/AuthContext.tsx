@@ -9,6 +9,7 @@ type AuthState = {
   login: (login: string, password: string) => Promise<void>;
   register: (data: { name: string; email: string; login: string; password: string }) => Promise<void>;
   logout: () => void;
+  refreshUser: () => Promise<void>;
   isAdmin: boolean;
 };
 
@@ -51,6 +52,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
+  const refreshUser = useCallback(async () => {
+    const token = getToken();
+    if (!token) {
+      setUser(null);
+      return;
+    }
+    const me = await authApi.me();
+    setUser(me);
+  }, []);
+
   const value = useMemo(
     () => ({
       user,
@@ -58,9 +69,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login,
       register,
       logout,
+      refreshUser,
       isAdmin: user?.roleId === "Admin",
     }),
-    [user, loading, login, register, logout],
+    [user, loading, login, register, logout, refreshUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

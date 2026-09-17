@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { productsApi } from "../api";
 import type { ProductDetail, ProductListItem, ProductReview } from "../api/types";
+import { useAuth } from "../app/AuthContext";
 import { useCart } from "../app/CartContext";
+import { useWishlist } from "../app/WishlistContext";
 import { ProductCard } from "../widgets/ProductCard";
 
 function scrollTrack(el: HTMLElement | null, dir: 1 | -1) {
@@ -43,6 +45,9 @@ export function ProductPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const ratingFilter = searchParams.get("rating");
   const { add } = useCart();
+  const { user } = useAuth();
+  const { has, toggle } = useWishlist();
+  const navigate = useNavigate();
   const [product, setProduct] = useState<ProductDetail | null>(null);
   const [active, setActive] = useState(0);
   const [qty, setQty] = useState(1);
@@ -257,9 +262,22 @@ export function ProductPage() {
               <button className="btn btn-add-cart pdp-buy__btn" type="button" onClick={() => void addToCart(false)}>
                 Add to cart
               </button>
-              <a className="pdp-wishlist" href="#">
-                Add to wish list
-              </a>
+              <button
+                className="pdp-wishlist"
+                type="button"
+                onClick={() => {
+                  if (!user) {
+                    navigate("/login");
+                    return;
+                  }
+                  const wasIn = has(product.id);
+                  void toggle(product.id).then(() =>
+                    setMsg(wasIn ? "Removed from wishlist" : "Added to wishlist"),
+                  );
+                }}
+              >
+                {user && has(product.id) ? "Remove from wish list" : "Add to wish list"}
+              </button>
             </div>
           )}
         </aside>

@@ -1,13 +1,15 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import { AppShell, AdminShell } from "../widgets/layout/AppShell";
 import { AuthShell } from "../widgets/layout/AuthShell";
+import { AccountShell } from "../widgets/layout/AccountShell";
 import { RequireAuth } from "./RequireAuth";
 import { HomePage } from "../pages/HomePage";
 import { ProductsPage } from "../pages/ProductsPage";
 import { ProductPage } from "../pages/ProductPage";
 import { CartPage } from "../pages/CartPage";
-import { OrdersPage } from "../pages/OrdersPage";
-import { OrderDetailsPage } from "../pages/OrderDetailsPage";
+import { AccountOrdersPage } from "../pages/account/AccountOrdersPage";
+import { AccountWishlistPage } from "../pages/account/AccountWishlistPage";
+import { AccountSettingsPage } from "../pages/account/AccountSettingsPage";
 import { LoginPage } from "../pages/auth/LoginPage";
 import { RegisterPage } from "../pages/auth/RegisterPage";
 import { ForgotPasswordPage } from "../pages/auth/ForgotPasswordPage";
@@ -17,7 +19,6 @@ import {
   ResetPasswordPage,
   VerifyCodePage,
 } from "../pages/auth/AuthFlowPages";
-import { ProfilePage } from "../pages/auth/ProfilePage";
 import { LegalPage } from "../pages/LegalPage";
 import { AdminLoginPage } from "../pages/admin/AdminLoginPage";
 import { AdminDashboardPage } from "../pages/admin/AdminDashboardPage";
@@ -42,9 +43,19 @@ export const router = createBrowserRouter([
       {
         element: <RequireAuth />,
         children: [
-          { path: "orders", element: <OrdersPage /> },
-          { path: "orders/:id", element: <OrderDetailsPage /> },
-          { path: "profile", element: <ProfilePage /> },
+          {
+            path: "account",
+            element: <AccountShell />,
+            children: [
+              { index: true, element: <Navigate to="orders" replace /> },
+              { path: "orders", element: <AccountOrdersPage /> },
+              { path: "wishlist", element: <AccountWishlistPage /> },
+              { path: "settings", element: <AccountSettingsPage /> },
+            ],
+          },
+          { path: "orders", element: <Navigate to="/account/orders" replace /> },
+          { path: "orders/:id", element: <Navigate to="/account/orders" replace /> },
+          { path: "profile", element: <Navigate to="/account/settings" replace /> },
         ],
       },
     ],

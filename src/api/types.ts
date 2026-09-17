@@ -91,6 +91,7 @@ export type AuthUser = {
   id: string;
   name: string;
   email: string;
+  avatar?: string;
   login: string;
   roleId: string;
 };
@@ -107,10 +108,23 @@ export type OrderDto = {
   totalAmount: number;
   itemsCount: number;
   userName?: string;
+  recipientName?: string | null;
+  shippingAddress?: string | null;
+  paymentType?: string | null;
   items?: {
     productId: string;
     productName: string;
+    productDescription?: string | null;
     quantity: number;
     unitPrice: number;
+    lineTotal?: number;
+    imageUrl?: string | null;
   }[];
+};
+
+export type WishlistItemDto = {
+  id: string;
+  productId: string;
+  createdAtUtc: string;
+  product: ProductListItem;
 };
