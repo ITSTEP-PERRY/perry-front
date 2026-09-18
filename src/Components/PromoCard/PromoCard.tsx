@@ -1,17 +1,22 @@
-import { Button, Card, Flex, Image, Typography } from 'antd';
-
-import { FiChevronRight } from 'react-icons/fi';
+import {
+  Button,
+  Card,
+  Image,
+  Typography,
+} from 'antd';
 
 import { useNavigate } from 'react-router';
 
 import './PromoCard.css';
 
-const { Paragraph, Text } = Typography;
+const { Title } = Typography;
 
 export interface PromoCardData {
   id: number;
   title: string;
   image: string;
+
+  category: string;
 }
 
 interface PromoCardProps {
@@ -23,8 +28,10 @@ export const PromoCard = ({
 }: PromoCardProps) => {
   const navigate = useNavigate();
 
-  const handleSeeAll = () => {
-    navigate(`/category/${item.id}`);
+  const handleCategoryClick = () => {
+    navigate(
+      `/category/${item.category}`,
+    );
   };
 
   return (
@@ -34,41 +41,32 @@ export const PromoCard = ({
       styles={{
         body: {
           height: '100%',
-          padding: 16,
         },
       }}
     >
-      <Flex
-        className="promo-card__content"
-        vertical
-        justify="space-between"
+      <Title
+        level={3}
+        className="promo-card__title"
       >
-        <Image
-          className="promo-card__image"
-          src={item.image}
-          alt={item.title}
-          preview={false}
-        />
+        {item.title}
+      </Title>
 
-        <Paragraph
-          className="promo-card__title"
-          ellipsis={{ rows: 2 }}
-        >
-          {item.title}
-        </Paragraph>
+      <Image
+        className="promo-card__image"
+        src={item.image}
+        alt={item.title}
+        preview={false}
+      />
 
-        <Button
-          className="promo-card__link"
-          type="text"
-          onClick={handleSeeAll}
-        >
-          <Text className="promo-card__link-text">
-            See all
-          </Text>
-
-          <FiChevronRight />
-        </Button>
-      </Flex>
+      <Button
+        type="link"
+        className="promo-card__link"
+        onClick={
+          handleCategoryClick
+        }
+      >
+        See all
+      </Button>
     </Card>
   );
 };

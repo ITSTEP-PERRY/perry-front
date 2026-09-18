@@ -24,27 +24,21 @@ const { Paragraph, Text } = Typography;
 
 export interface ProductCardData {
   id: number;
-
   title: string;
-
   image: string;
 
   price: number;
-
   oldPrice?: number;
-
   discount?: number;
 
   rating: number;
-
   reviewsCount: number;
 
+  category: string;
+
   brand: string;
-
   fabric: string;
-
   color: string;
-
   sizes: string[];
 
   inStock?: boolean;
@@ -54,15 +48,11 @@ interface ProductCardProps {
   product: ProductCardData;
 }
 
-const formatPrice = (
-  price: number,
-) => {
+const formatPrice = (price: number) => {
   const [
     integerPart,
     decimalPart = '00',
-  ] = price
-    .toFixed(2)
-    .split('.');
+  ] = price.toFixed(2).split('.');
 
   return {
     integerPart,
@@ -75,18 +65,18 @@ export const ProductCard = ({
 }: ProductCardProps) => {
   const navigate = useNavigate();
 
-  const price =
-    formatPrice(product.price);
+  const price = formatPrice(
+    product.price,
+  );
 
   const isOutOfStock =
     product.inStock === false;
 
-  const handleProductClick =
-    () => {
-      navigate(
-        `/product/${product.id}`,
-      );
-    };
+  const handleProductClick = () => {
+    navigate(
+      `/product/${product.id}`,
+    );
+  };
 
   const handleProductKeyDown = (
     event: KeyboardEvent<HTMLDivElement>,
@@ -96,7 +86,6 @@ export const ProductCard = ({
       event.key === ' '
     ) {
       event.preventDefault();
-
       handleProductClick();
     }
   };
@@ -184,7 +173,7 @@ export const ProductCard = ({
             className="product-card__rating"
             align="center"
           >
-            <FiStar className="product-card__star" />
+            <FiStar />
 
             <Text>
               {product.rating}
@@ -198,9 +187,7 @@ export const ProductCard = ({
             <FiMessageSquare />
 
             <Text>
-              {
-                product.reviewsCount
-              }
+              {product.reviewsCount}
             </Text>
           </Flex>
         </Flex>
@@ -216,15 +203,11 @@ export const ProductCard = ({
             </span>
 
             <span>
-              {
-                price.integerPart
-              }
+              {price.integerPart}
             </span>
 
             <sup>
-              {
-                price.decimalPart
-              }
+              {price.decimalPart}
             </sup>
           </Text>
 

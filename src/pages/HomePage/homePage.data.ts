@@ -1,5 +1,5 @@
-import type { PromoCardData } from "../../Components/PromoCard/PromoCard";
-import type { ProductCardData } from "../../Components/ProductCard/ProductCard";
+import type { PromoCardData } from '../../Components/PromoCard/PromoCard';
+import type { ProductCardData } from '../../Components/ProductCard/ProductCard';
 
 import promoLeather from '../../assets/promos/promo-leather.png';
 import promoElectronics from '../../assets/promos/promo-electronics.png';
@@ -35,36 +35,42 @@ export const topPromoItems: PromoCardData[] = [
     title:
       'Tools for leather products: favorable prices',
     image: promoLeather,
+    category: 'accessories',
   },
   {
     id: 2,
     title:
       'Electronics with discount: buy time',
     image: promoElectronics,
+    category: 'electronics',
   },
   {
     id: 3,
     title:
       'A set of garden tools: bargain price',
     image: promoGarden,
+    category: 'home',
   },
   {
     id: 4,
     title:
       'Summer care cosmetics: freshness and comfort',
     image: promoSummerCare,
+    category: 'beauty',
   },
   {
     id: 5,
     title:
       'Baby clothes up to $25: comfort and style',
     image: promoBabyClothes,
+    category: 'clothing',
   },
   {
     id: 6,
     title:
       "Stylish women's clothing: new season",
     image: promoWomenClothes,
+    category: 'dresses',
   },
 ];
 
@@ -74,36 +80,42 @@ export const bottomPromoItems: PromoCardData[] = [
     title:
       'Household chemicals up to $15: quality and savings',
     image: promoChemicals,
+    category: 'home',
   },
   {
     id: 8,
     title:
       'Swimsuits: competitive prices',
     image: promoSwimsuits,
+    category: 'clothing',
   },
   {
     id: 9,
     title:
       'Sports equipment bestseller: hit sales',
     image: promoSports,
+    category: 'sports',
   },
   {
     id: 10,
     title:
       "Fashionable children's clothes for girls",
     image: promoChildren,
+    category: 'clothing',
   },
   {
     id: 11,
     title:
       'Musical instruments: sale, super prices',
     image: promoMusic,
+    category: 'electronics',
   },
   {
     id: 12,
     title:
       "Fashion sunglasses: this month's best sellers",
     image: promoSunglasses,
+    category: 'accessories',
   },
 ];
 
@@ -114,12 +126,16 @@ export const trendingProducts: ProductCardData[] = [
       'Everyday Deadlift Shoes Cross-Trainer',
     image: productShoes,
     price: 18.99,
+
     rating: 4,
     reviewsCount: 110,
+
+    category: 'shoes',
 
     brand: 'PUMA',
     fabric: 'Cotton',
     color: 'Yellow',
+
     sizes: [
       '36',
       '38',
@@ -136,12 +152,16 @@ export const trendingProducts: ProductCardData[] = [
       'VANLINKER Small Retro Skinny Cat Eye Glasses',
     image: productGlasses,
     price: 11.99,
+
     rating: 4,
     reviewsCount: 2110,
+
+    category: 'accessories',
 
     brand: 'Roselux',
     fabric: 'Polyamide',
     color: 'Azure',
+
     sizes: [
       'XS',
       'S',
@@ -157,21 +177,22 @@ export const trendingProducts: ProductCardData[] = [
       'Classic Analog Alarm Clock, 4-inch',
     image: productAlarm,
     price: 9.99,
+
     rating: 4,
     reviewsCount: 114,
+
+    category: 'home',
 
     brand: 'AUTOMET',
     fabric: 'Cotton',
     color: 'Red',
+
     sizes: [
       'S',
       'M',
       'L',
     ],
 
-    /*
-     * OUT OF STOCK EXAMPLE
-     */
     inStock: false,
   },
 
@@ -181,12 +202,16 @@ export const trendingProducts: ProductCardData[] = [
       "Zeagoo Women's Casual Summer Shirt",
     image: productDress,
     price: 38.74,
+
     rating: 4,
     reviewsCount: 242,
+
+    category: 'dresses',
 
     brand: 'Trendy Queen',
     fabric: 'Nylon',
     color: 'White',
+
     sizes: [
       'S',
       'M',
@@ -202,15 +227,20 @@ export const trendingProducts: ProductCardData[] = [
     title:
       'Fresh Vitamin Nectar Moisture Glow Face Cream',
     image: productCream,
+
     price: 27.24,
     oldPrice: 52,
     discount: 48,
+
     rating: 4,
     reviewsCount: 9,
+
+    category: 'beauty',
 
     brand: 'KevaMolly',
     fabric: 'Silk',
     color: 'Green',
+
     sizes: [
       'XS',
       'S',
@@ -225,12 +255,16 @@ export const trendingProducts: ProductCardData[] = [
       "SOMALER Women's Cotton Wide Brim Summer Hat",
     image: productHat,
     price: 18.99,
+
     rating: 4,
     reviewsCount: 1547,
+
+    category: 'accessories',
 
     brand: 'H&M',
     fabric: 'Satin',
     color: 'Blue',
+
     sizes: [
       'M',
       'L',
@@ -247,15 +281,20 @@ export const saleProducts: ProductCardData[] = [
     title:
       "REORIA Women's Slimming Double Line Top",
     image: saleWoman,
+
     price: 14.93,
     oldPrice: 17.99,
     discount: 17,
+
     rating: 4,
     reviewsCount: 18,
+
+    category: 'dresses',
 
     brand: 'Roselux',
     fabric: 'Nylon',
     color: 'White',
+
     sizes: [
       'XS',
       'S',
@@ -271,15 +310,20 @@ export const saleProducts: ProductCardData[] = [
     title:
       'MALACASA LUNA Series 12-Piece Porcelain Set',
     image: saleDishes,
+
     price: 65.99,
     oldPrice: 85.99,
     discount: 23,
+
     rating: 4,
     reviewsCount: 113,
+
+    category: 'home',
 
     brand: 'Abardsion',
     fabric: 'Cotton',
     color: 'White',
+
     sizes: [
       'M',
       'L',
@@ -293,15 +337,20 @@ export const saleProducts: ProductCardData[] = [
     title:
       "Hanes Men's Heavyweight Cotton T-Shirt",
     image: saleMan,
+
     price: 15.46,
     oldPrice: 26,
     discount: 41,
+
     rating: 4,
     reviewsCount: 1025,
+
+    category: 'clothing',
 
     brand: 'Darong',
     fabric: 'Cotton',
     color: 'Black',
+
     sizes: [
       'S',
       'M',
@@ -318,15 +367,20 @@ export const saleProducts: ProductCardData[] = [
     title:
       'Ninja BN601 Professional Plus Food Processor',
     image: saleBlender,
+
     price: 89.96,
     oldPrice: 119.65,
     discount: 25,
+
     rating: 4,
     reviewsCount: 1341,
+
+    category: 'electronics',
 
     brand: 'AUTOMET',
     fabric: 'Polyamide',
     color: 'Silver',
+
     sizes: [
       'M',
     ],
@@ -339,15 +393,20 @@ export const saleProducts: ProductCardData[] = [
     title:
       "LONDON FOG Women's Single Breasted Coat",
     image: saleCoat,
+
     price: 119.51,
     oldPrice: 129.99,
     discount: 8,
+
     rating: 4,
     reviewsCount: 1547,
+
+    category: 'clothing',
 
     brand: 'PUMIEY',
     fabric: 'Satin',
     color: 'Brown',
+
     sizes: [
       'S',
       'M',
@@ -363,15 +422,20 @@ export const saleProducts: ProductCardData[] = [
     title:
       'SHARPIE Fine Point Pens, Assorted Colors',
     image: salePens,
+
     price: 23.39,
     oldPrice: 25.99,
     discount: 10,
+
     rating: 4,
     reviewsCount: 660,
+
+    category: 'stationery',
 
     brand: 'KevaMolly',
     fabric: 'Polyamide',
     color: 'Purple',
+
     sizes: [
       'S',
     ],

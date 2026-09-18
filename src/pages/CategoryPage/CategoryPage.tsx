@@ -1,4 +1,8 @@
-import { useEffect, useState } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import {
   Breadcrumb,
@@ -21,6 +25,8 @@ import {
   FiSearch,
 } from 'react-icons/fi';
 
+import { useParams } from 'react-router';
+
 import { ProductCard } from '../../Components/ProductCard/ProductCard';
 import { ScrollToTop } from '../../Components/ScrollToTop/ScrollToTop';
 
@@ -42,176 +48,324 @@ type SortType =
   | 'rating'
   | 'popular';
 
-const brandOptions = [
-  'PUMIEY',
-  'Abardsion',
-  'Trendy Queen',
-  'Roselux',
-  'Darong',
-  'KevaMolly',
-  'AUTOMET',
-  'PUMA',
-  'H&M',
-];
+interface CategoryConfig {
+  title: string;
+  category: string;
+}
 
-const fabricOptions = [
-  'Polyamide',
-  'Elastane',
-  'Cotton',
-  'Silk',
-  'Nylon',
-  'Chiffon',
-  'Satin',
-  'Sateen',
-  'Stockinet',
-];
+const categoryConfig: Record<
+  string,
+  CategoryConfig
+> = {
+  dresses: {
+    title: 'Dresses',
+    category: 'dresses',
+  },
 
-const colorOptions = [
-  'White',
-  'Black',
-  'Red',
-  'Yellow',
-  'Orange',
-  'Green',
-  'Azure',
-  'Blue',
-  'Purple',
-  'Silver',
-  'Brown',
-];
+  electronics: {
+    title: 'Electronics',
+    category: 'electronics',
+  },
 
-const sizes = [
-  '2XS',
-  'XS',
-  'S',
-  'M',
-  'L',
-  'XL',
-  '2XL',
-  '3XL',
-  '4XL',
-  '5XL',
-  '32',
-  '34',
-  '36',
-  '38',
-  '40',
-  '42',
-  '44',
-  '46',
-  '48',
-  '50',
-];
+  beauty: {
+    title: 'Beauty',
+    category: 'beauty',
+  },
 
-const ratingOptions = [5, 4, 3, 2, 1];
+  shoes: {
+    title: 'Shoes',
+    category: 'shoes',
+  },
+
+  accessories: {
+    title: 'Accessories',
+    category: 'accessories',
+  },
+
+  clothing: {
+    title: 'Clothing',
+    category: 'clothing',
+  },
+
+  home: {
+    title: 'Home & Kitchen',
+    category: 'home',
+  },
+
+  sports: {
+    title: 'Sports',
+    category: 'sports',
+  },
+
+  stationery: {
+    title: 'Stationery',
+    category: 'stationery',
+  },
+};
+
+const ratingOptions = [
+  5,
+  4,
+  3,
+  2,
+  1,
+];
 
 const productsPerPage = 12;
 
 export const CategoryPage = () => {
-  const [viewMode, setViewMode] = useState<
+  /*
+   * Получаем категорию из URL.
+   *
+   * Поддерживаем:
+   * /category/:categoryId
+   * /category/:id
+   */
+  const params = useParams<{
+    categoryId?: string;
+    id?: string;
+  }>();
+
+  const categoryId =
+    params.categoryId ??
+    params.id ??
+    '';
+
+  const currentCategory =
+    categoryConfig[categoryId];
+
+  /*
+   * GRID / LIST
+   */
+  const [
+    viewMode,
+    setViewMode,
+  ] = useState<
     'grid' | 'list'
   >('grid');
 
-  const [selectedBrands, setSelectedBrands] =
-    useState<string[]>([]);
+  /*
+   * SELECTED FILTERS
+   */
+  const [
+    selectedBrands,
+    setSelectedBrands,
+  ] = useState<string[]>([]);
 
-  const [selectedFabrics, setSelectedFabrics] =
-    useState<string[]>([]);
+  const [
+    selectedFabrics,
+    setSelectedFabrics,
+  ] = useState<string[]>([]);
 
-  const [selectedColors, setSelectedColors] =
-    useState<string[]>([]);
+  const [
+    selectedColors,
+    setSelectedColors,
+  ] = useState<string[]>([]);
 
-  const [selectedSizes, setSelectedSizes] =
-    useState<string[]>([]);
+  const [
+    selectedSizes,
+    setSelectedSizes,
+  ] = useState<string[]>([]);
 
   /*
    * SEARCH INSIDE FILTERS
    */
-  const [brandSearch, setBrandSearch] =
-    useState('');
+  const [
+    brandSearch,
+    setBrandSearch,
+  ] = useState('');
 
-  const [fabricSearch, setFabricSearch] =
-    useState('');
+  const [
+    fabricSearch,
+    setFabricSearch,
+  ] = useState('');
 
-  const [sizeSearch, setSizeSearch] =
-    useState('');
+  const [
+    sizeSearch,
+    setSizeSearch,
+  ] = useState('');
 
-  const [colorSearch, setColorSearch] =
-    useState('');
+  const [
+    colorSearch,
+    setColorSearch,
+  ] = useState('');
 
   /*
    * PRICE
    */
-  const [priceRange, setPriceRange] = useState<
+  const [
+    priceRange,
+    setPriceRange,
+  ] = useState<
     [number, number]
   >([0, 150]);
 
-  const [appliedPriceRange, setAppliedPriceRange] =
-    useState<[number, number]>([0, 150]);
+  const [
+    appliedPriceRange,
+    setAppliedPriceRange,
+  ] = useState<
+    [number, number]
+  >([0, 150]);
 
   /*
    * RATING
    */
-  const [selectedRating, setSelectedRating] =
-    useState<number | null>(4);
+  const [
+    selectedRating,
+    setSelectedRating,
+  ] = useState<
+    number | null
+  >(4);
 
   /*
    * SORT
    */
-  const [sortType, setSortType] =
-    useState<SortType>('expensive');
+  const [
+    sortType,
+    setSortType,
+  ] = useState<SortType>(
+    'expensive',
+  );
 
   /*
    * PAGINATION
    */
-  const [currentPage, setCurrentPage] =
-    useState(1);
+  const [
+    currentPage,
+    setCurrentPage,
+  ] = useState(1);
 
   /*
-   * LOCAL PRODUCTS
+   * ALL PRODUCTS
    */
-  const products = [
-    ...trendingProducts,
-    ...saleProducts,
-  ];
+  const allProducts = useMemo(
+    () => [
+      ...trendingProducts,
+      ...saleProducts,
+    ],
+    [],
+  );
 
   /*
-   * SEARCHED FILTER OPTIONS
+   * PRODUCTS OF CURRENT CATEGORY
    */
-  const filteredBrandOptions =
-    brandOptions.filter((brand) =>
-      brand
-        .toLowerCase()
-        .includes(
-          brandSearch.toLowerCase(),
+  const categoryProducts =
+    useMemo(() => {
+      if (!currentCategory) {
+        return [];
+      }
+
+      return allProducts.filter(
+        (product) =>
+          product.category ===
+          currentCategory.category,
+      );
+    }, [
+      allProducts,
+      currentCategory,
+    ]);
+
+  /*
+   * =========================
+   * DYNAMIC FILTER OPTIONS
+   * =========================
+   *
+   * Теперь Brand / Fabric /
+   * Color / Size получаем
+   * только из товаров
+   * текущей категории.
+   */
+
+  const brandOptions =
+    useMemo(() => {
+      return Array.from(
+        new Set(
+          categoryProducts.map(
+            (product) =>
+              product.brand,
+          ),
         ),
+      ).sort();
+    }, [categoryProducts]);
+
+  const fabricOptions =
+    useMemo(() => {
+      return Array.from(
+        new Set(
+          categoryProducts.map(
+            (product) =>
+              product.fabric,
+          ),
+        ),
+      ).sort();
+    }, [categoryProducts]);
+
+  const colorOptions =
+    useMemo(() => {
+      return Array.from(
+        new Set(
+          categoryProducts.map(
+            (product) =>
+              product.color,
+          ),
+        ),
+      ).sort();
+    }, [categoryProducts]);
+
+  const sizeOptions =
+    useMemo(() => {
+      return Array.from(
+        new Set(
+          categoryProducts.flatMap(
+            (product) =>
+              product.sizes,
+          ),
+        ),
+      );
+    }, [categoryProducts]);
+
+  /*
+   * SEARCH INSIDE DYNAMIC OPTIONS
+   */
+
+  const filteredBrandOptions =
+    brandOptions.filter(
+      (brand) =>
+        brand
+          .toLowerCase()
+          .includes(
+            brandSearch.toLowerCase(),
+          ),
     );
 
   const filteredFabricOptions =
-    fabricOptions.filter((fabric) =>
-      fabric
-        .toLowerCase()
-        .includes(
-          fabricSearch.toLowerCase(),
-        ),
-    );
-
-  const filteredSizeOptions =
-    sizes.filter((size) =>
-      size
-        .toLowerCase()
-        .includes(
-          sizeSearch.toLowerCase(),
-        ),
+    fabricOptions.filter(
+      (fabric) =>
+        fabric
+          .toLowerCase()
+          .includes(
+            fabricSearch.toLowerCase(),
+          ),
     );
 
   const filteredColorOptions =
-    colorOptions.filter((color) =>
-      color
-        .toLowerCase()
-        .includes(
-          colorSearch.toLowerCase(),
-        ),
+    colorOptions.filter(
+      (color) =>
+        color
+          .toLowerCase()
+          .includes(
+            colorSearch.toLowerCase(),
+          ),
+    );
+
+  const filteredSizeOptions =
+    sizeOptions.filter(
+      (size) =>
+        size
+          .toLowerCase()
+          .includes(
+            sizeSearch.toLowerCase(),
+          ),
     );
 
   /*
@@ -221,12 +375,17 @@ export const CategoryPage = () => {
     brand: string,
     checked: boolean,
   ) => {
-    setSelectedBrands((prev) =>
-      checked
-        ? [...prev, brand]
-        : prev.filter(
-            (item) => item !== brand,
-          ),
+    setSelectedBrands(
+      (previous) =>
+        checked
+          ? [
+              ...previous,
+              brand,
+            ]
+          : previous.filter(
+              (item) =>
+                item !== brand,
+            ),
     );
   };
 
@@ -237,12 +396,17 @@ export const CategoryPage = () => {
     fabric: string,
     checked: boolean,
   ) => {
-    setSelectedFabrics((prev) =>
-      checked
-        ? [...prev, fabric]
-        : prev.filter(
-            (item) => item !== fabric,
-          ),
+    setSelectedFabrics(
+      (previous) =>
+        checked
+          ? [
+              ...previous,
+              fabric,
+            ]
+          : previous.filter(
+              (item) =>
+                item !== fabric,
+            ),
     );
   };
 
@@ -253,12 +417,17 @@ export const CategoryPage = () => {
     color: string,
     checked: boolean,
   ) => {
-    setSelectedColors((prev) =>
-      checked
-        ? [...prev, color]
-        : prev.filter(
-            (item) => item !== color,
-          ),
+    setSelectedColors(
+      (previous) =>
+        checked
+          ? [
+              ...previous,
+              color,
+            ]
+          : previous.filter(
+              (item) =>
+                item !== color,
+            ),
     );
   };
 
@@ -268,21 +437,29 @@ export const CategoryPage = () => {
   const handleSizeChange = (
     size: string,
   ) => {
-    setSelectedSizes((prev) =>
-      prev.includes(size)
-        ? prev.filter(
-            (item) => item !== size,
-          )
-        : [...prev, size],
+    setSelectedSizes(
+      (previous) =>
+        previous.includes(size)
+          ? previous.filter(
+              (item) =>
+                item !== size,
+            )
+          : [
+              ...previous,
+              size,
+            ],
     );
   };
 
   /*
    * PRICE
    */
-  const handleApplyPrice = () => {
-    setAppliedPriceRange(priceRange);
-  };
+  const handleApplyPrice =
+    () => {
+      setAppliedPriceRange(
+        priceRange,
+      );
+    };
 
   /*
    * RATING
@@ -292,72 +469,106 @@ export const CategoryPage = () => {
     checked: boolean,
   ) => {
     if (checked) {
-      setSelectedRating(rating);
+      setSelectedRating(
+        rating,
+      );
+
       return;
     }
 
-    if (selectedRating === rating) {
+    if (
+      selectedRating === rating
+    ) {
       setSelectedRating(null);
     }
   };
 
   /*
-   * PRODUCT FILTERS
+   * =========================
+   * PRODUCT FILTERING
+   * =========================
    */
-  const filteredProducts = products.filter(
-    (product) => {
-      const matchesBrand =
-        selectedBrands.length === 0 ||
-        selectedBrands.includes(product.brand);
 
-      const matchesFabric =
-        selectedFabrics.length === 0 ||
-        selectedFabrics.includes(product.fabric);
+  const filteredProducts =
+    categoryProducts.filter(
+      (product) => {
+        const matchesBrand =
+          selectedBrands.length ===
+            0 ||
+          selectedBrands.includes(
+            product.brand,
+          );
 
-      const matchesColor =
-        selectedColors.length === 0 ||
-        selectedColors.includes(product.color);
+        const matchesFabric =
+          selectedFabrics.length ===
+            0 ||
+          selectedFabrics.includes(
+            product.fabric,
+          );
 
-      const matchesSize =
-        selectedSizes.length === 0 ||
-        selectedSizes.some((size) =>
-          product.sizes.includes(size),
+        const matchesColor =
+          selectedColors.length ===
+            0 ||
+          selectedColors.includes(
+            product.color,
+          );
+
+        const matchesSize =
+          selectedSizes.length ===
+            0 ||
+          selectedSizes.some(
+            (size) =>
+              product.sizes.includes(
+                size,
+              ),
+          );
+
+        const matchesPrice =
+          product.price >=
+            appliedPriceRange[0] &&
+          product.price <=
+            appliedPriceRange[1];
+
+        const matchesRating =
+          selectedRating === null ||
+          product.rating >=
+            selectedRating;
+
+        return (
+          matchesBrand &&
+          matchesFabric &&
+          matchesColor &&
+          matchesSize &&
+          matchesPrice &&
+          matchesRating
         );
-
-      const matchesPrice =
-        product.price >= appliedPriceRange[0] &&
-        product.price <= appliedPriceRange[1];
-
-      const matchesRating =
-        selectedRating === null ||
-        product.rating >= selectedRating;
-
-      return (
-        matchesBrand &&
-        matchesFabric &&
-        matchesColor &&
-        matchesSize &&
-        matchesPrice &&
-        matchesRating
-      );
-    },
-  );
+      },
+    );
 
   /*
-   * SORT PRODUCTS
+   * =========================
+   * SORT
+   * =========================
    */
+
   const sortedProducts = [
     ...filteredProducts,
   ].sort((a, b) => {
     switch (sortType) {
       case 'expensive':
-        return b.price - a.price;
+        return (
+          b.price - a.price
+        );
 
       case 'cheap':
-        return a.price - b.price;
+        return (
+          a.price - b.price
+        );
 
       case 'rating':
-        return b.rating - a.rating;
+        return (
+          b.rating - a.rating
+        );
 
       case 'popular':
         return (
@@ -371,23 +582,25 @@ export const CategoryPage = () => {
   });
 
   /*
+   * =========================
    * PAGINATION
+   * =========================
    */
-  const startIndex =
-    (currentPage - 1) * productsPerPage;
 
-  const endIndex =
-    startIndex + productsPerPage;
+  const startIndex =
+    (currentPage - 1) *
+    productsPerPage;
 
   const currentProducts =
     sortedProducts.slice(
       startIndex,
-      endIndex,
+      startIndex +
+        productsPerPage,
     );
 
   /*
-   * RESET CURRENT PAGE
-   * AFTER FILTERS CHANGE
+   * Если меняем фильтр,
+   * возвращаемся на page 1.
    */
   useEffect(() => {
     setCurrentPage(1);
@@ -402,6 +615,40 @@ export const CategoryPage = () => {
   ]);
 
   /*
+   * Если открыли другую
+   * категорию:
+   *
+   * очищаем старые фильтры,
+   * чтобы фильтр Dresses
+   * не влиял на Electronics.
+   */
+  useEffect(() => {
+    setSelectedBrands([]);
+    setSelectedFabrics([]);
+    setSelectedColors([]);
+    setSelectedSizes([]);
+
+    setBrandSearch('');
+    setFabricSearch('');
+    setSizeSearch('');
+    setColorSearch('');
+
+    setPriceRange([
+      0,
+      150,
+    ]);
+
+    setAppliedPriceRange([
+      0,
+      150,
+    ]);
+
+    setSelectedRating(4);
+
+    setCurrentPage(1);
+  }, [categoryId]);
+
+  /*
    * ACTIVE FILTERS COUNTER
    */
   const activeFiltersCount =
@@ -409,9 +656,13 @@ export const CategoryPage = () => {
     selectedFabrics.length +
     selectedColors.length +
     selectedSizes.length +
-    (selectedRating !== null ? 1 : 0) +
-    (appliedPriceRange[0] !== 0 ||
-    appliedPriceRange[1] !== 150
+    (selectedRating !== null
+      ? 1
+      : 0) +
+    (appliedPriceRange[0] !==
+      0 ||
+    appliedPriceRange[1] !==
+      150
       ? 1
       : 0);
 
@@ -421,49 +672,71 @@ export const CategoryPage = () => {
 
       <main className="category-page__main">
         <div className="category-page__container">
-          {/* BREADCRUMBS */}
+
+          {/* =========================
+              BREADCRUMBS
+          ========================= */}
 
           <Breadcrumb
             className="category-page__breadcrumbs"
             items={[
               {
                 title: (
-                  <Flex align="center" gap={4}>
+                  <Flex
+                    align="center"
+                    gap={4}
+                  >
                     <FiHome />
-                    <span>Fashion</span>
+
+                    <span>
+                      Home
+                    </span>
                   </Flex>
                 ),
               },
-              {
-                title: "Women's fashion",
-              },
+
               {
                 title:
-                  "Casual women's clothing",
+                  currentCategory
+                    ?.title ??
+                  'Category',
               },
             ]}
           />
 
-          {/* TITLE */}
+          {/* =========================
+              TITLE
+          ========================= */}
 
           <Title
             level={1}
             className="category-page__title"
           >
-            Dresses
+            {currentCategory
+              ?.title ??
+              'Category'}
           </Title>
 
           <Flex
             className="category-page__layout"
             align="flex-start"
           >
+
+            {/* =========================
+                SIDEBAR
+            ========================= */}
+
             <aside className="category-page__sidebar">
 
-              {/* BRAND */}
+              {/* =========================
+                  BRAND
+              ========================= */}
 
               <Collapse
                 className="category-filter"
-                defaultActiveKey={['brand']}
+                defaultActiveKey={[
+                  'brand',
+                ]}
                 ghost
                 items={[
                   {
@@ -471,15 +744,26 @@ export const CategoryPage = () => {
                     label: 'Brand',
 
                     children: (
-                      <Flex vertical gap={10}>
+                      <Flex
+                        vertical
+                        gap={10}
+                      >
                         <Input
                           className="category-filter__search"
-                          prefix={<FiSearch />}
+                          prefix={
+                            <FiSearch />
+                          }
                           placeholder="Search..."
-                          value={brandSearch}
-                          onChange={(event) =>
+                          value={
+                            brandSearch
+                          }
+                          onChange={(
+                            event,
+                          ) =>
                             setBrandSearch(
-                              event.target.value,
+                              event
+                                .target
+                                .value,
                             )
                           }
                           allowClear
@@ -491,16 +775,24 @@ export const CategoryPage = () => {
                           gap={5}
                         >
                           {filteredBrandOptions.map(
-                            (brand) => (
+                            (
+                              brand,
+                            ) => (
                               <Checkbox
-                                key={brand}
+                                key={
+                                  brand
+                                }
                                 checked={selectedBrands.includes(
                                   brand,
                                 )}
-                                onChange={(event) =>
+                                onChange={(
+                                  event,
+                                ) =>
                                   handleBrandChange(
                                     brand,
-                                    event.target.checked,
+                                    event
+                                      .target
+                                      .checked,
                                   )
                                 }
                               >
@@ -522,27 +814,43 @@ export const CategoryPage = () => {
                 ]}
               />
 
-              {/* FABRIC */}
+              {/* =========================
+                  FABRIC
+              ========================= */}
 
               <Collapse
                 className="category-filter"
-                defaultActiveKey={['fabric']}
+                defaultActiveKey={[
+                  'fabric',
+                ]}
                 ghost
                 items={[
                   {
                     key: 'fabric',
-                    label: 'Fabric type',
+                    label:
+                      'Fabric type',
 
                     children: (
-                      <Flex vertical gap={10}>
+                      <Flex
+                        vertical
+                        gap={10}
+                      >
                         <Input
                           className="category-filter__search"
-                          prefix={<FiSearch />}
+                          prefix={
+                            <FiSearch />
+                          }
                           placeholder="Search..."
-                          value={fabricSearch}
-                          onChange={(event) =>
+                          value={
+                            fabricSearch
+                          }
+                          onChange={(
+                            event,
+                          ) =>
                             setFabricSearch(
-                              event.target.value,
+                              event
+                                .target
+                                .value,
                             )
                           }
                           allowClear
@@ -554,16 +862,24 @@ export const CategoryPage = () => {
                           gap={5}
                         >
                           {filteredFabricOptions.map(
-                            (fabric) => (
+                            (
+                              fabric,
+                            ) => (
                               <Checkbox
-                                key={fabric}
+                                key={
+                                  fabric
+                                }
                                 checked={selectedFabrics.includes(
                                   fabric,
                                 )}
-                                onChange={(event) =>
+                                onChange={(
+                                  event,
+                                ) =>
                                   handleFabricChange(
                                     fabric,
-                                    event.target.checked,
+                                    event
+                                      .target
+                                      .checked,
                                   )
                                 }
                               >
@@ -585,11 +901,15 @@ export const CategoryPage = () => {
                 ]}
               />
 
-              {/* SIZE */}
+              {/* =========================
+                  SIZE
+              ========================= */}
 
               <Collapse
                 className="category-filter"
-                defaultActiveKey={['size']}
+                defaultActiveKey={[
+                  'size',
+                ]}
                 ghost
                 items={[
                   {
@@ -597,15 +917,26 @@ export const CategoryPage = () => {
                     label: 'Size',
 
                     children: (
-                      <Flex vertical gap={10}>
+                      <Flex
+                        vertical
+                        gap={10}
+                      >
                         <Input
                           className="category-filter__search"
-                          prefix={<FiSearch />}
+                          prefix={
+                            <FiSearch />
+                          }
                           placeholder="Search..."
-                          value={sizeSearch}
-                          onChange={(event) =>
+                          value={
+                            sizeSearch
+                          }
+                          onChange={(
+                            event,
+                          ) =>
                             setSizeSearch(
-                              event.target.value,
+                              event
+                                .target
+                                .value,
                             )
                           }
                           allowClear
@@ -613,9 +944,13 @@ export const CategoryPage = () => {
 
                         <div className="category-filter__sizes">
                           {filteredSizeOptions.map(
-                            (size) => (
+                            (
+                              size,
+                            ) => (
                               <Button
-                                key={size}
+                                key={
+                                  size
+                                }
                                 className={
                                   selectedSizes.includes(
                                     size,
@@ -647,11 +982,15 @@ export const CategoryPage = () => {
                 ]}
               />
 
-              {/* COLOR */}
+              {/* =========================
+                  COLOR
+              ========================= */}
 
               <Collapse
                 className="category-filter"
-                defaultActiveKey={['color']}
+                defaultActiveKey={[
+                  'color',
+                ]}
                 ghost
                 items={[
                   {
@@ -659,15 +998,26 @@ export const CategoryPage = () => {
                     label: 'Color',
 
                     children: (
-                      <Flex vertical gap={10}>
+                      <Flex
+                        vertical
+                        gap={10}
+                      >
                         <Input
                           className="category-filter__search"
-                          prefix={<FiSearch />}
+                          prefix={
+                            <FiSearch />
+                          }
                           placeholder="Search..."
-                          value={colorSearch}
-                          onChange={(event) =>
+                          value={
+                            colorSearch
+                          }
+                          onChange={(
+                            event,
+                          ) =>
                             setColorSearch(
-                              event.target.value,
+                              event
+                                .target
+                                .value,
                             )
                           }
                           allowClear
@@ -679,16 +1029,24 @@ export const CategoryPage = () => {
                           gap={5}
                         >
                           {filteredColorOptions.map(
-                            (color) => (
+                            (
+                              color,
+                            ) => (
                               <Checkbox
-                                key={color}
+                                key={
+                                  color
+                                }
                                 checked={selectedColors.includes(
                                   color,
                                 )}
-                                onChange={(event) =>
+                                onChange={(
+                                  event,
+                                ) =>
                                   handleColorChange(
                                     color,
-                                    event.target.checked,
+                                    event
+                                      .target
+                                      .checked,
                                   )
                                 }
                               >
@@ -710,11 +1068,15 @@ export const CategoryPage = () => {
                 ]}
               />
 
-              {/* PRICE */}
+              {/* =========================
+                  PRICE
+              ========================= */}
 
               <Collapse
                 className="category-filter"
-                defaultActiveKey={['price']}
+                defaultActiveKey={[
+                  'price',
+                ]}
                 ghost
                 items={[
                   {
@@ -722,7 +1084,10 @@ export const CategoryPage = () => {
                     label: 'Price',
 
                     children: (
-                      <Flex vertical gap={10}>
+                      <Flex
+                        vertical
+                        gap={10}
+                      >
                         <Flex
                           className="category-filter__price-row"
                           align="center"
@@ -730,15 +1095,21 @@ export const CategoryPage = () => {
                         >
                           <Input
                             className="category-filter__price-input"
-                            value={priceRange[0]}
+                            value={
+                              priceRange[0]
+                            }
                             readOnly
                           />
 
-                          <Text>—</Text>
+                          <Text>
+                            —
+                          </Text>
 
                           <Input
                             className="category-filter__price-input"
-                            value={priceRange[1]}
+                            value={
+                              priceRange[1]
+                            }
                             readOnly
                           />
 
@@ -757,8 +1128,12 @@ export const CategoryPage = () => {
                           range
                           min={0}
                           max={150}
-                          value={priceRange}
-                          onChange={(value) =>
+                          value={
+                            priceRange
+                          }
+                          onChange={(
+                            value,
+                          ) =>
                             setPriceRange(
                               value as [
                                 number,
@@ -773,7 +1148,9 @@ export const CategoryPage = () => {
                 ]}
               />
 
-              {/* CUSTOMER REVIEWS */}
+              {/* =========================
+                  CUSTOMER REVIEWS
+              ========================= */}
 
               <Collapse
                 className="category-filter"
@@ -788,27 +1165,42 @@ export const CategoryPage = () => {
                       'Customer reviews',
 
                     children: (
-                      <Flex vertical gap={5}>
+                      <Flex
+                        vertical
+                        gap={5}
+                      >
                         {ratingOptions.map(
-                          (rating) => (
+                          (
+                            rating,
+                          ) => (
                             <Checkbox
-                              key={rating}
+                              key={
+                                rating
+                              }
                               checked={
                                 selectedRating ===
                                 rating
                               }
-                              onChange={(event) =>
+                              onChange={(
+                                event,
+                              ) =>
                                 handleRatingChange(
                                   rating,
-                                  event.target.checked,
+                                  event
+                                    .target
+                                    .checked,
                                 )
                               }
                             >
                               <Rate
                                 className="category-filter__rating"
                                 disabled
-                                value={rating}
-                                count={5}
+                                value={
+                                  rating
+                                }
+                                count={
+                                  5
+                                }
                               />
                             </Checkbox>
                           ),
@@ -820,11 +1212,15 @@ export const CategoryPage = () => {
               />
             </aside>
 
-            {/* PRODUCTS */}
+            {/* =========================
+                PRODUCTS
+            ========================= */}
 
             <section className="category-page__products">
 
-              {/* TOOLBAR */}
+              {/* =========================
+                  TOOLBAR
+              ========================= */}
 
               <Flex
                 className="category-toolbar"
@@ -848,11 +1244,15 @@ export const CategoryPage = () => {
                 >
                   <Select
                     className="category-toolbar__sort"
-                    value={sortType}
+                    value={
+                      sortType
+                    }
                     onChange={(
                       value: SortType,
                     ) =>
-                      setSortType(value)
+                      setSortType(
+                        value,
+                      )
                     }
                     options={[
                       {
@@ -885,26 +1285,36 @@ export const CategoryPage = () => {
                   <Flex className="category-toolbar__views">
                     <Button
                       className={
-                        viewMode === 'grid'
+                        viewMode ===
+                        'grid'
                           ? 'category-toolbar__view category-toolbar__view--active'
                           : 'category-toolbar__view'
                       }
-                      icon={<FiGrid />}
+                      icon={
+                        <FiGrid />
+                      }
                       onClick={() =>
-                        setViewMode('grid')
+                        setViewMode(
+                          'grid',
+                        )
                       }
                       aria-label="Grid view"
                     />
 
                     <Button
                       className={
-                        viewMode === 'list'
+                        viewMode ===
+                        'list'
                           ? 'category-toolbar__view category-toolbar__view--active'
                           : 'category-toolbar__view'
                       }
-                      icon={<FiList />}
+                      icon={
+                        <FiList />
+                      }
                       onClick={() =>
-                        setViewMode('list')
+                        setViewMode(
+                          'list',
+                        )
                       }
                       aria-label="List view"
                     />
@@ -912,28 +1322,40 @@ export const CategoryPage = () => {
                 </Flex>
               </Flex>
 
-              {/* PRODUCT GRID */}
+              {/* =========================
+                  PRODUCT GRID
+              ========================= */}
 
               <div
                 className={
-                  viewMode === 'grid'
+                  viewMode ===
+                  'grid'
                     ? 'category-products-grid'
                     : 'category-products-grid category-products-grid--list'
                 }
               >
                 {currentProducts.map(
-                  (product) => (
+                  (
+                    product,
+                  ) => (
                     <ProductCard
-                      key={product.id}
-                      product={product}
+                      key={
+                        product.id
+                      }
+                      product={
+                        product
+                      }
                     />
                   ),
                 )}
               </div>
 
-              {/* EMPTY RESULT */}
+              {/* =========================
+                  EMPTY RESULT
+              ========================= */}
 
-              {sortedProducts.length === 0 && (
+              {sortedProducts.length ===
+                0 && (
                 <Flex
                   className="category-page__empty"
                   vertical
@@ -941,34 +1363,56 @@ export const CategoryPage = () => {
                   justify="center"
                   gap={8}
                 >
-                  <Title level={3}>
+                  <Title
+                    level={3}
+                  >
                     No products found
                   </Title>
 
                   <Text>
-                    Try changing the filters.
+                    There are no
+                    products in this
+                    category or the
+                    selected filters
+                    have no matches.
                   </Text>
                 </Flex>
               )}
 
-              {/* PAGINATION */}
+              {/* =========================
+                  PAGINATION
+              ========================= */}
 
-              {sortedProducts.length > 0 && (
+              {sortedProducts.length >
+                0 && (
                 <Flex
                   className="category-page__pagination"
                   justify="center"
                 >
                   <Pagination
-                    current={currentPage}
-                    total={sortedProducts.length}
-                    pageSize={productsPerPage}
-                    showSizeChanger={false}
-                    onChange={(page) => {
-                      setCurrentPage(page);
+                    current={
+                      currentPage
+                    }
+                    total={
+                      sortedProducts.length
+                    }
+                    pageSize={
+                      productsPerPage
+                    }
+                    showSizeChanger={
+                      false
+                    }
+                    onChange={(
+                      page,
+                    ) => {
+                      setCurrentPage(
+                        page,
+                      );
 
                       window.scrollTo({
                         top: 0,
-                        behavior: 'smooth',
+                        behavior:
+                          'smooth',
                       });
                     }}
                   />
