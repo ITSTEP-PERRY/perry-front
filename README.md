@@ -46,12 +46,6 @@ Backend: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_fo
 
 Список заказов Date / Customer / Status / Total.
 
-### 06 · Admin Users
-
-![Admin Users](./docs/screenshots/sprint-2026-09-19/06-admin-users.png)
-
-Фильтры Active / Deleted / All + role.
-
 ### 07 · Admin Products — category dropdown
 
 ![Admin Products category dropdown](./docs/screenshots/sprint-2026-09-19/07-admin-products-category-dropdown.png)
