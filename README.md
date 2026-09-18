@@ -3,9 +3,31 @@
 Vite + React 19 витрина маркетплейса **Perry**. Визуал по макету **Figma** (приоритет №1) и эталону Razor `site.css` / `auth.css`. Данные — из `Perry.Api` (proxy `/api` → `http://localhost:5272`).
 
 Backend: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_for_our_poroject)  
+**Спринт 19.09:** [docs/ИЗМЕНЕНИЯ-2026-09-19.md](./docs/ИЗМЕНЕНИЯ-2026-09-19.md) · скрины [docs/screenshots/sprint-2026-09-19/](./docs/screenshots/sprint-2026-09-19/README.md)  
 Сводка (каталог/PDP/auth): [docs/ИЗМЕНЕНИЯ-2026-09-17.md](./docs/ИЗМЕНЕНИЯ-2026-09-17.md)  
 **Account (Wishlist / Orders / Settings):** [docs/ИЗМЕНЕНИЯ-Account-2026-09-17.md](./docs/ИЗМЕНЕНИЯ-Account-2026-09-17.md)  
 Скриншоты Account (14 шт.): [docs/screenshots/README.md](./docs/screenshots/README.md)
+
+---
+
+## Спринт к защите — что сделано (19.09)
+
+Закрыты оставшиеся карточки Trello (кроме Backlog #73):
+
+| Блок | Что |
+|------|-----|
+| PDP | Reviews polish (#34), инфо-модалки Delivery…Seller (#36–#40), Notify (#29/#30), 404 |
+| Admin React | Categories (#65), Products (#66), Reviews (#69), Users (#68) |
+| Infra | Docker compose (#5), Swagger JWT (#76), SMTP-гайд (#14) |
+| Mobile | #77/#78/#80 — уже в адаптивe, Done |
+
+![Admin Products](./docs/screenshots/sprint-2026-09-19/02-admin-products.png)
+
+![Admin Reviews](./docs/screenshots/sprint-2026-09-19/04-admin-reviews.png)
+
+![My orders](./docs/screenshots/sprint-2026-09-19/12-account-my-orders.png)
+
+Полный набор из **17** фото с описаниями — [docs/screenshots/sprint-2026-09-19/README.md](./docs/screenshots/sprint-2026-09-19/README.md).
 
 ---
 
@@ -72,8 +94,8 @@ Backend: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_fo
 ### Legal
 - `/terms`, `/privacy`, `/license` — полные тексты + навигация Legal notice.
 
-### Админка React `/admin/*`
-- Login, Dashboard, Products (CRUD), Categories (дерево + `description` / `imageUrl` / `iconUrl` / `IsActive`), Orders, Users.
+### Админка React `/admin/*` (обновлено 19.09)
+- Login, Dashboard, Products (список + create/edit), Categories (CRUD + inactive), **Reviews** (Hide/Approve/Delete), Orders, Users (Active/Deleted + restore).
 
 ### API-клиент
 - `src/api/` — categories, products (facets/filters), auth JWT, cart session, orders.

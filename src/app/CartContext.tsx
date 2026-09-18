@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -29,6 +30,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const sessionId = getCartSessionId();
   const userId = user?.id ?? null;
   const [cart, setCart] = useState<CartResponse | null>(null);
+  const mergedForUser = useRef<string | null>(null);
 
   const refresh = useCallback(async () => {
     try {
@@ -40,8 +42,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [userId, sessionId]);
 
   useEffect(() => {
-    void refresh();
-  }, [refresh]);
+    let cancelled = false;
+    (async () => {
+      if (userId && mergedForUser.current !== userId) {
+        try {
+          await cartApi.merge(sessionId);
+          mergedForUser.current = userId;
+        } catch {
+          // merge best-effort
+        }
+      }
+      if (!userId) mergedForUser.current = null;
+      if (!cancelled) await refresh();
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [userId, sessionId, refresh]);
 
   const add = useCallback(
     async (productId: string, qty = 1) => {

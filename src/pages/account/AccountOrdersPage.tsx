@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { ordersApi } from "../../api";
 import type { OrderDto } from "../../api/types";
 import { OrderDetailsModal } from "../../widgets/OrderDetailsModal";
@@ -35,6 +35,7 @@ function shortId(id: string) {
 }
 
 export function AccountOrdersPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [orders, setOrders] = useState<OrderDto[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -43,9 +44,20 @@ export function AccountOrdersPage() {
   useEffect(() => {
     ordersApi
       .mine()
-      .then(setOrders)
+      .then((list) => {
+        setOrders(list);
+        const openId = searchParams.get("open");
+        if (openId && list.some((o) => o.id === openId)) {
+          setSelectedId(openId);
+          const next = new URLSearchParams(searchParams);
+          next.delete("open");
+          setSearchParams(next, { replace: true });
+        }
+      })
       .catch((e: Error) => setError(e.message))
       .finally(() => setLoading(false));
+    // open query handled once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const selected = useMemo(

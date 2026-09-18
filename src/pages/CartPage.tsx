@@ -21,7 +21,7 @@ export function CartPage() {
     try {
       const order = await ordersApi.checkout(sessionId);
       await refresh();
-      navigate(`/orders/${order.id}`);
+      navigate(`/account/orders?open=${encodeURIComponent(order.id)}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Checkout failed");
     } finally {

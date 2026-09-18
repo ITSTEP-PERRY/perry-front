@@ -20,6 +20,7 @@ import {
   VerifyCodePage,
 } from "../pages/auth/AuthFlowPages";
 import { LegalPage } from "../pages/LegalPage";
+import { NotFoundPage } from "../pages/NotFoundPage";
 import { AdminLoginPage } from "../pages/admin/AdminLoginPage";
 import { AdminDashboardPage } from "../pages/admin/AdminDashboardPage";
 import { AdminProductsPage } from "../pages/admin/AdminProductsPage";
@@ -27,6 +28,7 @@ import { AdminCategoriesPage } from "../pages/admin/AdminCategoriesPage";
 import { AdminOrdersPage } from "../pages/admin/AdminOrdersPage";
 import { AdminUsersPage } from "../pages/admin/AdminUsersPage";
 import { AdminProductEditPage } from "../pages/admin/AdminProductEditPage";
+import { AdminReviewsPage } from "../pages/admin/AdminReviewsPage";
 
 export const router = createBrowserRouter([
   {
@@ -58,6 +60,7 @@ export const router = createBrowserRouter([
           { path: "profile", element: <Navigate to="/account/settings" replace /> },
         ],
       },
+      { path: "*", element: <NotFoundPage /> },
     ],
   },
   {
@@ -92,9 +95,15 @@ export const router = createBrowserRouter([
       { path: "products", element: <AdminProductsPage /> },
       { path: "products/:id", element: <AdminProductEditPage /> },
       { path: "categories", element: <AdminCategoriesPage /> },
+      { path: "reviews", element: <AdminReviewsPage /> },
       { path: "orders", element: <AdminOrdersPage /> },
       { path: "users", element: <AdminUsersPage /> },
+      { path: "*", element: <Navigate to="/admin" replace /> },
     ],
   },
-  { path: "*", element: <Navigate to="/" replace /> },
+  {
+    path: "*",
+    element: <AppShell />,
+    children: [{ index: true, element: <NotFoundPage /> }],
+  },
 ]);

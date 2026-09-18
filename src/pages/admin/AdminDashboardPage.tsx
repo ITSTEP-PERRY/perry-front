@@ -11,6 +11,9 @@ export function AdminDashboardPage() {
         <Link className="cat-tile" to="/admin/categories">
           Categories
         </Link>
+        <Link className="cat-tile" to="/admin/reviews">
+          Reviews
+        </Link>
         <Link className="cat-tile" to="/admin/orders">
           Orders
         </Link>

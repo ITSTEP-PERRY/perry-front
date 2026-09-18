@@ -11,7 +11,10 @@ import type {
 } from "./types";
 
 export const categoriesApi = {
-  tree: () => apiFetch<CategoryDto[]>("/categories"),
+  tree: (opts?: { includeInactive?: boolean }) => {
+    const qs = opts?.includeInactive ? "?includeInactive=true" : "";
+    return apiFetch<CategoryDto[]>(`/categories${qs}`);
+  },
   bySlug: (slug: string) => apiFetch<CategoryDto>(`/categories/${encodeURIComponent(slug)}`),
   create: (body: Record<string, unknown>) =>
     apiFetch<CategoryDto>("/categories", { method: "POST", body: JSON.stringify(body) }),
@@ -36,6 +39,51 @@ export type ProductQuery = {
   pageSize?: number;
 };
 
+export const reviewsApi = {
+  create: (
+    productId: string,
+    body: { rating: number; title: string; body: string; tags?: string[]; imageUrls?: string[] },
+  ) =>
+    apiFetch<{
+      id: string;
+      authorName: string;
+      rating: number;
+      title: string;
+      body: string;
+      createdAtUtc: string;
+      tags: string[];
+      images: string[];
+    }>(`/products/${productId}/reviews`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  adminList: (opts?: { status?: string; q?: string }) => {
+    const p = new URLSearchParams();
+    if (opts?.status) p.set("status", opts.status);
+    if (opts?.q) p.set("q", opts.q);
+    const qs = p.toString();
+    return apiFetch<
+      {
+        id: string;
+        productId: string;
+        productName: string;
+        authorName: string;
+        rating: number;
+        title: string;
+        body: string;
+        isApproved: boolean;
+        createdAtUtc: string;
+        tags: string[];
+      }[]
+    >(`/admin/reviews${qs ? `?${qs}` : ""}`);
+  },
+  approve: (id: string) =>
+    apiFetch<{ status: string }>(`/admin/reviews/${id}/approve`, { method: "PUT" }),
+  reject: (id: string) =>
+    apiFetch<{ status: string }>(`/admin/reviews/${id}/reject`, { method: "PUT" }),
+  remove: (id: string) => apiFetch<void>(`/admin/reviews/${id}`, { method: "DELETE" }),
+};
+
 export const productsApi = {
   list: (q: ProductQuery = {}) => {
     const params = new URLSearchParams();
@@ -56,6 +104,14 @@ export const productsApi = {
   update: (id: string, body: Record<string, unknown>) =>
     apiFetch<{ id: string }>(`/products/${id}`, { method: "PUT", body: JSON.stringify(body) }),
   remove: (id: string) => apiFetch<void>(`/products/${id}`, { method: "DELETE" }),
+  notifyWhenAvailable: (id: string, email?: string) =>
+    apiFetch<{ status: string; email: string; alreadySubscribed?: boolean }>(
+      `/products/${id}/notify`,
+      {
+        method: "POST",
+        body: JSON.stringify(email ? { email } : {}),
+      },
+    ),
 };
 
 function cartQs(userId?: string | null, sessionId?: string) {
@@ -84,6 +140,11 @@ export const cartApi = {
   remove: (userId: string | null, sessionId: string, productId: string) =>
     apiFetch(`/cart/item/${productId}${cartQs(userId, sessionId)}`, {
       method: "DELETE",
+    }),
+  merge: (sessionId: string) =>
+    apiFetch<{ status: string }>("/cart/merge", {
+      method: "POST",
+      body: JSON.stringify({ sessionId }),
     }),
 };
 
@@ -152,8 +213,12 @@ export const ordersApi = {
 };
 
 export const usersApi = {
-  list: () =>
-    apiFetch<
+  list: (opts?: { status?: string; role?: string }) => {
+    const p = new URLSearchParams();
+    if (opts?.status) p.set("status", opts.status);
+    if (opts?.role) p.set("role", opts.role);
+    const qs = p.toString();
+    return apiFetch<
       {
         id: string;
         name: string;
@@ -161,9 +226,13 @@ export const usersApi = {
         roleId: string;
         login: string;
         registeredAtUtc: string;
+        deletedAtUtc?: string | null;
+        isDeleted?: boolean;
       }[]
-    >("/users"),
+    >(`/users${qs ? `?${qs}` : ""}`);
+  },
   softDelete: (id: string) => apiFetch(`/users/${id}`, { method: "DELETE" }),
+  restore: (id: string) => apiFetch(`/users/${id}/restore`, { method: "POST" }),
   setRole: (id: string, roleId: string) =>
     apiFetch(`/users/${id}/role`, { method: "PUT", body: JSON.stringify({ roleId }) }),
 };

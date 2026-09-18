@@ -733,10 +733,17 @@ button, input, select { font: inherit; }
 .buy-link {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  width: 100%;
   color: var(--ink);
   text-decoration: none !important;
   font-size: 0.92rem;
   padding: 2px 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
 }
 
 .buy-link:hover { color: var(--header-2); }
@@ -913,6 +920,16 @@ button, input, select { font: inherit; }
   background: #e8eef8;
   border-color: transparent;
   color: var(--ink);
+}
+
+button.tag {
+  cursor: pointer;
+  font: inherit;
+}
+
+.tag.is-active {
+  background: #d4e4ff;
+  border-color: #9bb8e8;
 }
 
 .reviews-toolbar {
@@ -2022,7 +2039,55 @@ body:not(.legal-shell) {
   text-shadow: 0 1px 6px rgba(20, 50, 110, 0.3);
 }
 
-.home-cta__actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.not-found {
+  padding-bottom: 64px;
+}
+
+.not-found__panel {
+  margin: 32px auto 0;
+  max-width: 560px;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 40px 28px 36px;
+  box-shadow: var(--shadow);
+}
+
+.not-found__code {
+  margin: 0 0 8px;
+  font-size: clamp(3.5rem, 8vw, 5rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--header);
+  letter-spacing: -0.04em;
+}
+
+.not-found__title {
+  margin: 0 0 12px;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.not-found__text {
+  margin: 0 auto 24px;
+  max-width: 36ch;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.not-found__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.home-cta__actions .btn-outline {
+  background: #fff;
+}
+
 
 .to-top {
   position: fixed;
@@ -2525,6 +2590,30 @@ html, body, #root {
   line-height: 1;
   color: #777;
   cursor: pointer;
+}
+
+.pdp-info-modal {
+  width: min(520px, 100%);
+}
+.pdp-info-modal__title {
+  margin: 0 28px 14px 0;
+  font-size: 1.35rem;
+  color: var(--ink);
+}
+.pdp-info-modal__body {
+  color: var(--ink);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+.pdp-info-modal__body p { margin: 0 0 12px; }
+.pdp-info-modal__body ul {
+  margin: 0 0 12px;
+  padding-left: 1.2em;
+}
+.pdp-info-modal__body li { margin: 4px 0; }
+.pdp-info-modal__body .muted {
+  color: var(--muted);
+  font-size: 0.88rem;
 }
 .confirm-modal { width: min(420px, 100%); text-align: center; }
 .confirm-modal h2 { margin: 8px 0 10px; font-size: 1.45rem; }

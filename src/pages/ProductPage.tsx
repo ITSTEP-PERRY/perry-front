@@ -1,11 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { productsApi } from "../api";
+import { productsApi, reviewsApi } from "../api";
+import { ApiError } from "../api/client";
 import type { ProductDetail, ProductListItem, ProductReview } from "../api/types";
 import { useAuth } from "../app/AuthContext";
 import { useCart } from "../app/CartContext";
 import { useWishlist } from "../app/WishlistContext";
 import { ProductCard } from "../widgets/ProductCard";
+import { PDP_INFO, PdpInfoModal, type PdpInfoKind } from "../widgets/PdpInfoModal";
+
+const REVIEW_TAG_OPTIONS = [
+  "High quality",
+  "Worth the price",
+  "Fits the description",
+  "Matches the photos",
+  "Easy to use",
+  "Great value",
+  "Comfortable",
+  "True to size",
+];
 
 function scrollTrack(el: HTMLElement | null, dir: 1 | -1) {
   if (!el) return;
@@ -54,9 +67,28 @@ export function ProductPage() {
   const [error, setError] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewTitle, setReviewTitle] = useState("");
+  const [reviewBody, setReviewBody] = useState("");
+  const [reviewTags, setReviewTags] = useState<string[]>([]);
+  const [reviewBusy, setReviewBusy] = useState(false);
+  const [reviewError, setReviewError] = useState<string | null>(null);
+  const [infoKind, setInfoKind] = useState<PdpInfoKind | null>(null);
+  const [reviewSort, setReviewSort] = useState<"recent" | "rating_desc" | "rating_asc">("recent");
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
+  const [reviewsVisible, setReviewsVisible] = useState(3);
+  const [helpful, setHelpful] = useState<Record<string, number>>({});
+  const [notifyBusy, setNotifyBusy] = useState(false);
 
   useEffect(() => {
     if (!id) return;
+    setError(null);
+    setProduct(null);
+    setInfoKind(null);
+    setReviewSort("recent");
+    setTagFilter(null);
+    setReviewsVisible(3);
+    setHelpful({});
     productsApi
       .byId(id)
       .then((p) => {
@@ -64,10 +96,49 @@ export function ProductPage() {
         setActive(0);
         setQty(1);
       })
-      .catch((e: Error) => setError(e.message));
+      .catch((e: Error) => {
+        if (e instanceof ApiError && e.status === 404) setError("404 Not found");
+        else setError(e.message);
+      });
   }, [id]);
 
-  if (error) return <div className="empty-state">{error}</div>;
+  if (error) {
+    const missing = /not found|404/i.test(error);
+    if (missing) {
+      return (
+        <div className="page-wrap not-found">
+          <nav className="breadcrumbs breadcrumbs--pdp" aria-label="Breadcrumb">
+            <Link className="breadcrumbs__home" to="/" aria-label="Home">
+              <img src="/icons/home.svg" alt="" width={16} height={16} />
+            </Link>
+            <span className="breadcrumbs__sep">/</span>
+            <Link to="/products">Catalog</Link>
+            <span className="breadcrumbs__sep">/</span>
+            <span>Not found</span>
+          </nav>
+          <div className="not-found__panel">
+            <p className="not-found__code" aria-hidden="true">
+              404
+            </p>
+            <h1 className="not-found__title">Product not found</h1>
+            <p className="not-found__text">
+              This product is unavailable or the link is outdated. Browse the catalog for similar
+              items.
+            </p>
+            <div className="not-found__actions">
+              <Link className="btn btn-primary" to="/products">
+                Browse catalog
+              </Link>
+              <Link className="btn btn-outline" to="/">
+                Go to home
+              </Link>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return <div className="empty-state">{error}</div>;
+  }
   if (!product) return <div className="empty-state">Loading…</div>;
 
   const images = product.images?.length ? product.images : [];
@@ -85,9 +156,18 @@ export function ProductPage() {
   const oos = product.status === "OutOfStock";
 
   const reviews: ProductReview[] = product.reviews ?? [];
-  const filtered = ratingFilter
+  const filteredBase = ratingFilter
     ? reviews.filter((r) => r.rating === Number(ratingFilter))
     : reviews;
+  const filteredByTag = tagFilter
+    ? filteredBase.filter((r) => r.tags.some((t) => t.toLowerCase() === tagFilter.toLowerCase()))
+    : filteredBase;
+  const filtered = [...filteredByTag].sort((a, b) => {
+    if (reviewSort === "rating_desc") return b.rating - a.rating;
+    if (reviewSort === "rating_asc") return a.rating - b.rating;
+    return new Date(b.createdAtUtc).getTime() - new Date(a.createdAtUtc).getTime();
+  });
+  const visibleReviews = filtered.slice(0, reviewsVisible);
   const totalReviews = Math.max(1, reviews.length);
   const distribution: Record<number, number> =
     reviews.length === 0 && product.reviewCount > 0
@@ -108,6 +188,9 @@ export function ProductPage() {
     .slice(0, 8)
     .map(([t]) => t);
 
+  const reviewKey = (r: ProductReview, i: number) =>
+    `${r.authorName}-${r.createdAtUtc}-${r.title}-${i}`;
+
   const shift = (dir: -1 | 1) => {
     if (!images.length) return;
     setActive((i) => (i + dir + images.length) % images.length);
@@ -119,11 +202,84 @@ export function ProductPage() {
     if (buyNow) window.location.href = "/cart";
   };
 
+  const notifyWhenAvailable = async () => {
+    setNotifyBusy(true);
+    try {
+      let email = user?.email?.trim() || "";
+      if (!email) {
+        const entered = window.prompt("Enter your email to get notified when this item is back:");
+        if (!entered?.trim()) {
+          setNotifyBusy(false);
+          return;
+        }
+        email = entered.trim();
+      }
+      const res = await productsApi.notifyWhenAvailable(product.id, email);
+      setMsg(
+        res.alreadySubscribed
+          ? `Already subscribed: ${res.email}`
+          : `We'll notify ${res.email} when it's back`,
+      );
+    } catch (e) {
+      setMsg(e instanceof Error ? e.message : "Could not subscribe");
+    } finally {
+      setNotifyBusy(false);
+    }
+  };
+
+  const toggleTag = (tag: string) => {
+    setReviewTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag].slice(0, 5)));
+  };
+
+  const submitReview = async () => {
+    if (!user) {
+      navigate("/login", { state: { from: { pathname: `/products/${product.id}` } } });
+      return;
+    }
+    setReviewBusy(true);
+    setReviewError(null);
+    try {
+      const created = await reviewsApi.create(product.id, {
+        rating: reviewRating,
+        title: reviewTitle.trim(),
+        body: reviewBody.trim(),
+        tags: reviewTags,
+      });
+      setProduct({
+        ...product,
+        reviewCount: product.reviewCount + 1,
+        reviews: [
+          {
+            authorName: created.authorName,
+            rating: created.rating,
+            title: created.title,
+            body: created.body,
+            createdAtUtc: created.createdAtUtc,
+            tags: created.tags ?? [],
+            images: created.images ?? [],
+          },
+          ...(product.reviews ?? []),
+        ],
+      });
+      setShowReviewForm(false);
+      setReviewTitle("");
+      setReviewBody("");
+      setReviewTags([]);
+      setReviewRating(5);
+      setMsg("Review published");
+    } catch (e) {
+      setReviewError(e instanceof Error ? e.message : "Could not submit review");
+    } finally {
+      setReviewBusy(false);
+    }
+  };
+
   const setRating = (star?: number) => {
     const next = new URLSearchParams(searchParams);
     if (!star) next.delete("rating");
     else next.set("rating", String(star));
     setSearchParams(next, { replace: true });
+    setReviewsVisible(3);
   };
 
   return (
@@ -216,21 +372,32 @@ export function ProductPage() {
             <span>Status</span>
             <span className={oos ? "status-oos" : "status-ok"}>{oos ? "Out of stock" : "In stock"}</span>
           </div>
-          <a className="buy-link" href="#delivery">
-            Delivery <span aria-hidden="true">›</span>
-          </a>
-          <a className="buy-link" href="#payment">
-            Payment methods <span aria-hidden="true">›</span>
-          </a>
-          <a className="buy-link" href="#security">
-            Security <span aria-hidden="true">›</span>
-          </a>
-          <a className="buy-link" href="#returns">
-            Returns <span aria-hidden="true">›</span>
-          </a>
+          {(
+            [
+              ["delivery", "Delivery"],
+              ["payment", "Payment methods"],
+              ["security", "Security"],
+              ["returns", "Returns"],
+              ["seller", "About seller"],
+            ] as const
+          ).map(([kind, label]) => (
+            <button
+              key={kind}
+              type="button"
+              className="buy-link"
+              onClick={() => setInfoKind(kind)}
+            >
+              {label} <span aria-hidden="true">›</span>
+            </button>
+          ))}
           {oos ? (
-            <button className="btn btn-primary pdp-buy__btn" type="button" disabled>
-              Notify when available
+            <button
+              className="btn btn-primary pdp-buy__btn"
+              type="button"
+              disabled={notifyBusy}
+              onClick={() => void notifyWhenAvailable()}
+            >
+              {notifyBusy ? "Subscribing…" : "Notify when available"}
             </button>
           ) : (
             <div className="pdp-buy__form">
@@ -336,9 +503,17 @@ export function ProductPage() {
                 <h3>Frequent tags</h3>
                 <div className="frequent-tags__list">
                   {frequentTags.map((t) => (
-                    <span key={t} className="tag tag--soft">
+                    <button
+                      key={t}
+                      type="button"
+                      className={`tag tag--soft${tagFilter === t ? " is-active" : ""}`}
+                      onClick={() => {
+                        setTagFilter((cur) => (cur === t ? null : t));
+                        setReviewsVisible(3);
+                      }}
+                    >
                       {t}
-                    </span>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -363,8 +538,17 @@ export function ProductPage() {
                 ))}
               </div>
               <label className="reviews-sort">
-                <select disabled aria-label="Sort reviews">
-                  <option>Most recent</option>
+                <select
+                  aria-label="Sort reviews"
+                  value={reviewSort}
+                  onChange={(e) => {
+                    setReviewSort(e.target.value as typeof reviewSort);
+                    setReviewsVisible(3);
+                  }}
+                >
+                  <option value="recent">Most recent</option>
+                  <option value="rating_desc">Highest rating</option>
+                  <option value="rating_asc">Lowest rating</option>
                 </select>
               </label>
             </div>
@@ -376,7 +560,79 @@ export function ProductPage() {
             {showReviewForm && (
               <div className="review-form">
                 <h3>Create review</h3>
-                <p className="muted">Review submission will be wired to the API next.</p>
+                {!user && (
+                  <p className="muted">
+                    <Link to="/login" state={{ from: { pathname: `/products/${product.id}` } }}>
+                      Sign in
+                    </Link>{" "}
+                    to publish a review.
+                  </p>
+                )}
+                {reviewError && <div className="alert alert-error">{reviewError}</div>}
+                <label className="qty-label">
+                  Rating
+                  <select
+                    value={reviewRating}
+                    onChange={(e) => setReviewRating(Number(e.target.value))}
+                    aria-label="Rating"
+                  >
+                    {[5, 4, 3, 2, 1].map((n) => (
+                      <option key={n} value={n}>
+                        {n} ★
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="qty-label" style={{ display: "block", marginTop: 12 }}>
+                  Title
+                  <input
+                    type="text"
+                    value={reviewTitle}
+                    onChange={(e) => setReviewTitle(e.target.value)}
+                    placeholder="Sum up your experience"
+                    style={{ width: "100%", marginTop: 6 }}
+                  />
+                </label>
+                <label className="qty-label" style={{ display: "block", marginTop: 12 }}>
+                  Review
+                  <textarea
+                    value={reviewBody}
+                    onChange={(e) => setReviewBody(e.target.value)}
+                    rows={4}
+                    placeholder="What did you like or dislike?"
+                    style={{ width: "100%", marginTop: 6 }}
+                  />
+                </label>
+                <div style={{ marginTop: 12 }}>
+                  <div className="muted" style={{ marginBottom: 8 }}>
+                    Tags
+                  </div>
+                  <div className="frequent-tags__list">
+                    {REVIEW_TAG_OPTIONS.map((tag) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        className={`tag tag--soft${reviewTags.includes(tag) ? " is-active" : ""}`}
+                        onClick={() => toggleTag(tag)}
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    disabled={reviewBusy || !reviewTitle.trim() || !reviewBody.trim()}
+                    onClick={() => void submitReview()}
+                  >
+                    {reviewBusy ? "Publishing…" : "Publish review"}
+                  </button>
+                  <button type="button" className="btn btn-ghost" onClick={() => setShowReviewForm(false)}>
+                    Cancel
+                  </button>
+                </div>
               </div>
             )}
 
@@ -385,61 +641,101 @@ export function ProductPage() {
             ) : (
               <>
                 <div className="review-list">
-                  {filtered.map((r, i) => (
-                    <article key={i} className="review-card">
-                      <div className="review-card__head">
-                        <div className="review-card__author">
-                          <span className="review-avatar" aria-hidden="true">
-                            {r.authorName.charAt(0)}
-                          </span>
-                          <strong>{r.authorName}</strong>
+                  {visibleReviews.map((r, i) => {
+                    const key = reviewKey(r, i);
+                    const helpfulCount = helpful[key] ?? (i === 1 ? 25 : 0);
+                    return (
+                      <article key={key} className="review-card">
+                        <div className="review-card__head">
+                          <div className="review-card__author">
+                            <span className="review-avatar" aria-hidden="true">
+                              {r.authorName.charAt(0)}
+                            </span>
+                            <strong>{r.authorName}</strong>
+                          </div>
+                          <time>{new Date(r.createdAtUtc).toLocaleDateString()}</time>
                         </div>
-                        <time>{new Date(r.createdAtUtc).toLocaleDateString()}</time>
-                      </div>
-                      <div className="stars-row">
-                        {Array.from({ length: 5 }, (_, s) => (
-                          <span key={s} className={s < r.rating ? "on" : "off"}>
-                            ★
-                          </span>
-                        ))}
-                      </div>
-                      <h3>{r.title}</h3>
-                      <p>{r.body}</p>
-                      {r.tags.length > 0 && (
-                        <div className="review-card__tags">
-                          {r.tags.map((t) => (
-                            <span key={t} className="tag tag--soft">
-                              {t}
+                        <div className="stars-row">
+                          {Array.from({ length: 5 }, (_, s) => (
+                            <span key={s} className={s < r.rating ? "on" : "off"}>
+                              ★
                             </span>
                           ))}
                         </div>
-                      )}
-                      <div className="review-card__actions">
-                        <div className="review-card__btns">
-                          <button type="button" className="btn btn-helpful">
-                            Helpful
-                          </button>
-                          <button type="button" className="btn btn-translate">
-                            Translate
-                          </button>
-                        </div>
-                        {i === 1 && (
-                          <span className="review-card__helpful-note">25 people found this helpful</span>
+                        <h3>{r.title}</h3>
+                        <p>{r.body}</p>
+                        {r.tags.length > 0 && (
+                          <div className="review-card__tags">
+                            {r.tags.map((t) => (
+                              <span key={t} className="tag tag--soft">
+                                {t}
+                              </span>
+                            ))}
+                          </div>
                         )}
-                      </div>
-                    </article>
-                  ))}
+                        {r.images?.length > 0 && (
+                          <div className="review-card__photos">
+                            {r.images.map((url) => (
+                              <img key={url} src={url} alt="" width={72} height={72} />
+                            ))}
+                          </div>
+                        )}
+                        <div className="review-card__actions">
+                          <div className="review-card__btns">
+                            <button
+                              type="button"
+                              className="btn btn-helpful"
+                              onClick={() =>
+                                setHelpful((prev) => ({
+                                  ...prev,
+                                  [key]: (prev[key] ?? (i === 1 ? 25 : 0)) + 1,
+                                }))
+                              }
+                            >
+                              Helpful
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-translate"
+                              onClick={() => setMsg("Translation is a demo action")}
+                            >
+                              Translate
+                            </button>
+                          </div>
+                          {helpfulCount > 0 && (
+                            <span className="review-card__helpful-note">
+                              {helpfulCount === 1
+                                ? "1 person found this helpful"
+                                : `${helpfulCount} people found this helpful`}
+                            </span>
+                          )}
+                        </div>
+                      </article>
+                    );
+                  })}
                 </div>
-                <div className="reviews-more">
-                  <button type="button" className="btn btn-see-more">
-                    See more
-                  </button>
-                </div>
+                {reviewsVisible < filtered.length && (
+                  <div className="reviews-more">
+                    <button
+                      type="button"
+                      className="btn btn-see-more"
+                      onClick={() => setReviewsVisible((n) => n + 3)}
+                    >
+                      See more
+                    </button>
+                  </div>
+                )}
               </>
             )}
           </div>
         </div>
       </section>
+
+      {infoKind && (
+        <PdpInfoModal title={PDP_INFO[infoKind].title} onClose={() => setInfoKind(null)}>
+          {PDP_INFO[infoKind].body}
+        </PdpInfoModal>
+      )}
 
       <ProductCarousel
         items={product.related ?? []}

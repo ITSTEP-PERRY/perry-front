@@ -13,6 +13,7 @@ export function AdminCategoriesPage() {
   const [search, setSearch] = useState(q);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   const [form, setForm] = useState({
     name: "",
     slug: "",
@@ -26,7 +27,7 @@ export function AdminCategoriesPage() {
 
   const reload = () =>
     categoriesApi
-      .tree()
+      .tree({ includeInactive: true })
       .then(setTree)
       .catch((e: Error) => setError(e.message));
 
@@ -49,7 +50,7 @@ export function AdminCategoriesPage() {
   }, [tree]);
 
   const parent = flat.find((c) => c.id === categoryId) ?? null;
-  const subcategories = useMemo(() => {
+  const listItems = useMemo(() => {
     const kids = parent?.subCategories ?? (!categoryId ? tree : []);
     const qq = q.trim().toLowerCase();
     if (!qq) return kids;
@@ -116,6 +117,7 @@ export function AdminCategoriesPage() {
   const onSave = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
+    setBusy(true);
     const body = {
       name: form.name,
       slug: form.slug || null,
@@ -142,11 +144,13 @@ export function AdminCategoriesPage() {
       await reload();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Save failed");
+    } finally {
+      setBusy(false);
     }
   };
 
   const showPanel = creating || !!selected;
-  const hasFilter = !!categoryId;
+  const listTitle = categoryId ? "Subcategory" : "Category";
 
   return (
     <div>
@@ -175,35 +179,37 @@ export function AdminCategoriesPage() {
 
       <div className="ap-layout">
         <section className="ap-list">
-          {!hasFilter ? (
+          {listItems.length === 0 ? (
             <div className="ap-empty">
               <div className="ap-empty__ph" aria-hidden="true" />
-              <p className="ap-empty__text">Choose a category to see its subcategories</p>
+              <p className="ap-empty__text">
+                {q
+                  ? `Nothing found for “${q}”`
+                  : categoryId
+                    ? "No subcategories in the selected category"
+                    : "No root categories yet"}
+              </p>
               <button type="button" className="ap-create-card" onClick={startCreate}>
                 <span className="ap-create-card__plus">+</span>
-                <span>Create category</span>
-              </button>
-            </div>
-          ) : subcategories.length === 0 ? (
-            <div className="ap-empty">
-              <div className="ap-empty__ph" aria-hidden="true" />
-              <p className="ap-empty__text">No subcategories in the selected category</p>
-              <button type="button" className="ap-create-card" onClick={startCreate}>
-                <span className="ap-create-card__plus">+</span>
-                <span>Create subcategory</span>
+                <span>{categoryId ? "Create subcategory" : "Create category"}</span>
               </button>
             </div>
           ) : (
             <div className="ap-table ap-table--cats">
               <div className="ap-table__head">
                 <span />
-                <span className="ap-table__name">Subcategory</span>
+                <span className="ap-table__name">{listTitle}</span>
                 <span className="ap-table__price">Active</span>
-                <button type="button" className="ap-table__add" title="Create subcategory" onClick={startCreate}>
+                <button
+                  type="button"
+                  className="ap-table__add"
+                  title={categoryId ? "Create subcategory" : "Create category"}
+                  onClick={startCreate}
+                >
                   +
                 </button>
               </div>
-              {subcategories.map((s) => (
+              {listItems.map((s) => (
                 <button
                   key={s.id}
                   type="button"
@@ -216,7 +222,9 @@ export function AdminCategoriesPage() {
                   }}
                 >
                   <span className="ap-table__thumb">
-                    {(s.imageUrl || s.iconUrl) && <img src={s.imageUrl || s.iconUrl || ""} alt="" />}
+                    {(s.imageUrl || s.iconUrl) && (
+                      <img src={s.imageUrl || s.iconUrl || ""} alt="" />
+                    )}
                   </span>
                   <span className="ap-table__name">
                     <strong>{s.name}</strong>
@@ -242,7 +250,9 @@ export function AdminCategoriesPage() {
               </h2>
               {!creating && selected && (
                 <>
-                  <div className={`ap-panel__hero ap-panel__hero--sm ${selected.imageUrl ? "" : "is-ph"}`}>
+                  <div
+                    className={`ap-panel__hero ap-panel__hero--sm ${selected.imageUrl ? "" : "is-ph"}`}
+                  >
                     {selected.imageUrl && <img src={selected.imageUrl} alt="" />}
                   </div>
                   <p className="ap-panel__meta">
@@ -299,7 +309,7 @@ export function AdminCategoriesPage() {
                 >
                   <option value="">— root —</option>
                   {flat
-                    .filter((c) => c.id !== selectedId)
+                    .filter((c) => c.id !== selectedId && c.id !== selected?.id)
                     .map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.name}
@@ -324,25 +334,54 @@ export function AdminCategoriesPage() {
                 IsActive
               </label>
               <div className="ap-panel__actions">
-                <button className="ap-panel__btn" type="submit">
+                <button className="ap-panel__btn" type="submit" disabled={busy}>
                   Save
                 </button>
                 {!creating && (selectedId || selected) && (
                   <button
                     type="button"
                     className="ap-panel__btn ap-panel__btn--danger"
+                    disabled={busy}
                     onClick={async () => {
                       const id = selectedId || selected?.id;
-                      if (!id || !confirm("Deactivate category?")) return;
-                      await categoriesApi.remove(id);
-                      setCreating(false);
-                      const next = new URLSearchParams(params);
-                      next.delete("selectedId");
-                      setParams(next);
-                      await reload();
+                      if (!id) return;
+                      const inactive = selected?.isActive === false;
+                      if (inactive) {
+                        setBusy(true);
+                        try {
+                          await categoriesApi.update(id, {
+                            name: form.name,
+                            slug: form.slug || null,
+                            description: form.description || null,
+                            imageUrl: form.imageUrl || null,
+                            iconUrl: form.iconUrl || null,
+                            parentCategoryId: form.parentCategoryId || null,
+                            sortOrder: Number(form.sortOrder),
+                            isActive: true,
+                          });
+                          await reload();
+                        } catch (err) {
+                          setError(err instanceof Error ? err.message : "Restore failed");
+                        } finally {
+                          setBusy(false);
+                        }
+                        return;
+                      }
+                      if (!confirm("Deactivate category?")) return;
+                      setBusy(true);
+                      try {
+                        await categoriesApi.remove(id);
+                        setCreating(false);
+                        const next = new URLSearchParams(params);
+                        next.delete("selectedId");
+                        setParams(next);
+                        await reload();
+                      } finally {
+                        setBusy(false);
+                      }
                     }}
                   >
-                    Deactivate
+                    {selected?.isActive === false ? "Activate" : "Deactivate"}
                   </button>
                 )}
               </div>

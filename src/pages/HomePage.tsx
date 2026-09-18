@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { categoriesApi, productsApi } from "../api";
 import type { CategoryDto, ProductListItem } from "../api/types";
+import { useAuth } from "../app/AuthContext";
 import { ProductCard } from "../widgets/ProductCard";
 
 function scrollTrack(el: HTMLElement | null, dir: 1 | -1) {
@@ -62,6 +63,7 @@ function ProductCarousel({ items }: { items: ProductListItem[] }) {
 }
 
 export function HomePage() {
+  const { user } = useAuth();
   const [cats, setCats] = useState<CategoryDto[]>([]);
   const [trending, setTrending] = useState<ProductListItem[]>([]);
   const [sale, setSale] = useState<ProductListItem[]>([]);
@@ -77,7 +79,12 @@ export function HomePage() {
       .then(([c, t, s]) => {
         setCats(c);
         setTrending(t.items);
-        setSale(s.items.filter((p) => p.oldPrice && p.oldPrice > p.price).concat(s.items).slice(0, 12));
+        setSale(
+          s.items
+            .filter((p) => p.oldPrice && p.oldPrice > p.price)
+            .concat(s.items.filter((p) => !(p.oldPrice && p.oldPrice > p.price)))
+            .slice(0, 12),
+        );
       })
       .catch((e: Error) => setError(e.message));
   }, []);
@@ -158,16 +165,33 @@ export function HomePage() {
         <div className="home-cta__inner">
           <img className="home-cta__bg" src="/images/home/cta-banner.png" alt="" />
           <div className="home-cta__copy">
-            <h2>Abundance of goods</h2>
-            <p>Join, choose and buy with confidence!</p>
-            <div className="home-cta__actions">
-              <Link className="btn btn-primary" to="/register">
-                Sign up
-              </Link>
-              <Link className="btn btn-cta-ghost" to="/login">
-                Log in
-              </Link>
-            </div>
+            {user ? (
+              <>
+                <h2>Welcome back, {user.name.split(" ")[0] || "friend"}</h2>
+                <p>Pick up where you left off — deals and favourites await.</p>
+                <div className="home-cta__actions">
+                  <Link className="btn btn-primary" to="/products">
+                    Go to catalog
+                  </Link>
+                  <Link className="btn btn-cta-ghost" to="/account/orders">
+                    My orders
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2>Abundance of goods</h2>
+                <p>Join, choose and buy with confidence!</p>
+                <div className="home-cta__actions">
+                  <Link className="btn btn-primary" to="/register">
+                    Sign up
+                  </Link>
+                  <Link className="btn btn-cta-ghost" to="/login">
+                    Log in
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </section>

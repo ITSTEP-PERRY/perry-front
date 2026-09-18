@@ -1,10 +1,21 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { categoriesApi } from "../../api";
+import type { CategoryDto } from "../../api/types";
 import { useAuth } from "../../app/AuthContext";
 import { useCart } from "../../app/CartContext";
 import { useIsMobile } from "../../hooks/useMediaQuery";
 
 const LEGAL_PATHS = new Set(["/privacy", "/terms", "/license"]);
+
+function flattenCategories(nodes: CategoryDto[], depth = 0): { cat: CategoryDto; depth: number }[] {
+  const out: { cat: CategoryDto; depth: number }[] = [];
+  for (const n of nodes) {
+    out.push({ cat: n, depth });
+    if (n.subCategories?.length) out.push(...flattenCategories(n.subCategories, depth + 1));
+  }
+  return out;
+}
 
 export function AppShell() {
   const { user, logout, isAdmin } = useAuth();
@@ -13,6 +24,7 @@ export function AppShell() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [showTop, setShowTop] = useState(false);
+  const [categories, setCategories] = useState<CategoryDto[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
   const isLegal = LEGAL_PATHS.has(location.pathname);
@@ -23,6 +35,21 @@ export function AppShell() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    categoriesApi.tree().then(setCategories).catch(() => setCategories([]));
+  }, []);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname, location.search]);
+
+  useEffect(() => {
+    if (location.pathname.startsWith("/products")) {
+      const q = new URLSearchParams(location.search).get("search") || "";
+      setSearch(q);
+    }
+  }, [location.pathname, location.search]);
+
   const onSearch = (e: FormEvent) => {
     e.preventDefault();
     const q = search.trim();
@@ -30,25 +57,23 @@ export function AppShell() {
     setMenuOpen(false);
   };
 
+  const closeMenu = () => setMenuOpen(false);
+  const flatCats = flattenCategories(categories).slice(0, 24);
+
   return (
     <div className={`shell${isLegal ? " legal-shell" : ""}`}>
       <header className="site-header">
         <div className="header-inner">
           <div className="header-brand">
-            {isMobile ? (
-              <button
-                type="button"
-                className="header-menu"
-                aria-label="Menu"
-                onClick={() => setMenuOpen((v) => !v)}
-              >
-                <img src="/icons/menu.svg" alt="" width={24} height={24} />
-              </button>
-            ) : (
-              <Link className="header-menu" to="/products" aria-label="Catalog">
-                <img src="/icons/menu.svg" alt="" width={24} height={24} />
-              </Link>
-            )}
+            <button
+              type="button"
+              className="header-menu"
+              aria-label="Menu"
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((v) => !v)}
+            >
+              <img src="/icons/menu.svg" alt="" width={24} height={24} />
+            </button>
             <Link className="logo" to="/">
               PERRY
             </Link>
@@ -94,25 +119,73 @@ export function AppShell() {
           </nav>
         </div>
 
-        <nav className={`mobile-nav ${menuOpen ? "is-open" : ""}`} onClick={() => setMenuOpen(false)}>
-          <NavLink to="/">Home</NavLink>
-          <NavLink to="/products">Catalog</NavLink>
-          <NavLink to="/cart">Cart</NavLink>
-          {user && <NavLink to="/account/orders">Orders</NavLink>}
-          {user && <NavLink to="/account/wishlist">Wishlist</NavLink>}
-          {user ? <NavLink to="/account/settings">Account</NavLink> : <NavLink to="/login">Login</NavLink>}
-          {isAdmin && <NavLink to="/admin/products">Admin</NavLink>}
-          {user && (
+        <nav className={`mobile-nav ${menuOpen ? "is-open" : ""}`} aria-label="Catalog menu">
+          <NavLink to="/" onClick={closeMenu}>
+            Home
+          </NavLink>
+          <NavLink to="/products" onClick={closeMenu}>
+            Catalog
+          </NavLink>
+          {flatCats.map(({ cat, depth }) => (
+            <NavLink
+              key={cat.id}
+              to={`/products?categoryId=${cat.id}`}
+              onClick={closeMenu}
+              style={{ paddingLeft: 8 + depth * 12 }}
+            >
+              {cat.name}
+            </NavLink>
+          ))}
+          <NavLink to="/cart" onClick={closeMenu}>
+            Cart
+          </NavLink>
+          {user ? (
+            <>
+              <NavLink to="/account/orders" onClick={closeMenu}>
+                My orders
+              </NavLink>
+              <NavLink to="/account/wishlist" onClick={closeMenu}>
+                Wishlist
+              </NavLink>
+              <NavLink to="/account/settings" onClick={closeMenu}>
+                Account settings
+              </NavLink>
+              {isAdmin && (
+                <NavLink to="/admin/products" onClick={closeMenu}>
+                  Admin
+                </NavLink>
+              )}
+              <button
+                type="button"
+                className="header-link"
+                style={{ background: "transparent", border: 0, textAlign: "left", padding: "8px 0", cursor: "pointer", color: "#fff", fontWeight: 600 }}
+                onClick={() => {
+                  logout();
+                  closeMenu();
+                  navigate("/");
+                }}
+              >
+                Log out
+              </button>
+            </>
+          ) : (
+            <>
+              <NavLink to="/login" onClick={closeMenu}>
+                Log in
+              </NavLink>
+              <NavLink to="/register" onClick={closeMenu}>
+                Create account
+              </NavLink>
+            </>
+          )}
+          {!isMobile && (
             <button
               type="button"
               className="header-link"
-              style={{ background: "transparent", border: 0, textAlign: "left", padding: 0, cursor: "pointer" }}
-              onClick={() => {
-                logout();
-                navigate("/");
-              }}
+              style={{ background: "transparent", border: 0, textAlign: "left", padding: "8px 0", cursor: "pointer", color: "#b8ea48", fontWeight: 600 }}
+              onClick={closeMenu}
             >
-              Logout
+              Close menu
             </button>
           )}
         </nav>
@@ -193,6 +266,9 @@ export function AdminShell() {
             <NavLink to="/admin/categories" className="admin-header__link">
               Categories
             </NavLink>
+            <NavLink to="/admin/reviews" className="admin-header__link">
+              Reviews
+            </NavLink>
             <NavLink to="/admin/orders" className="admin-header__link">
               Orders
             </NavLink>
@@ -232,6 +308,9 @@ export function AdminShell() {
             </NavLink>
             <NavLink to="/admin/categories" onClick={close}>
               Category
+            </NavLink>
+            <NavLink to="/admin/reviews" onClick={close}>
+              Reviews
             </NavLink>
             <NavLink to="/admin/orders" onClick={close}>
               Orders

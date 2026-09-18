@@ -405,7 +405,20 @@ export function ProductsPage() {
           <p className="catalog-count muted">{total} results</p>
 
           {items.length === 0 ? (
-            <p className="empty-state">No products match these filters.</p>
+            <div className="empty-state">
+              <p>
+                {search
+                  ? `No products found for “${search}”.`
+                  : "No products match these filters."}
+              </p>
+              {search && (
+                <p>
+                  <Link className="btn btn-outline" to="/products">
+                    Clear search
+                  </Link>
+                </p>
+              )}
+            </div>
           ) : (
             <div className={`catalog-products ${view === "list" ? "is-list" : "is-grid"}`}>
               {items.map((p) => (
