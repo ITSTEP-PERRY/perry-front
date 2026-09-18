@@ -3,7 +3,7 @@ import {colors} from "../../../theme/colors.ts";
 
 export const inputStyles: InputDeepStylesType = {
     root: {
-        margin: "20px 0 10px 0px",
+        margin: "20px 0 0px 0px",
         padding: '12px 20px',
         width: '100%',
     },

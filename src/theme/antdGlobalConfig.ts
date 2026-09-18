@@ -26,7 +26,13 @@ export const config: ThemeConfig = {
             colorBorder: colors.inputBorder,
             lineWidth: 1.5,
             borderRadius: 2
-        }
+        },
+        Typography: {
+            colorText: colors.darkText,
+            colorTextHeading: colors.darkText,
+            titleMarginBottom: 0,
+        },
+
     }
 }
 
