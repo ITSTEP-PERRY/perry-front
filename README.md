@@ -106,13 +106,7 @@ Backend: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_fo
 
 Второй заказ (#918320), Total $178.
 
-### 16 · Account — shell
-
-![Account shell](./docs/screenshots/sprint-2026-09-19/16-account-shell.png)
-
-Header PERRY + сайдбар Account / My orders.
-
-### 17 · Account — Change email
+### 16 · Account — Change email
 
 ![Change email modal](./docs/screenshots/sprint-2026-09-19/17-account-change-email-modal.png)
 
