@@ -114,31 +114,30 @@ export const productsApi = {
     ),
 };
 
-function cartQs(userId?: string | null, sessionId?: string) {
+function cartQs(sessionId?: string) {
   const p = new URLSearchParams();
-  if (userId) p.set("userId", userId);
   if (sessionId) p.set("sessionId", sessionId);
   const qs = p.toString();
   return qs ? `?${qs}` : "";
 }
 
 export const cartApi = {
-  get: (userId: string | null, sessionId: string) =>
-    apiFetch<CartResponse>(`/cart${cartQs(userId, sessionId)}`),
-  count: (userId: string | null, sessionId: string) =>
-    apiFetch<{ count: number }>(`/cart/count${cartQs(userId, sessionId)}`),
-  add: (userId: string | null, sessionId: string, productId: string, quantity = 1) =>
-    apiFetch(`/cart/add${cartQs(userId, sessionId)}`, {
+  get: (_userId: string | null, sessionId: string) =>
+    apiFetch<CartResponse>(`/cart${cartQs(sessionId)}`),
+  count: (_userId: string | null, sessionId: string) =>
+    apiFetch<{ count: number }>(`/cart/count${cartQs(sessionId)}`),
+  add: (_userId: string | null, sessionId: string, productId: string, quantity = 1) =>
+    apiFetch(`/cart/add${cartQs(sessionId)}`, {
       method: "POST",
       body: JSON.stringify({ productId, quantity }),
     }),
-  setQty: (userId: string | null, sessionId: string, productId: string, quantity: number) =>
-    apiFetch(`/cart/quantity${cartQs(userId, sessionId)}`, {
+  setQty: (_userId: string | null, sessionId: string, productId: string, quantity: number) =>
+    apiFetch(`/cart/quantity${cartQs(sessionId)}`, {
       method: "PUT",
       body: JSON.stringify({ productId, quantity }),
     }),
-  remove: (userId: string | null, sessionId: string, productId: string) =>
-    apiFetch(`/cart/item/${productId}${cartQs(userId, sessionId)}`, {
+  remove: (_userId: string | null, sessionId: string, productId: string) =>
+    apiFetch(`/cart/item/${productId}${cartQs(sessionId)}`, {
       method: "DELETE",
     }),
   merge: (sessionId: string) =>

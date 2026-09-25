@@ -210,8 +210,28 @@ export function AppShell() {
           </div>
           <div className="footer-col">
             <h4>Social media</h4>
-            <div className="social-row" aria-hidden="true">
-              <span /><span /><span /><span /><span />
+            <div className="social-row">
+              {(
+                [
+                  ["Instagram", "/icons/social-instagram.svg", "https://instagram.com"],
+                  ["Facebook", "/icons/social-facebook.svg", "https://facebook.com"],
+                  ["X", "/icons/social-x.svg", "https://x.com"],
+                  ["YouTube", "/icons/social-youtube.svg", "https://youtube.com"],
+                  ["TikTok", "/icons/social-tiktok.svg", "https://tiktok.com"],
+                ] as const
+              ).map(([label, icon, href]) => (
+                <a
+                  key={label}
+                  href={href}
+                  className="social-row__link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  title={`${label} (demo)`}
+                >
+                  <img src={icon} alt="" width={16} height={16} />
+                </a>
+              ))}
             </div>
           </div>
         </div>

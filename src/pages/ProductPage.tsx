@@ -6,6 +6,7 @@ import type { ProductDetail, ProductListItem, ProductReview } from "../api/types
 import { useAuth } from "../app/AuthContext";
 import { useCart } from "../app/CartContext";
 import { useWishlist } from "../app/WishlistContext";
+import { ImageLightbox } from "../widgets/ImageLightbox";
 import { ProductCard } from "../widgets/ProductCard";
 import { PDP_INFO, PdpInfoModal, type PdpInfoKind } from "../widgets/PdpInfoModal";
 
@@ -79,6 +80,7 @@ export function ProductPage() {
   const [reviewsVisible, setReviewsVisible] = useState(3);
   const [helpful, setHelpful] = useState<Record<string, number>>({});
   const [notifyBusy, setNotifyBusy] = useState(false);
+  const [lightbox, setLightbox] = useState<{ images: string[]; index: number; alt?: string } | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -303,7 +305,24 @@ export function ProductPage() {
             <button type="button" className="pdp-gallery__nav pdp-gallery__nav--prev" aria-label="Previous image" onClick={() => shift(-1)}>
               <img src="/icons/carousel-prev.svg" alt="" width={24} height={24} />
             </button>
-            {main ? <img src={main} alt={product.name} /> : <div className="img-placeholder large" />}
+            {main ? (
+              <button
+                type="button"
+                className="pdp-gallery__open"
+                aria-label="Open photo"
+                onClick={() =>
+                  setLightbox({
+                    images: images.map((img) => img.url),
+                    index: active,
+                    alt: product.name,
+                  })
+                }
+              >
+                <img src={main} alt={product.name} />
+              </button>
+            ) : (
+              <div className="img-placeholder large" />
+            )}
             <button type="button" className="pdp-gallery__nav pdp-gallery__nav--next" aria-label="Next image" onClick={() => shift(1)}>
               <img src="/icons/carousel-next.svg" alt="" width={24} height={24} />
             </button>
@@ -315,6 +334,13 @@ export function ProductPage() {
                 type="button"
                 className={`thumb ${i === active ? "active" : ""}`}
                 onClick={() => setActive(i)}
+                onDoubleClick={() =>
+                  setLightbox({
+                    images: images.map((x) => x.url),
+                    index: i,
+                    alt: product.name,
+                  })
+                }
               >
                 <img src={img.url} alt="" />
               </button>
@@ -675,8 +701,22 @@ export function ProductPage() {
                         )}
                         {r.images?.length > 0 && (
                           <div className="review-card__photos">
-                            {r.images.map((url) => (
-                              <img key={url} src={url} alt="" width={72} height={72} />
+                            {r.images.map((url, photoIdx) => (
+                              <button
+                                key={url}
+                                type="button"
+                                className="review-card__photo-btn"
+                                aria-label="Open review photo"
+                                onClick={() =>
+                                  setLightbox({
+                                    images: r.images,
+                                    index: photoIdx,
+                                    alt: `Review by ${r.authorName}`,
+                                  })
+                                }
+                              >
+                                <img src={url} alt="" width={72} height={72} />
+                              </button>
                             ))}
                           </div>
                         )}
@@ -735,6 +775,16 @@ export function ProductPage() {
         <PdpInfoModal title={PDP_INFO[infoKind].title} onClose={() => setInfoKind(null)}>
           {PDP_INFO[infoKind].body}
         </PdpInfoModal>
+      )}
+
+      {lightbox && (
+        <ImageLightbox
+          images={lightbox.images}
+          index={lightbox.index}
+          alt={lightbox.alt}
+          onClose={() => setLightbox(null)}
+          onIndexChange={(i) => setLightbox((prev) => (prev ? { ...prev, index: i } : prev))}
+        />
       )}
 
       <ProductCarousel

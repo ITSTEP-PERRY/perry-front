@@ -50,8 +50,8 @@
 | **12** | Forgot password | FE BE | ✅ | `Desktop - Forgot password` |
 | **13** | Reset password | FE BE | ✅ | — |
 | **14** | Реальный SMTP (Gmail App Password), без stub | BE P1 | ⬜ | Сейчас `Smtp:UseStub` |
-| **15** | Хранить коды/токены в БД (не только MemoryCache) | BE P1 | ⬜ | — |
-| **16** | Безопасный Forgot: единый ответ «если email есть — отправили» | BE P2 | ⬜ | — |
+| **15** | Хранить коды/токены в БД (не только MemoryCache) | BE P1 | ✅ | Таблица `AuthTokens`; миграция `AddAuthTokens` |
+| **16** | Безопасный Forgot: единый ответ «если email есть — отправили» | BE P2 | ✅ | — |
 
 ---
 
@@ -64,7 +64,7 @@
 | **19** | Карусели категорий (2 ряда) | FE BE | ✅ | Main |
 | **20** | Trending deals + Sale карусели | FE BE | ✅ | Main |
 | **21** | CTA «Abundance of goods» + Sign up / Log in | FE | ✅ | Main |
-| **22** | Back to top + footer (Support / Legal / Social) | FE | 🟡 | Social — плейсхолдеры иконок |
+| **22** | Back to top + footer (Support / Legal / Social) | FE | ✅ | Social icons — #62 |
 | **23** | Меню каталога (overlay): без аккаунта / с аккаунтом customer | FE P0 | ⬜ | `Desktop - Menu (without account)` · `Desktop - Menu (with account: customer)` · `Main V3.3 - Menu` |
 | **24** | Состояния главной: authorized vs guest (разный CTA/меню) | FE P1 | 🟡 | `Main V2 (authorization)` / `(no authorization)` |
 | **25** | Реальные изображения товаров вместо picsum seed | Design BE P1 | ⬜ | — |
@@ -81,7 +81,7 @@
 | **29** | Out of stock + кнопка Notify when available (UI) | FE | 🟡 | Кнопка есть, бэкенд notify — нет |
 | **30** | Backend «Notify when available» (email/подписка) | BE P1 | ⬜ | — |
 | **31** | Поиск из header → каталог с query | FE BE | 🟡 | Search bar в макете |
-| **32** | Пустой результат поиска / фильтров (empty state по макету) | FE P2 | ⬜ | — |
+| **32** | Пустой результат поиска / фильтров (empty state по макету) | FE P2 | ✅ | — |
 
 ---
 
@@ -97,9 +97,9 @@
 | **38** | Модалка **Security** | FE P1 | ⬜ | `(security)` |
 | **39** | Модалка **Returns** | FE P1 | ⬜ | `(returns)` |
 | **40** | Блок / модалка **About seller** | FE BE P1 | ⬜ | `(about seller)` |
-| **41** | Lightbox фото товара | FE P1 | ⬜ | `(good's photo)` |
+| **41** | Lightbox фото товара | FE P1 | ✅ | `(good's photo)` |
 | **42** | Видео товара в галерее | FE BE P2 | ⬜ | `(good's video)` |
-| **43** | Открыть фото в комментариях (lightbox отзыва) | FE P1 | ⬜ | `(open photo in comments) V2` |
+| **43** | Открыть фото в комментариях (lightbox отзыва) | FE P1 | ✅ | `(open photo in comments) V2` |
 | **44** | Create review — полный UX по макету (рейтинг UI, теги, фото) | FE BE P0 | 🟡 | `(create review)` |
 | **45** | Helpful / Translate — рабочая логика (не только кнопки) | FE BE P2 | ⬜ | — |
 | **46** | Wish list (Add to wish list) | FE BE P1 | ⬜ | buy-box в PDP |
@@ -139,7 +139,7 @@
 | **59** | Terms and conditions | FE Docs | ✅ | `Desktop - Terms and conditions` |
 | **60** | License agreement | FE Docs | ✅ | `Desktop - License agreement` |
 | **61** | Privacy policy | FE Docs | ✅ | `Desktop - Privacy policy` |
-| **62** | Иконки Social media в футере (вместо плейсхолдеров) | FE Design P2 | ⬜ | footer Main |
+| **62** | Иконки Social media в футере (вместо плейсхолдеров) | FE Design P2 | ✅ | footer Main |
 
 ---
 
@@ -164,7 +164,7 @@
 |---|--------|-------|--------|-------|
 | **71** | REST: categories / products GET+POST+DELETE | BE | ✅ | — |
 | **72** | REST: cart + checkout | BE | ✅ | — |
-| **73** | JWT / cookie auth для API (убрать query `userId`) | BE P1 | ⬜ | — |
+| **73** | JWT / cookie auth для API (убрать query `userId`) | BE P1 | ✅ | Cart: userId только из JWT |
 | **74** | PUT category/product через API | BE P2 | ⬜ | — |
 | **75** | API отзывов отдельным ресурсом | BE P2 | ⬜ | — |
 | **76** | Swagger актуализировать под финальные контракты | BE Docs P2 | 🟡 | — |
@@ -197,7 +197,27 @@
 
 ---
 
+## Epic M. Product analytics & wishlist (сент. 2026)
+
+| # | Задача | Метки | Статус | Примечание |
+|---|--------|-------|--------|------------|
+| **90** | Product API: statistics (views / popular / orders) | BE | ✅ | Антиспам на GetById; `/products/popular`, `/products/{id}/stats` |
+| **91** | Product Wishlist: CRUD + admin stats по месяцам | FE BE Admin | ✅ | User: `/api/wishlist`; Admin: `/api/admin/wishlist/*` |
+
+---
+
 ## Рекомендуемый порядок для Trello (ближайший спринт)
+
+### Приоритеты к защите (открытый бэклог, сент. 2026)
+
+| Tier | Задачи | Зачем на защите | Статус |
+|------|--------|-----------------|--------|
+| **Blocked** | **#6** Figma edit, **#47** variants, **#82** mobile sheets | Внешний доступ / ждём макет / sheets после mobile PDP polish | Blocked |
+| **P0** | **#41** lightbox PDP, **#43** lightbox отзывов, **#73** JWT cart (без query userId), **#16** secure Forgot, **#92** слайды | Демо WOW + security talking points + речь | ✅ #41/#43/#73/#16 · #92 To Do |
+| **P1** | **#32** empty search, **#62** social icons, **#81** mobile menu, **#79** mobile PDP, **#15** tokens в БД | Полировка витрины / mobile / устойчивость auth | ✅ #32/#62/#15 · mobile (#81/#79) у другого |
+| **P2** | **#25** реальные фото, **#74** PUT API, **#75** reviews API, **#45** Helpful/Translate, **#42** video, **#82** mobile sheets, **#85** тесты | Не блокер защиты; sheets ждут #36–40 | Backlog |
+
+**Последовательность (feasible):** #41 → #43 (общий lightbox) → #62 → #32 → #16 → #73 → #81/#79 → #15 → остальное.
 
 Перенесите в **To Do** в таком порядке:
 

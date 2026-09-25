@@ -139,6 +139,13 @@ export function ProductsPage() {
     setParams(next);
   };
 
+  const clearSearchAndFilters = () => {
+    const next = new URLSearchParams();
+    next.set("sort", sort);
+    next.set("view", view);
+    setParams(next);
+  };
+
   const onPrice = (e: FormEvent) => {
     e.preventDefault();
     const next = new URLSearchParams(params);
@@ -405,19 +412,31 @@ export function ProductsPage() {
           <p className="catalog-count muted">{total} results</p>
 
           {items.length === 0 ? (
-            <div className="empty-state">
+            <div className="empty-state catalog-empty">
+              <div className="catalog-empty__icon" aria-hidden="true">
+                <img src="/icons/search.svg" alt="" width={40} height={40} />
+              </div>
+              <h2 className="catalog-empty__title">
+                {search ? "No results for your search" : "No products match these filters"}
+              </h2>
               <p>
                 {search
-                  ? `No products found for “${search}”.`
-                  : "No products match these filters."}
+                  ? `We couldn’t find products for “${search}”. Try another query or clear filters.`
+                  : "Try removing some filters or browse the full catalog."}
               </p>
-              {search && (
-                <p>
-                  <Link className="btn btn-outline" to="/products">
-                    Clear search
-                  </Link>
-                </p>
-              )}
+              <div className="catalog-empty__actions">
+                {(applied > 0 || minRating) && (
+                  <button type="button" className="btn btn-outline" onClick={clearFilters}>
+                    Clear filters
+                  </button>
+                )}
+                <Link className="btn btn-primary" to="/products" onClick={(e) => {
+                  e.preventDefault();
+                  clearSearchAndFilters();
+                }}>
+                  Back to catalog
+                </Link>
+              </div>
             </div>
           ) : (
             <div className={`catalog-products ${view === "list" ? "is-list" : "is-grid"}`}>
