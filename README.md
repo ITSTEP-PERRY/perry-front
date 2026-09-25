@@ -4,11 +4,31 @@ Vite + React 19 витрина маркетплейса **Perry**. Визуал 
 
 Backend: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_for_our_poroject)  
 **Хроника всей работы:** [docs/ХРОНИКА-РАБОТЫ.md](./docs/ХРОНИКА-РАБОТЫ.md) · оглавление [docs/README.md](./docs/README.md)  
-**Trello (карточки #1–#88):** [docs/TRELLO-TODO.md](./docs/TRELLO-TODO.md) · доска [ITSTEP-PERRY](https://trello.com/b/bwEYs3Kq/itstep-perry)  
+**Trello (карточки):** [docs/TRELLO-TODO.md](./docs/TRELLO-TODO.md) · доска [ITSTEP-PERRY](https://trello.com/b/bwEYs3Kq/itstep-perry)  
+**Срез 25.09 (lightbox / auth tokens / orders stats):** [docs/ИЗМЕНЕНИЯ-2026-09-25.md](./docs/ИЗМЕНЕНИЯ-2026-09-25.md) · [docs/ИЗМЕНЕНИЯ-2026-09-25-orders-stats.md](./docs/ИЗМЕНЕНИЯ-2026-09-25-orders-stats.md)  
 **Спринт 19.09:** [docs/ИЗМЕНЕНИЯ-2026-09-19.md](./docs/ИЗМЕНЕНИЯ-2026-09-19.md) · скрины [docs/screenshots/sprint-2026-09-19/](./docs/screenshots/sprint-2026-09-19/README.md)  
 Сводка (каталог/PDP/auth): [docs/ИЗМЕНЕНИЯ-2026-09-17.md](./docs/ИЗМЕНЕНИЯ-2026-09-17.md)  
 **Account:** [docs/ACCOUNT-КАБИНЕТ.md](./docs/ACCOUNT-КАБИНЕТ.md) · [docs/ИЗМЕНЕНИЯ-Account-2026-09-17.md](./docs/ИЗМЕНЕНИЯ-Account-2026-09-17.md)  
 Скриншоты: [docs/screenshots/README.md](./docs/screenshots/README.md)
+
+---
+
+## Срез 25.09.2026 — что сделано
+
+Кратко по закрытым карточкам и коду (ветка `feature/figma-storefront-port`). Полные тексты: [ИЗМЕНЕНИЯ-2026-09-25.md](./docs/ИЗМЕНЕНИЯ-2026-09-25.md), [ИЗМЕНЕНИЯ-2026-09-25-orders-stats.md](./docs/ИЗМЕНЕНИЯ-2026-09-25-orders-stats.md).
+
+| # | Что |
+|---|-----|
+| **#41 / #43** | Общий `ImageLightbox` — fullscreen фото на PDP и в отзывах |
+| **#32** | Empty state каталога (поиск/фильтры без результатов) |
+| **#62** | SVG-иконки соцсетей в футере |
+| **#16** | Secure Forgot — единый ответ без раскрытия email |
+| **#73** | Cart API без `?userId=` (только JWT / sessionId) |
+| **#93** | **Admin Orders:** статусы Ordered / Received / Shipped / ReadyToPickup / Cancelled / Returned; фильтры status + даты + orderId; `statusCounts`, `totalAmount`, `totalOrderCompare` / `totalAmountCompare` |
+
+**Admin Orders (#93)** — экран `/admin/orders`: поиск по orderId, фильтр статуса, диапазон дат / «This month», чипы количества по статусам, % сравнения с предыдущим периодом.
+
+Backend-пара: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_for_our_poroject) (`AuthTokens` #15, admin orders API #93).
 
 ---
 
