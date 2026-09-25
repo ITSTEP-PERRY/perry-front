@@ -122,6 +122,17 @@ export type OrderDto = {
   }[];
 };
 
+export type AdminOrdersResponse = {
+  items: OrderDto[];
+  totalOrders: number;
+  totalAmount: number;
+  statusCounts: Record<string, number>;
+  totalOrderCompare?: number | null;
+  totalAmountCompare?: number | null;
+  period?: { fromUtc: string; toUtc: string } | null;
+  comparePeriod?: { fromUtc: string; toUtc: string } | null;
+};
+
 export type WishlistItemDto = {
   id: string;
   productId: string;

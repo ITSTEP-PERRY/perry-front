@@ -5,6 +5,7 @@ import type {
   CartResponse,
   CategoryDto,
   OrderDto,
+  AdminOrdersResponse,
   ProductDetail,
   ProductListResponse,
   WishlistItemDto,
@@ -203,7 +204,18 @@ export const ordersApi = {
       method: "POST",
       body: JSON.stringify({ sessionId }),
     }),
-  all: () => apiFetch<OrderDto[]>("/orders/admin"),
+  admin: (opts?: { status?: string; fromUtc?: string; toUtc?: string; orderId?: string }) => {
+    const p = new URLSearchParams();
+    if (opts?.status) p.set("status", opts.status);
+    if (opts?.fromUtc) p.set("fromUtc", opts.fromUtc);
+    if (opts?.toUtc) p.set("toUtc", opts.toUtc);
+    if (opts?.orderId) p.set("orderId", opts.orderId);
+    const qs = p.toString();
+    return apiFetch<AdminOrdersResponse>(`/orders/admin${qs ? `?${qs}` : ""}`);
+  },
+  /** Back-compat: flat list without filters. */
+  all: () =>
+    apiFetch<AdminOrdersResponse>("/orders/admin").then((r) => r.items),
   setStatus: (id: string, status: string) =>
     apiFetch(`/orders/${id}/status`, {
       method: "PUT",

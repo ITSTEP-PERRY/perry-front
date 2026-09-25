@@ -4,19 +4,27 @@ import { ordersApi } from "../api";
 import type { OrderDto } from "../api/types";
 
 const STATUS_LABEL: Record<string, string> = {
+  Ordered: "Ordered",
+  Received: "Received",
+  Shipped: "Shipped",
+  ReadyToPickup: "Ready for pickup",
+  Cancelled: "Cancelled",
+  Returned: "Returned",
   Pending: "Ordered",
   Paid: "Received",
-  Shipped: "Shipped",
   Completed: "Ready for pickup",
-  Cancelled: "Cancelled",
 };
 
 const STATUS_CLASS: Record<string, string> = {
+  Ordered: "is-ordered",
+  Received: "is-received",
+  Shipped: "is-shipped",
+  ReadyToPickup: "is-pickup",
+  Cancelled: "is-cancelled",
+  Returned: "is-cancelled",
   Pending: "is-ordered",
   Paid: "is-received",
-  Shipped: "is-shipped",
   Completed: "is-pickup",
-  Cancelled: "is-cancelled",
 };
 
 function formatOrderDate(iso: string) {
@@ -127,7 +135,10 @@ export function OrderDetailsModal({ order: initial, onClose, onLoaded }: Props) 
             </ul>
 
             <div className="order-details-modal__total">
-              {(order.status === "Pending" || order.status === "Paid") && (
+              {(order.status === "Ordered" ||
+                order.status === "Received" ||
+                order.status === "Pending" ||
+                order.status === "Paid") && (
                 <button type="button" className="btn btn-outline" disabled title="Coming soon">
                   How to cancel order?
                 </button>

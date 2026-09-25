@@ -5,19 +5,28 @@ import type { OrderDto } from "../../api/types";
 import { OrderDetailsModal } from "../../widgets/OrderDetailsModal";
 
 const STATUS_LABEL: Record<string, string> = {
+  Ordered: "Ordered",
+  Received: "Received",
+  Shipped: "Shipped",
+  ReadyToPickup: "Ready for pickup",
+  Cancelled: "Cancelled",
+  Returned: "Returned",
+  // legacy API names
   Pending: "Ordered",
   Paid: "Received",
-  Shipped: "Shipped",
   Completed: "Ready for pickup",
-  Cancelled: "Cancelled",
 };
 
 const STATUS_CLASS: Record<string, string> = {
+  Ordered: "is-ordered",
+  Received: "is-received",
+  Shipped: "is-shipped",
+  ReadyToPickup: "is-pickup",
+  Cancelled: "is-cancelled",
+  Returned: "is-cancelled",
   Pending: "is-ordered",
   Paid: "is-received",
-  Shipped: "is-shipped",
   Completed: "is-pickup",
-  Cancelled: "is-cancelled",
 };
 
 function formatOrderDate(iso: string) {

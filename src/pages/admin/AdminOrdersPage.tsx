@@ -1,51 +1,131 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ordersApi } from "../../api";
-import type { OrderDto } from "../../api/types";
+import type { AdminOrdersResponse, OrderDto } from "../../api/types";
 
-const STATUSES = ["Pending", "Paid", "Shipped", "Completed", "Cancelled"];
+const STATUSES = [
+  "Ordered",
+  "Received",
+  "Shipped",
+  "ReadyToPickup",
+  "Cancelled",
+  "Returned",
+] as const;
 
 function statusClass(status: string) {
   const s = status.toLowerCase();
-  if (s.includes("pending")) return "ap-status ap-status--pending";
-  if (s.includes("paid")) return "ap-status ap-status--paid";
+  if (s === "ordered") return "ap-status ap-status--pending";
+  if (s === "received") return "ap-status ap-status--paid";
   if (s.includes("ship")) return "ap-status ap-status--shipped";
-  if (s.includes("complete")) return "ap-status ap-status--completed";
+  if (s === "readytopickup") return "ap-status ap-status--completed";
   if (s.includes("cancel")) return "ap-status ap-status--cancelled";
+  if (s.includes("return")) return "ap-status ap-status--cancelled";
   return "ap-status";
+}
+
+function fmtPct(v: number | null | undefined) {
+  if (v == null || Number.isNaN(v)) return "—";
+  const sign = v > 0 ? "+" : "";
+  return `${sign}${v.toFixed(1)}%`;
+}
+
+function toInputDate(iso: string | null) {
+  if (!iso) return "";
+  return iso.slice(0, 10);
+}
+
+/** Inclusive calendar day → UTC midnight start */
+function dayStartIso(d: string) {
+  return `${d}T00:00:00.000Z`;
+}
+
+/** Inclusive "to" date → exclusive next-day UTC midnight for API `< toUtc` */
+function dayEndExclusiveIso(d: string) {
+  const dt = new Date(`${d}T00:00:00.000Z`);
+  dt.setUTCDate(dt.getUTCDate() + 1);
+  return dt.toISOString();
+}
+
+/** Current calendar month UTC → from start of month, to start of next month */
+function currentMonthRangeUtc() {
+  const now = new Date();
+  const from = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+  const to = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
+  return { from: from.toISOString(), to: to.toISOString() };
 }
 
 export function AdminOrdersPage() {
   const [params, setParams] = useSearchParams();
   const selectedId = params.get("selectedId") || undefined;
-  const q = params.get("q") || "";
-  const [orders, setOrders] = useState<OrderDto[]>([]);
-  const [search, setSearch] = useState(q);
-  const [error, setError] = useState<string | null>(null);
+  const status = params.get("status") || "";
+  const orderId = params.get("orderId") || "";
+  const fromUtc = params.get("fromUtc") || "";
+  const toUtc = params.get("toUtc") || "";
 
-  const reload = () =>
-    ordersApi
-      .all()
-      .then(setOrders)
-      .catch((e: Error) => setError(e.message));
+  const [data, setData] = useState<AdminOrdersResponse | null>(null);
+  const [orderIdInput, setOrderIdInput] = useState(orderId);
+  const [fromInput, setFromInput] = useState(toInputDate(fromUtc || null));
+  const [toInput, setToInput] = useState(toInputDate(toUtc || null));
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const query = useMemo(
+    () => ({
+      status: status || undefined,
+      orderId: orderId || undefined,
+      fromUtc: fromUtc || undefined,
+      toUtc: toUtc || undefined,
+    }),
+    [status, orderId, fromUtc, toUtc],
+  );
+
+  const reload = () => {
+    setLoading(true);
+    return ordersApi
+      .admin(query)
+      .then(setData)
+      .catch((e: Error) => setError(e.message))
+      .finally(() => setLoading(false));
+  };
 
   useEffect(() => {
+    setError(null);
     void reload();
-  }, []);
+  }, [query.status, query.orderId, query.fromUtc, query.toUtc]);
 
-  useEffect(() => setSearch(q), [q]);
+  useEffect(() => setOrderIdInput(orderId), [orderId]);
+  useEffect(() => setFromInput(toInputDate(fromUtc || null)), [fromUtc]);
+  useEffect(() => setToInput(toInputDate(toUtc || null)), [toUtc]);
 
-  const filtered = orders.filter((o) => {
-    const qq = q.trim().toLowerCase();
-    if (!qq) return true;
-    return (
-      o.userName?.toLowerCase().includes(qq) ||
-      o.status.toLowerCase().includes(qq) ||
-      o.id.toLowerCase().includes(qq)
-    );
-  });
+  const orders: OrderDto[] = data?.items ?? [];
+  const selected = orders.find((o) => o.id === selectedId) ?? null;
 
-  const selected = filtered.find((o) => o.id === selectedId) ?? null;
+  const patchParams = (patch: Record<string, string | undefined>) => {
+    const next = new URLSearchParams(params);
+    for (const [k, v] of Object.entries(patch)) {
+      if (v) next.set(k, v);
+      else next.delete(k);
+    }
+    setParams(next);
+  };
+
+  const applyFilters = () => {
+    patchParams({
+      orderId: orderIdInput.trim() || undefined,
+      fromUtc: fromInput ? dayStartIso(fromInput) : undefined,
+      toUtc: toInput ? dayEndExclusiveIso(toInput) : undefined,
+      selectedId: undefined,
+    });
+  };
+
+  const setThisMonth = () => {
+    const { from, to } = currentMonthRangeUtc();
+    patchParams({ fromUtc: from, toUtc: to, selectedId: undefined });
+  };
+
+  const clearPeriod = () => {
+    patchParams({ fromUtc: undefined, toUtc: undefined, selectedId: undefined });
+  };
 
   return (
     <div>
@@ -58,29 +138,120 @@ export function AdminOrdersPage() {
           role="search"
           onSubmit={(e) => {
             e.preventDefault();
-            const next = new URLSearchParams(params);
-            if (search.trim()) next.set("q", search.trim());
-            else next.delete("q");
-            setParams(next);
+            applyFilters();
           }}
         >
           <img className="ap-search__icon" src="/icons/search.svg" alt="" width={20} height={16} />
           <input
             className="ap-search__input"
             type="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search..."
+            value={orderIdInput}
+            onChange={(e) => setOrderIdInput(e.target.value)}
+            placeholder="Search by orderId…"
           />
         </form>
       </div>
 
+      <div className="ap-orders-filters">
+        <label>
+          Status
+          <select
+            value={status}
+            onChange={(e) => patchParams({ status: e.target.value || undefined, selectedId: undefined })}
+          >
+            <option value="">All</option>
+            {STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          From
+          <input type="date" value={fromInput} onChange={(e) => setFromInput(e.target.value)} />
+        </label>
+        <label>
+          To
+          <input type="date" value={toInput} onChange={(e) => setToInput(e.target.value)} />
+        </label>
+        <button type="button" className="btn btn-secondary" onClick={applyFilters}>
+          Apply dates
+        </button>
+        <button type="button" className="btn btn-secondary" onClick={setThisMonth}>
+          This month
+        </button>
+        <button type="button" className="btn btn-secondary" onClick={clearPeriod}>
+          All time
+        </button>
+      </div>
+
+      {data && (
+        <div className="ap-orders-stats">
+          <div className="ap-orders-stats__main">
+            <div>
+              <span className="ap-orders-stats__label">Orders</span>
+              <strong>{data.totalOrders}</strong>
+              {data.totalOrderCompare != null && (
+                <span
+                  className={
+                    data.totalOrderCompare >= 0
+                      ? "ap-orders-stats__cmp is-up"
+                      : "ap-orders-stats__cmp is-down"
+                  }
+                >
+                  {fmtPct(data.totalOrderCompare)}
+                </span>
+              )}
+            </div>
+            <div>
+              <span className="ap-orders-stats__label">Total amount</span>
+              <strong>${data.totalAmount.toFixed(2)}</strong>
+              {data.totalAmountCompare != null && (
+                <span
+                  className={
+                    data.totalAmountCompare >= 0
+                      ? "ap-orders-stats__cmp is-up"
+                      : "ap-orders-stats__cmp is-down"
+                  }
+                >
+                  {fmtPct(data.totalAmountCompare)}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="ap-orders-stats__counts">
+            {STATUSES.map((s) => (
+              <button
+                key={s}
+                type="button"
+                className={`ap-orders-stats__chip ${status === s ? "is-active" : ""}`}
+                onClick={() =>
+                  patchParams({ status: status === s ? undefined : s, selectedId: undefined })
+                }
+              >
+                <span className={statusClass(s)}>{s}</span>
+                <em>{data.statusCounts[s] ?? 0}</em>
+              </button>
+            ))}
+          </div>
+          {data.comparePeriod && (
+            <p className="ap-orders-stats__hint">
+              Compare vs {new Date(data.comparePeriod.fromUtc).toLocaleDateString()} –{" "}
+              {new Date(data.comparePeriod.toUtc).toLocaleDateString()}
+            </p>
+          )}
+        </div>
+      )}
+
+      {loading && <p className="muted">Loading…</p>}
+
       <div className="ap-layout">
         <section className="ap-list">
-          {filtered.length === 0 ? (
+          {orders.length === 0 ? (
             <div className="ap-empty">
               <div className="ap-empty__ph" aria-hidden="true" />
-              <p className="ap-empty__text">{q ? `Nothing found for “${q}”` : "No orders yet"}</p>
+              <p className="ap-empty__text">No orders for current filters</p>
             </div>
           ) : (
             <div className="ap-table ap-table--orders">
@@ -91,16 +262,12 @@ export function AdminOrdersPage() {
                 <span>Total</span>
                 <span />
               </div>
-              {filtered.map((o) => (
+              {orders.map((o) => (
                 <button
                   key={o.id}
                   type="button"
                   className={`ap-table__row ${selectedId === o.id ? "is-selected" : ""}`}
-                  onClick={() => {
-                    const next = new URLSearchParams(params);
-                    next.set("selectedId", o.id);
-                    setParams(next);
-                  }}
+                  onClick={() => patchParams({ selectedId: o.id })}
                 >
                   <span className="ap-table__name">
                     {new Date(o.orderDateUtc).toLocaleString()}
