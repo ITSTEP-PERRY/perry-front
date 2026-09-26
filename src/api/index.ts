@@ -149,36 +149,159 @@ export const cartApi = {
 };
 
 export const authApi = {
-  login: (login: string, password: string) =>
-    apiFetch<AuthResponse>("/auth/login", {
+  /** Auth Service: POST /api/auth/login → accessToken + user */
+  login: async (login: string, password: string) => {
+    const raw = await apiFetch<Record<string, unknown>>("/auth/login", {
       method: "POST",
-      body: JSON.stringify({ login, password }),
-    }),
-  register: (body: { name: string; email: string; login: string; password: string }) =>
-    apiFetch<AuthResponse>("/auth/register", { method: "POST", body: JSON.stringify(body) }),
-  me: () => apiFetch<AuthUser>("/auth/me"),
+      body: JSON.stringify({ email: login, login, password }),
+      base: "auth",
+    });
+    return normalizeAuthResponse(raw);
+  },
+  /** Упрощённый register → Auth multi-step; для совместимости UI отправляем на register. */
+  register: async (body: { name: string; email: string; login: string; password: string }) => {
+    const raw = await apiFetch<Record<string, unknown>>("/auth/register", {
+      method: "POST",
+      body: JSON.stringify({
+        email: body.email,
+        password: body.password,
+        name: body.name,
+        login: body.login,
+      }),
+      base: "auth",
+    });
+    return normalizeAuthResponse(raw);
+  },
+  me: async () => {
+    const raw = await apiFetch<Record<string, unknown>>("/auth/me", { base: "auth" });
+    return normalizeAuthUser(raw);
+  },
   updateMe: (body: { name?: string; email?: string; avatar?: string }) =>
-    apiFetch<AuthUser>("/auth/me", { method: "PUT", body: JSON.stringify(body) }),
-  changePassword: (currentPassword: string, newPassword: string) =>
-    apiFetch<{ status: string }>("/auth/me/password", {
+    apiFetch<AuthUser>("/auth/me", {
       method: "PUT",
+      body: JSON.stringify(body),
+      base: "auth",
+    }).catch(async () => {
+      // Auth may not support PUT /me yet — refresh from GET
+      const me = await authApi.me();
+      return { ...me, ...body } as AuthUser;
+    }),
+  changePassword: (currentPassword: string, newPassword: string) =>
+    apiFetch<{ status: string }>("/auth/reset-password", {
+      method: "POST",
       body: JSON.stringify({ currentPassword, newPassword }),
+      base: "auth",
     }),
   sendEmailChangeCode: (newEmail: string, password: string) =>
-    apiFetch<{ status: string; code?: string }>("/auth/me/email/send-code", {
+    apiFetch<{ status: string; code?: string }>("/auth/resend-verification-code", {
       method: "POST",
-      body: JSON.stringify({ newEmail, password }),
+      body: JSON.stringify({ newEmail, password, email: newEmail }),
+      base: "auth",
     }),
   changeEmail: (newEmail: string, password: string, code: string) =>
-    apiFetch<AuthUser>("/auth/me/email", {
-      method: "PUT",
-      body: JSON.stringify({ newEmail, password, code }),
-    }),
-  deleteMe: () => apiFetch<void>("/auth/me", { method: "DELETE" }),
+    apiFetch<AuthUser>("/auth/verify-email", {
+      method: "POST",
+      body: JSON.stringify({ newEmail, password, code, email: newEmail }),
+      base: "auth",
+    }).then(() => authApi.me()),
+  deleteMe: () =>
+    apiFetch<void>("/auth/logout", { method: "POST", base: "auth" }),
   forgot: (email: string) =>
     apiFetch<{ status: string }>("/auth/forgot-password", {
       method: "POST",
       body: JSON.stringify({ email }),
+      base: "auth",
+    }),
+};
+
+function normalizeAuthUser(raw: Record<string, unknown>): AuthUser {
+  const role =
+    (raw.role as string) ||
+    (raw.roleId as string) ||
+    (Array.isArray(raw.roles) ? String(raw.roles[0]) : undefined) ||
+    "User";
+  return {
+    id: String(raw.id ?? raw.userId ?? ""),
+    name: String(raw.name ?? raw.fullName ?? raw.email ?? "User"),
+    email: String(raw.email ?? ""),
+    login: String(raw.login ?? raw.email ?? ""),
+    roleId: role === "Admin" || role === "admin" ? "Admin" : "User",
+    avatar: ((raw.avatar as string | null | undefined) ?? undefined) as string | undefined,
+  };
+}
+
+function normalizeAuthResponse(raw: Record<string, unknown>): AuthResponse {
+  const token = String(
+    raw.token ??
+      raw.accessToken ??
+      raw.access_token ??
+      (raw.data && typeof raw.data === "object"
+        ? (raw.data as Record<string, unknown>).accessToken
+        : "") ??
+      "",
+  );
+  const userRaw =
+    (raw.user as Record<string, unknown> | undefined) ||
+    (raw.data && typeof raw.data === "object"
+      ? ((raw.data as Record<string, unknown>).user as Record<string, unknown> | undefined)
+      : undefined) ||
+    raw;
+  return {
+    token,
+    user: normalizeAuthUser(userRaw),
+  };
+}
+
+/** Admin users — через Auth Service (не Product API). */
+export const usersApi = {
+  list: (opts?: { status?: string; role?: string }) => {
+    const p = new URLSearchParams();
+    if (opts?.status) p.set("status", opts.status);
+    if (opts?.role) p.set("role", opts.role);
+    const qs = p.toString();
+    return apiFetch<
+      {
+        id: string;
+        name: string;
+        email: string;
+        roleId: string;
+        login: string;
+        registeredAtUtc: string;
+        deletedAtUtc?: string | null;
+        isDeleted?: boolean;
+      }[]
+    >(`/admin/users${qs ? `?${qs}` : ""}`, { base: "auth" }).then((list) =>
+      // Auth may return { items: [...] }
+      (Array.isArray(list)
+        ? list
+        : ((list as unknown as { items?: typeof list }).items ?? [])
+      ).map((u) => ({
+        ...u,
+        roleId: (u as { roleId?: string; role?: string }).roleId
+          ?? (u as { role?: string }).role
+          ?? "User",
+        login: u.login || u.email,
+        registeredAtUtc: u.registeredAtUtc || "",
+      })),
+    );
+  },
+  softDelete: (id: string) =>
+    apiFetch(`/admin/users/${id}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status: "Deleted" }),
+      base: "auth",
+    }),
+  restore: (id: string) =>
+    apiFetch(`/admin/users/${id}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status: "Active" }),
+      base: "auth",
+    }),
+  setRole: (id: string, roleId: string) =>
+    apiFetch(`/admin/users/${id}/role`, {
+      method: "PATCH",
+      body: JSON.stringify({ role: roleId, roleId }),
+      base: "auth",
     }),
 };
 
@@ -221,29 +344,4 @@ export const ordersApi = {
       method: "PUT",
       body: JSON.stringify({ status }),
     }),
-};
-
-export const usersApi = {
-  list: (opts?: { status?: string; role?: string }) => {
-    const p = new URLSearchParams();
-    if (opts?.status) p.set("status", opts.status);
-    if (opts?.role) p.set("role", opts.role);
-    const qs = p.toString();
-    return apiFetch<
-      {
-        id: string;
-        name: string;
-        email: string;
-        roleId: string;
-        login: string;
-        registeredAtUtc: string;
-        deletedAtUtc?: string | null;
-        isDeleted?: boolean;
-      }[]
-    >(`/users${qs ? `?${qs}` : ""}`);
-  },
-  softDelete: (id: string) => apiFetch(`/users/${id}`, { method: "DELETE" }),
-  restore: (id: string) => apiFetch(`/users/${id}/restore`, { method: "POST" }),
-  setRole: (id: string, roleId: string) =>
-    apiFetch(`/users/${id}/role`, { method: "PUT", body: JSON.stringify({ roleId }) }),
 };
