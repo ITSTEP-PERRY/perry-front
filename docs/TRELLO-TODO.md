@@ -233,8 +233,9 @@
 **Закрыто 25.09:** #15, #16, #32, #41, #43, #62, #73.  
 **#93** — в Review: автор предложения сверяет реализацию с желаемым контрактом.  
 **Закрыто 26.09:** **#94** (Users out of Product API).  
-**#A02** — ✅ Done: merge `backend/main` (PR #13, fixed DB migrations) в `feature/categories-facets-figma-storefront` → [Teslyar75/My_Amazon2](https://github.com/Teslyar75/My_Amazon2) · [карточка](https://trello.com/c/BgOTO4i6).  
-**#95** — To Do: уточнить JWT claims / issuer / Internal API у Влада ([карточка](https://trello.com/c/T28F0b7e)). См. [AUTH-INTEGRATION.md](./AUTH-INTEGRATION.md).
+**#A02** — ✅ Done: merge `backend/main` (PR #13, fixed DB migrations) · [карточка](https://trello.com/c/BgOTO4i6).  
+**Закрыто 28.09:** **#A03** seed orders · **#A04** remove AdminReviewsController · **#A05** checkout shipping/payment · **#A06** `/api/health` · **#A07** popular-by-userId — см. [ИЗМЕНЕНИЯ-2026-09-28.md](./ИЗМЕНЕНИЯ-2026-09-28.md).  
+**#95** — To Do: JWT у Влада ([карточка](https://trello.com/c/T28F0b7e)). **#92** — слайды (Design).
 
 ---
 
