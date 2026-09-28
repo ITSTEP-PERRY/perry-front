@@ -5,7 +5,8 @@ Vite + React 19 витрина маркетплейса **Perry**. Визуал 
 Backend: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_for_our_poroject)  
 **Хроника всей работы:** [docs/ХРОНИКА-РАБОТЫ.md](./docs/ХРОНИКА-РАБОТЫ.md) · оглавление [docs/README.md](./docs/README.md)  
 **Trello (карточки):** [docs/TRELLO-TODO.md](./docs/TRELLO-TODO.md) · доска [ITSTEP-PERRY](https://trello.com/b/bwEYs3Kq/itstep-perry)  
-**Срез 28.09 (#A03–#A07):** [docs/ИЗМЕНЕНИЯ-2026-09-28.md](./docs/ИЗМЕНЕНИЯ-2026-09-28.md) · админка: [docs/НАША-АДМИНКА.md](./docs/НАША-АДМИНКА.md) · [docs/РЕШЕНИЕ-ФРОНТ-АДМИН.md](./docs/РЕШЕНИЕ-ФРОНТ-АДМИН.md)  
+**Отчёт 28.09 (весь день):** [docs/ОТЧЁТ-2026-09-28.md](./docs/ОТЧЁТ-2026-09-28.md) · срезы: [#A03–#A07](./docs/ИЗМЕНЕНИЯ-2026-09-28.md) · [#95 Auth](./docs/ИЗМЕНЕНИЯ-2026-09-28-auth-95.md) · [отзывы #99–#104](./docs/ОТЗЫВЫ-ПОКУПАТЕЛЕЙ.md)  
+**Админка:** [docs/НАША-АДМИНКА.md](./docs/НАША-АДМИНКА.md) · [docs/РЕШЕНИЕ-ФРОНТ-АДМИН.md](./docs/РЕШЕНИЕ-ФРОНТ-АДМИН.md)  
 **Срез 26.09 (#94 Auth / без Users):** [docs/ИЗМЕНЕНИЯ-2026-09-26.md](./docs/ИЗМЕНЕНИЯ-2026-09-26.md) · [docs/ОТЧЁТ-2026-09-26.md](./docs/ОТЧЁТ-2026-09-26.md) · [docs/AUTH-INTEGRATION.md](./docs/AUTH-INTEGRATION.md) · [docs/ВОПРОСЫ-КОМАНДЕ.md](./docs/ВОПРОСЫ-КОМАНДЕ.md) · [docs/ADMIN-КОМАНДА.md](./docs/ADMIN-КОМАНДА.md)  
 **Срез 25.09 (lightbox / auth tokens / orders stats):** [docs/ИЗМЕНЕНИЯ-2026-09-25.md](./docs/ИЗМЕНЕНИЯ-2026-09-25.md) · [docs/ИЗМЕНЕНИЯ-2026-09-25-orders-stats.md](./docs/ИЗМЕНЕНИЯ-2026-09-25-orders-stats.md)  
 **Спринт 19.09:** [docs/ИЗМЕНЕНИЯ-2026-09-19.md](./docs/ИЗМЕНЕНИЯ-2026-09-19.md) · скрины [docs/screenshots/sprint-2026-09-19/](./docs/screenshots/sprint-2026-09-19/README.md)  
@@ -15,18 +16,18 @@ Backend: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_fo
 
 ---
 
-## Срез 28.09.2026 — Trello #A03–#A07
+## Срез 28.09.2026 — итог дня (#A03–#A07 · #95 · #99–#104)
 
-| # | Что |
-|---|-----|
-| **#A03** | Seed демо-заказов (`EnsureDemoOrdersAsync`) |
-| **#A04** | Удалён `AdminReviewsController` → модерация в `ReviewController` |
-| **#A05** | Checkout: `shippingAddress` + `paymentType` |
-| **#A06** | `GET /api/health` |
-| **#A07** | Admin: popular products by `userId` |
-| CI | Фикс Razor Cart после смены сигнатуры checkout → Perry CI green |
+Полный отчёт: [ОТЧЁТ-2026-09-28.md](./docs/ОТЧЁТ-2026-09-28.md).
 
-Подробнее: [ИЗМЕНЕНИЯ-2026-09-28.md](./docs/ИЗМЕНЕНИЯ-2026-09-28.md). Backend: ветки `feature/categories-facets-figma-storefront` и `feature/front-match` в [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_for_our_poroject).
+| Блок | Что |
+|------|-----|
+| **#A03–#A07** | Seed orders · ReviewController · checkout address/payment · `/api/health` · popular-by-user · CI green |
+| **#95** | JWT HS256 secret от Auth → Product валидирует подпись (`.env`, не в git) |
+| **#99–#104** | Create `POST /api/reviews` · AuthClaims UserId · unique · `GET /me` · Account «My reviews» · tags |
+| Auth next | **#96** iss/aud · **#97** credential · **#98** claims |
+
+Backend: `feature/categories-facets-figma-storefront` в [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_for_our_poroject). Front: `feature/figma-storefront-port`.
 
 ---
 
