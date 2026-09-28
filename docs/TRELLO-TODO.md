@@ -8,9 +8,9 @@
 1. Создайте доску: колонки `Backlog` → `To Do` → `In Progress` → `Review` → `Done`.
 2. Создайте карточку на каждую задачу ниже (номер = ID карточки).
 3. Метки (labels): `FE` · `BE` · `Admin` · `Mobile` · `Design` · `Docs` · `P0` / `P1` / `P2`.
-4. Статус — синхронизирован с доской **ITSTEP-PERRY** на **26.09.2026**.
+4. Статус — синхронизирован с доской **ITSTEP-PERRY** на **28.09.2026**.
 Легенда статуса: ✅ Done · 🟡 Partial · ⬜ To Do / Backlog · 🚫 Blocked · 🔵 In Progress · 🟣 Review
-Срез дня: [ИЗМЕНЕНИЯ-2026-09-26.md](./ИЗМЕНЕНИЯ-2026-09-26.md) · Auth: [AUTH-INTEGRATION.md](./AUTH-INTEGRATION.md)
+Срез дня: [ИЗМЕНЕНИЯ-2026-09-28.md](./ИЗМЕНЕНИЯ-2026-09-28.md) · 26.09: [ИЗМЕНЕНИЯ-2026-09-26.md](./ИЗМЕНЕНИЯ-2026-09-26.md) · Auth: [AUTH-INTEGRATION.md](./AUTH-INTEGRATION.md)
 
 ---
 
