@@ -47,17 +47,61 @@ export const reviewsApi = {
   ) =>
     apiFetch<{
       id: string;
+      productId: string;
+      userId: string;
       authorName: string;
       rating: number;
       title: string;
       body: string;
       createdAtUtc: string;
+      isApproved: boolean;
       tags: string[];
       images: string[];
-    }>(`/products/${productId}/reviews`, {
+    }>(`/reviews`, {
       method: "POST",
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        productId,
+        rating: body.rating,
+        title: body.title,
+        body: body.body,
+        tags: body.tags ?? [],
+        images: body.imageUrls ?? [],
+      }),
     }),
+  /** #102 — отзывы текущего пользователя */
+  mine: async () => {
+    const p = new URLSearchParams();
+    p.set("CurrentPage", "1");
+    p.set("PageSize", "100");
+    p.set("OrderPropertyName", "CreatedAtUtc");
+    p.set("DescendingOrder", "true");
+    const raw = await apiFetch<{
+      pagedList?: {
+        items?: {
+          id: string;
+          productId: string;
+          authorName?: string;
+          rating: number;
+          title?: string;
+          body?: string;
+          isApproved: boolean;
+          createdAtUtc: string;
+          tags?: { name?: string }[];
+        }[];
+      };
+    }>(`/reviews/me?${p}`);
+    return (raw.pagedList?.items ?? []).map((r) => ({
+      id: r.id,
+      productId: r.productId,
+      authorName: r.authorName || "—",
+      rating: r.rating,
+      title: r.title || "",
+      body: r.body || "",
+      isApproved: r.isApproved,
+      createdAtUtc: r.createdAtUtc,
+      tags: (r.tags ?? []).map((t) => t.name || "").filter(Boolean),
+    }));
+  },
   /** #A04 — модерация через ReviewController (`/api/reviews`), не AdminReviewsController. */
   adminList: async (opts?: { status?: string; q?: string }) => {
     const p = new URLSearchParams();

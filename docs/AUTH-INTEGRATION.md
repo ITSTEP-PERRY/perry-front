@@ -64,8 +64,8 @@ Endpoint: `POST {Auth}/internal/auth/token`
 | # | Вопрос | Статус |
 |---|--------|--------|
 | 1–3 | UserId / Guid / role | Частично: читаем `sub`/`nameid`/`userId` + `role` (`User`/`Admin` по API.md) |
-| 4 | Issuer / Audience | Рабочие значения Product: `Perry.AuthService` / `Perry.Client` — **подтвердить** по реальному токену |
+| 4 | Issuer / Audience | Рабочие значения Product: `Perry.AuthService` / `Perry.Client` — **подтвердить** · Trello [#96](https://trello.com/c/dnk4VUUk) |
 | 5 | Подпись | ✅ HS256 shared secret (`Jwt:SigningSecret`) |
-| 6 | name / email | AuthClaims читает; наличие в токене — проверить login |
-| 7 | Internal JWT | ✅ endpoint известен; ⏳ ждём plaintext `credential` для `local-service` |
+| 6 | name / email | AuthClaims читает; наличие в токене — [#98](https://trello.com/c/paCSfdu7) |
+| 7 | Internal JWT | ✅ endpoint известен; ⏳ plaintext credential — [#97](https://trello.com/c/hcmCvKWF) |
 | 8 | CORS | Product CORS уже включает `:3000`/`:3001`; CORS Auth — у Влада |

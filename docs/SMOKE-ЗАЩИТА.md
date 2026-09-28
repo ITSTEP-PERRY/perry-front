@@ -30,7 +30,7 @@ Swagger: http://localhost:5272/swagger
 | 3 | Register → Login | JWT, иконка Account ведёт в кабинет |
 | 4 | Меню ☰ (auth) | My orders / Wishlist / Account settings / Log out |
 | 5 | Catalog → товар | Галерея, About, отзывы (несколько штук) |
-| 6 | Create review | Форма → Publish → отзыв в списке |
+| 6 | Create review | Форма → Publish → отзыв в списке (**после #99–#100**; см. [ОТЗЫВЫ-ПОКУПАТЕЛЕЙ.md](./ОТЗЫВЫ-ПОКУПАТЕЛЕЙ.md)) |
 | 7 | Add to cart → Cart | Qty / Remove / summary |
 | 8 | Proceed to checkout | Заказ создан → `/orders/:id` |
 | 9 | Account → Wishlist | Add from PDP, Remove confirm |

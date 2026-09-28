@@ -48,6 +48,12 @@ export function AccountShell() {
               Wishlist
             </NavLink>
             <NavLink
+              to="/account/reviews"
+              className={({ isActive }) => `account-nav__link${isActive ? " is-active" : ""}`}
+            >
+              My reviews
+            </NavLink>
+            <NavLink
               to="/account/settings"
               className={({ isActive }) => `account-nav__link${isActive ? " is-active" : ""}`}
             >

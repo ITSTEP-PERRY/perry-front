@@ -249,7 +249,9 @@ export function ProductPage() {
       });
       setProduct({
         ...product,
-        reviewCount: product.reviewCount + 1,
+        reviewCount: typeof created.isApproved === "boolean" && created.isApproved
+          ? product.reviewCount + 1
+          : product.reviewCount,
         reviews: [
           {
             authorName: created.authorName,

@@ -147,6 +147,9 @@ export function AppShell() {
               <NavLink to="/account/wishlist" onClick={closeMenu}>
                 Wishlist
               </NavLink>
+              <NavLink to="/account/reviews" onClick={closeMenu}>
+                My reviews
+              </NavLink>
               <NavLink to="/account/settings" onClick={closeMenu}>
                 Account settings
               </NavLink>
