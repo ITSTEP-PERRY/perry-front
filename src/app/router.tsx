@@ -3,7 +3,7 @@ import { AppShell, AdminShell } from "../widgets/layout/AppShell";
 import { AuthShell } from "../widgets/layout/AuthShell";
 import { AccountShell } from "../widgets/layout/AccountShell";
 import { RequireAuth } from "./RequireAuth";
-import { HomePage } from "../pages/HomePage";
+import { HomePage } from "../pages/HomePage/HomePage";
 import { ProductsPage } from "../pages/ProductsPage";
 import { ProductPage } from "../pages/ProductPage";
 import { CartPage } from "../pages/CartPage";

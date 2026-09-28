@@ -1,0 +1,587 @@
+
+.side-menu .ant-drawer-content-wrapper {
+  width: 365px !important;
+
+  overflow: hidden !important;
+
+  box-shadow: none !important;
+}
+
+.side-menu .ant-drawer-content {
+  overflow: hidden !important;
+
+  background: #f4faff;
+}
+
+.side-menu .ant-drawer-body {
+  overflow: hidden !important;
+
+  padding: 0 !important;
+
+  background: #f4faff;
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.side-menu__content {
+  width: 365px;
+  min-height: 100vh;
+
+  box-sizing: border-box;
+
+  padding: 24px;
+
+  color: #0e2042;
+
+  background: #f4faff;
+}
+
+.side-menu__inner {
+  display: flex;
+
+  flex-direction: column;
+
+  width: 317px;
+
+  gap: 24px;
+}
+
+/* =========================================================
+   CLOSE BUTTON
+========================================================= */
+
+.side-menu__close.ant-btn {
+  position: fixed;
+
+  top: 24px;
+  left: 389px;
+
+  z-index: 1200;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 56px;
+  min-width: 56px;
+  height: 56px;
+
+  padding: 8px !important;
+
+  background:
+    #f2f4f8 !important;
+
+  border: none;
+
+  border-radius: 50px;
+
+  box-shadow: none;
+}
+
+.side-menu__close.ant-btn:hover,
+.side-menu__close.ant-btn:focus {
+  background:
+    #f2f4f8 !important;
+}
+
+.side-menu__close-icon {
+  display: block;
+
+  width: 40px;
+  height: 40px;
+
+  object-fit: contain;
+}
+
+/* =========================================================
+   GUEST
+========================================================= */
+
+.side-menu__guest {
+  display: flex;
+
+  flex-direction: column;
+
+  width: 317px;
+
+  gap: 8px;
+}
+
+.side-menu__guest-avatar {
+  display: block;
+
+  width: 48px;
+  height: 48px;
+
+  object-fit: contain;
+}
+
+.side-menu__guest-info {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.side-menu__guest-title {
+  color: #0e2042;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  line-height: 20px;
+}
+
+.side-menu__guest-text {
+  color: #0e2042;
+
+  font-size: 12px;
+  font-weight: 400;
+
+  line-height: 16px;
+}
+
+/* =========================================================
+   USER
+========================================================= */
+
+.side-menu__user {
+  display: flex;
+
+  flex-direction: column;
+
+  width: 317px;
+
+  gap: 4px;
+}
+
+.side-menu__user-name {
+  color: #0e2042;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  line-height: 20px;
+}
+
+.side-menu__user-role {
+  color: #0e2042;
+
+  font-size: 12px;
+
+  line-height: 16px;
+}
+
+/* =========================================================
+   SIGN UP
+========================================================= */
+
+.side-menu__signup.ant-btn {
+  width: 317px;
+  height: 48px;
+
+  padding: 12px !important;
+
+  color: #0e2042 !important;
+
+  font-size: 14px;
+
+  background:
+    #b8ea48 !important;
+
+  border:
+    2.5px solid
+    #b8ea48 !important;
+
+  border-radius: 4px;
+}
+
+.side-menu__signup.ant-btn:hover,
+.side-menu__signup.ant-btn:focus {
+  color: #0e2042 !important;
+
+  background:
+    #b8ea48 !important;
+
+  border-color:
+    #b8ea48 !important;
+}
+
+/* =========================================================
+   LOG IN
+========================================================= */
+
+.side-menu__login.ant-btn {
+  width: 317px;
+  height: 48px;
+
+  padding: 12px !important;
+
+  color: #0e2042;
+
+  font-size: 14px;
+
+  background:
+    transparent;
+
+  border:
+    2.5px solid
+    #4a7bd9;
+
+  border-radius: 4px;
+}
+
+.side-menu__login.ant-btn:hover,
+.side-menu__login.ant-btn:focus {
+  color: #0e2042 !important;
+
+  background:
+    rgb(74 123 217 / 5%) !important;
+
+  border-color:
+    #4a7bd9 !important;
+}
+
+/* =========================================================
+   DIVIDER
+========================================================= */
+
+.side-menu__divider {
+  width: 317px;
+  height: 0;
+
+  margin: 0;
+
+  border-top:
+    1.5px solid
+    #ccddff;
+}
+
+/* =========================================================
+   CATALOG
+========================================================= */
+
+.side-menu__catalog {
+  display: flex;
+
+  flex-direction: column;
+
+  width: 317px;
+
+  gap: 16px;
+}
+
+/* =========================================================
+   PRODUCT CATALOG HEADER
+========================================================= */
+
+.side-menu__catalog-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  width: 317px;
+  height: 32px;
+
+  padding: 0;
+
+  color: #0e2042;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+
+  cursor: pointer;
+
+  background:
+    transparent;
+
+  border: none;
+}
+
+.side-menu__catalog-left {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+.side-menu__catalog-icon {
+  display: block;
+
+  width: 32px;
+  height: 32px;
+
+  object-fit: contain;
+}
+
+.side-menu__catalog-arrow {
+  display: block;
+
+  width: 16px;
+  height: 16px;
+
+  transition:
+    transform
+    0.2s ease;
+}
+
+.side-menu__catalog-arrow--closed {
+  transform:
+    rotate(180deg);
+}
+
+/* =========================================================
+   CATEGORY LIST
+========================================================= */
+
+.side-menu__category-list {
+  display: flex;
+
+  flex-direction: column;
+
+  width: 317px;
+
+  gap: 0;
+}
+
+/* =========================================================
+   CATEGORY ITEM
+========================================================= */
+
+.side-menu__category {
+  display: flex;
+
+  align-items: center;
+
+  width: 317px;
+  height: 32px;
+
+  padding: 0;
+
+  gap: 12px;
+
+  color: #0e2042;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  background:
+    transparent;
+
+  border: none;
+}
+
+.side-menu__category:hover {
+  background:
+    rgb(74 123 217 / 6%);
+}
+
+.side-menu__category-icon {
+  display: block;
+
+  flex:
+    0 0 32px;
+
+  width: 32px;
+  height: 32px;
+
+  object-fit: contain;
+}
+
+/* =========================================================
+   SEE ALL
+========================================================= */
+
+.side-menu__see-all.ant-btn {
+  width: 317px;
+  height: 48px;
+
+  margin: 0;
+
+  padding: 12px !important;
+
+  color: #0e2042;
+
+  font-size: 14px;
+
+  background:
+    transparent;
+
+  border:
+    2.5px solid
+    #4a7bd9;
+
+  border-radius: 4px;
+}
+
+.side-menu__see-all.ant-btn:hover,
+.side-menu__see-all.ant-btn:focus {
+  color: #0e2042 !important;
+
+  background:
+    rgb(74 123 217 / 5%) !important;
+
+  border-color:
+    #4a7bd9 !important;
+}
+
+/* =========================================================
+   BOTTOM
+========================================================= */
+
+.side-menu__bottom {
+  display: flex;
+
+  flex-direction: column;
+
+  width: 317px;
+
+  gap: 16px;
+}
+
+/* =========================================================
+   HELP / SETTINGS / LOGOUT
+========================================================= */
+
+.side-menu__action {
+  display: flex;
+
+  align-items: center;
+
+  width: 317px;
+  height: 32px;
+
+  padding: 0;
+
+  gap: 16px;
+
+  color: #0e2042;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  background:
+    transparent;
+
+  border: none;
+}
+
+.side-menu__action img {
+  display: block;
+
+  flex:
+    0 0 32px;
+
+  width: 32px;
+  height: 32px;
+
+  object-fit: contain;
+}
+
+.side-menu__action:hover {
+  background:
+    rgb(74 123 217 / 6%);
+}
+
+/* =========================================================
+   OVERLAY
+========================================================= */
+
+.ant-drawer-mask {
+  background:
+    rgb(14 32 66 / 26%) !important;
+}
+
+/* =========================================================
+   REMOVE SCROLLBARS
+========================================================= */
+
+.side-menu,
+.side-menu .ant-drawer-content-wrapper,
+.side-menu .ant-drawer-content,
+.side-menu .ant-drawer-body {
+  scrollbar-width: none;
+}
+
+.side-menu::-webkit-scrollbar,
+.side-menu .ant-drawer-content-wrapper::-webkit-scrollbar,
+.side-menu .ant-drawer-content::-webkit-scrollbar,
+.side-menu .ant-drawer-body::-webkit-scrollbar {
+  display: none;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (
+  max-width: 600px
+) {
+  .side-menu
+    .ant-drawer-content-wrapper {
+    width:
+      min(
+        365px,
+        calc(
+          100vw - 80px
+        )
+      ) !important;
+  }
+
+  .side-menu__content {
+    width: 100%;
+
+    padding: 20px;
+  }
+
+  .side-menu__inner,
+  .side-menu__guest,
+  .side-menu__user,
+  .side-menu__catalog,
+  .side-menu__catalog-header,
+  .side-menu__category-list,
+  .side-menu__category,
+  .side-menu__divider,
+  .side-menu__bottom,
+  .side-menu__action,
+  .side-menu__signup.ant-btn,
+  .side-menu__login.ant-btn,
+  .side-menu__see-all.ant-btn {
+    width: 100%;
+  }
+
+  .side-menu__close.ant-btn {
+    top: 20px;
+
+    left:
+      calc(
+        100vw - 56px
+      );
+
+    width: 48px;
+    min-width: 48px;
+    height: 48px;
+  }
+
+  .side-menu__close-icon {
+    width: 32px;
+    height: 32px;
+  }
+}

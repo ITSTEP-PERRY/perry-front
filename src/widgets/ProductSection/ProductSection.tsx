@@ -12,6 +12,10 @@ import {
 } from 'react-icons/fi';
 
 import {
+  useNavigate,
+} from 'react-router-dom';
+
+import {
   ProductCard,
   type ProductCardData,
 } from '../../Components/ProductCard/ProductCard';
@@ -31,12 +35,20 @@ export const ProductSection = ({
   products,
   sectionId,
 }: ProductSectionProps) => {
-  const listRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  const listRef =
+    useRef<HTMLDivElement>(
+      null,
+    );
 
   const scrollProducts = (
-    direction: 'left' | 'right',
+    direction:
+      | 'left'
+      | 'right',
   ) => {
-    const list = listRef.current;
+    const list =
+      listRef.current;
 
     if (!list) {
       return;
@@ -44,21 +56,30 @@ export const ProductSection = ({
 
     const cardWidth = 225;
     const cardsGap = 24;
-    const scrollDistance = cardWidth + cardsGap;
+
+    const scrollDistance =
+      cardWidth + cardsGap;
 
     list.scrollBy({
       left:
         direction === 'right'
           ? scrollDistance
           : -scrollDistance,
+
       behavior: 'smooth',
     });
+  };
+
+  const handleSeeAll = () => {
+    navigate('/products');
   };
 
   return (
     <section
       className="product-section"
-      aria-labelledby={sectionId}
+      aria-labelledby={
+        sectionId
+      }
     >
       <Flex
         className="product-section__header"
@@ -76,6 +97,7 @@ export const ProductSection = ({
         <Button
           className="product-section__see-all"
           type="text"
+          onClick={handleSeeAll}
         >
           <Text className="product-section__see-all-text">
             See all
@@ -89,9 +111,15 @@ export const ProductSection = ({
         <Button
           className="product-section__arrow product-section__arrow--left"
           type="default"
-          icon={<FiChevronLeft />}
+          icon={
+            <FiChevronLeft />
+          }
           aria-label={`Previous ${title} products`}
-          onClick={() => scrollProducts('left')}
+          onClick={() =>
+            scrollProducts(
+              'left',
+            )
+          }
         />
 
         <Flex
@@ -100,20 +128,28 @@ export const ProductSection = ({
           gap={24}
           wrap={false}
         >
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-            />
-          ))}
+          {products.map(
+            (product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+              />
+            ),
+          )}
         </Flex>
 
         <Button
           className="product-section__arrow product-section__arrow--right"
           type="default"
-          icon={<FiChevronRight />}
+          icon={
+            <FiChevronRight />
+          }
           aria-label={`Next ${title} products`}
-          onClick={() => scrollProducts('right')}
+          onClick={() =>
+            scrollProducts(
+              'right',
+            )
+          }
         />
       </div>
     </section>

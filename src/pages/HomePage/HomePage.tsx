@@ -1,20 +1,9 @@
-import { useState } from 'react';
-
-import { useAppDispatch } from '../../app/hooks';
-
-import { setAuthStatus, type AuthStatusType } from '../../app/slices/authSlice'; 
-
 import { Flex } from 'antd';
 
-import { ScrollToTop } from '../../Components/ScrollToTop/ScrollToTop';
-
 import { AuthBanner } from '../../widgets/AuthBanner/AuthBanner';
-import { Footer } from '../../widgets/Footer/Footer';
-import { Header } from '../../widgets/Header/Header';
 import { HeroBanner } from '../../widgets/HeroBanner/HeroBanner';
 import { ProductSection } from '../../widgets/ProductSection/ProductSection';
 import { PromoSection } from '../../widgets/PromoSection/PromoSection';
-import { SignInSignUp } from '../../widgets/SigninSignup';
 
 import {
   bottomPromoItems,
@@ -26,25 +15,12 @@ import {
 import './HomePage.css';
 
 export const HomePage = () => {
-  const [isAuthModalOpen, setIsAuthModalOpen] =
-    useState(false);
-
-  const dispatch = useAppDispatch();
-
-  const openAuthModal = (
-    status: AuthStatusType,
-  ) => {
-    dispatch(
-      setAuthStatus({
-        status,
-      }),
-    );
-
-    setIsAuthModalOpen(true);
+  const handleLogin = () => {
+    console.log('Login');
   };
 
-  const closeAuthModal = () => {
-    setIsAuthModalOpen(false);
+  const handleSignUp = () => {
+    console.log('Sign up');
   };
 
   return (
@@ -52,12 +28,6 @@ export const HomePage = () => {
       className="home-page"
       vertical
     >
-      <Header
-        onProfileClick={() =>
-          openAuthModal('signIn')
-        }
-      />
-
       <main className="home-page__content">
         <Flex
           className="home-page__sections"
@@ -90,24 +60,11 @@ export const HomePage = () => {
           />
 
           <AuthBanner
-            onLogin={() =>
-              openAuthModal('signIn')
-            }
-            onSignUp={() =>
-              openAuthModal('signUp')
-            }
+            onLogin={handleLogin}
+            onSignUp={handleSignUp}
           />
         </Flex>
       </main>
-
-      <Footer />
-
-      <ScrollToTop />
-
-      <SignInSignUp
-        open={isAuthModalOpen}
-        onClose={closeAuthModal}
-      />
     </Flex>
   );
 };

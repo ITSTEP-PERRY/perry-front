@@ -1,250 +1,365 @@
 .header {
   width: 100%;
-  height: 64px;
-  background-color: #4a7bd9;
+
+  background: #4a7bd9;
 }
 
 .header__inner {
-  display: flex;
-  align-items: center;
-  gap: 32px;
+  width: 100%;
 
-  width: min(calc(100% - 64px), 1600px);
-  height: 64px;
-  margin: 0 auto;
-  padding: 12px 0;
+  min-height: 76px;
+
+  padding: 12px 48px;
+
+  box-sizing: border-box;
 }
 
-/* Левая часть: burger + logo */
+/* =========================================================
+   BRAND / MENU / LOGO
+========================================================= */
 
 .header__brand {
-  display: flex;
-  align-items: center;
-  flex: 0 0 153.7px;
-  gap: 12px;
-
-  width: 153.7px;
-  height: 40px;
+  flex: 0 0 auto;
 }
 
 .header__menu-button.ant-btn {
-  display: inline-flex;
+  display: flex;
+
   align-items: center;
   justify-content: center;
-  flex: 0 0 40px;
 
   width: 40px;
   min-width: 40px;
   height: 40px;
-  min-height: 40px;
-  padding: 9px !important;
 
-  color: #f4faff;
-  background-color: transparent;
+  padding: 0 !important;
+
+  color: #ffffff;
+
+  font-size: 26px;
+
+  background: transparent;
+
   border: none;
-  border-radius: 3px;
-  box-shadow: none;
+
+  border-radius: 4px;
 }
 
-.header__menu-button.ant-btn:hover {
-  color: #f4faff !important;
-  background-color: rgb(255 255 255 / 10%) !important;
-}
+.header__menu-button.ant-btn:hover,
+.header__menu-button.ant-btn:focus {
+  color: #ffffff !important;
 
-.header__menu-button .ant-btn-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
+  background:
+    rgb(255 255 255 / 8%) !important;
 }
 
 .header__menu-button svg {
-  width: 22px;
-  height: 22px;
+  width: 26px;
+  height: 26px;
 }
 
+/* =========================================================
+   LOGO
+========================================================= */
+
 .header__logo-link {
-  display: inline-flex;
+  display: flex;
+
   align-items: center;
   justify-content: center;
 
   margin: 0;
   padding: 0;
 
-  background: transparent;
-  border: none;
   cursor: pointer;
+
+  appearance: none;
+
+  background: transparent;
+
+  border: none;
+  outline: none;
+
+  box-shadow: none;
+}
+
+.header__logo-link:hover,
+.header__logo-link:focus,
+.header__logo-link:active {
+  background: transparent;
+
+  border: none;
+  outline: none;
+
+  box-shadow: none;
 }
 
 .header__logo-image {
   display: block;
-  max-width: 100%;
+
+  width: 116px;
+  height: auto;
+
+  object-fit: contain;
 }
 
-/* Поиск */
+.header__logo-link .ant-image {
+  display: block;
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
 
 .header__search {
   display: flex;
-  align-items: stretch;
+
   flex: 1;
 
   min-width: 0;
-  height: 40px;
+
+  height: 48px;
 }
 
 .header__search-input.ant-input {
-  flex: 1;
-  min-width: 0;
+  height: 48px;
 
-  height: 40px;
-  min-height: 40px;
-  padding: 0 20px;
+  padding:
+    0
+    20px;
 
-  color: #172b4d;
-  background-color: #f4faff;
+  color: #0e2042;
+
+  font-size: 16px;
+
+  background: #ffffff;
+
   border: none;
-  border-radius: 4px 0 0 4px;
+
+  border-radius:
+    8px
+    0
+    0
+    8px;
+
   box-shadow: none;
+}
+
+.header__search-input.ant-input::placeholder {
+  color:
+    rgb(14 32 66 / 50%);
 }
 
 .header__search-input.ant-input:hover,
 .header__search-input.ant-input:focus {
   border: none;
+
   box-shadow: none;
 }
 
-.header__search-input.ant-input::placeholder {
-  color: #8798b1;
-}
+/* SEARCH BUTTON */
 
 .header__search-button.ant-btn {
-  display: inline-flex;
+  display: flex;
+
   align-items: center;
   justify-content: center;
-  flex: 0 0 56px;
 
-  width: 56px;
-  min-width: 56px;
-  max-width: 56px;
+  width: 64px;
+  min-width: 64px;
+  height: 48px;
 
-  height: 40px;
-  min-height: 40px;
-  max-height: 40px;
+  padding: 0 !important;
 
-  margin: 0;
-  padding: 8px 16px !important;
+  color: #0e2042;
 
-  color: #172b4d;
-  background-color: #b8ea48;
+  background: #b8ea48;
+
   border: none;
-  border-radius: 0 4px 4px 0;
-  box-shadow: none;
+
+  border-radius:
+    0
+    8px
+    8px
+    0;
 }
 
-.header__search-button.ant-btn:hover {
-  color: #172b4d !important;
-  background-color: #addf3e !important;
-}
+.header__search-button.ant-btn:hover,
+.header__search-button.ant-btn:focus {
+  color: #0e2042 !important;
 
-.header__search-button .ant-btn-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
+  background: #b8ea48 !important;
 }
 
 .header__search-button svg {
-  width: 16px;
-  height: 16px;
+  width: 22px;
+  height: 22px;
 }
 
-/* Правая часть: profile + cart */
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
 
 .header__actions {
-  display: flex;
-  align-items: center;
-  flex: 0 0 88px;
-  gap: 8px;
-
-  width: 88px;
-  height: 40px;
+  flex: 0 0 auto;
 }
 
 .header__action-button.ant-btn {
-  display: inline-flex;
+  display: flex;
+
   align-items: center;
   justify-content: center;
-  flex: 0 0 40px;
 
-  width: 40px;
-  min-width: 40px;
-  height: 40px;
-  min-height: 40px;
-  padding: 8px !important;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
 
-  color: #f4faff;
-  background-color: transparent;
+  padding: 0 !important;
+
+  color: #ffffff;
+
+  background: transparent;
+
   border: none;
+
   border-radius: 4px;
-  box-shadow: none;
 }
 
-.header__action-button.ant-btn:hover {
-  color: #f4faff !important;
-  background-color: rgb(255 255 255 / 10%) !important;
-}
+.header__action-button.ant-btn:hover,
+.header__action-button.ant-btn:focus {
+  color: #ffffff !important;
 
-.header__action-button .ant-btn-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
+  background:
+    rgb(255 255 255 / 8%) !important;
 }
 
 .header__action-button svg {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
 }
 
-/* Адаптивность */
+/* =========================================================
+   TABLET
+========================================================= */
 
-@media (min-width: 1920px) {
+@media (max-width: 1024px) {
   .header__inner {
-    width: calc(100% - 320px);
-    max-width: 1600px;
+    padding:
+      12px
+      24px;
+
+    gap: 20px !important;
+  }
+
+  .header__logo-image {
+    width: 100px;
+  }
+
+  .header__search-input.ant-input {
+    font-size: 15px;
   }
 }
 
-@media (max-width: 900px) {
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
   .header__inner {
-    width: calc(100% - 32px);
-    gap: 16px;
+    flex-wrap: wrap;
+
+    padding:
+      10px
+      16px;
+
+    gap: 12px !important;
   }
 
   .header__brand {
-    flex-basis: auto;
-    width: auto;
-  }
-}
-
-@media (max-width: 600px) {
-  .header__inner {
-    width: calc(100% - 24px);
-    gap: 8px;
-  }
-
-
-
-  .header__brand {
-    flex: 0 0 40px;
+    order: 1;
   }
 
   .header__actions {
-    flex: 0 0 40px;
-    width: 40px;
+    order: 2;
+
+    margin-left: auto;
   }
 
-  .header__actions .header__action-button:first-child {
-    display: none;
+  .header__search {
+    order: 3;
+
+    flex: 0 0 100%;
+
+    width: 100%;
+  }
+
+  .header__logo-image {
+    width: 92px;
+  }
+
+  .header__menu-button.ant-btn {
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+  }
+
+  .header__menu-button svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .header__action-button.ant-btn {
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+  }
+
+  .header__action-button svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .header__search,
+  .header__search-input.ant-input,
+  .header__search-button.ant-btn {
+    height: 44px;
+  }
+
+  .header__search-button.ant-btn {
+    width: 54px;
+    min-width: 54px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .header__inner {
+    padding:
+      10px
+      12px;
+  }
+
+  .header__logo-image {
+    width: 82px;
+  }
+
+  .header__actions {
+    gap: 2px !important;
+  }
+
+  .header__search-input.ant-input {
+    padding:
+      0
+      14px;
+
+    font-size: 14px;
+  }
+
+  .header__search-button.ant-btn {
+    width: 48px;
+    min-width: 48px;
   }
 }

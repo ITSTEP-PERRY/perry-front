@@ -2,61 +2,83 @@
   position: relative;
 
   width: 100%;
+
   overflow: hidden;
 
-  background-color: #172b4d;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgb(23 43 77 / 10%);
+
+  box-shadow:
+    0 4px 14px
+    rgb(44 93 187 / 12%);
 }
+
+/* Ant Design wrapper */
 
 .hero-banner .ant-image {
   display: block;
+
   width: 100%;
 }
 
-.hero-banner__image.ant-image-img {
+/* IMAGE */
+
+.hero-banner__image {
   display: block;
 
-  width: 100%;
+  width: 100% !important;
   height: auto;
 
   object-fit: cover;
+
+  border-radius: 8px;
+
+  transition:
+    opacity 0.25s ease;
 }
+
+/* =========================================================
+   ARROWS
+========================================================= */
 
 .hero-banner__arrow.ant-btn {
   position: absolute;
-  top: 50%;
-  z-index: 2;
 
-  display: inline-flex;
+  top: 50%;
+
+  z-index: 5;
+
+  display: flex;
+
   align-items: center;
   justify-content: center;
 
-  width: 40px;
-  min-width: 40px;
-  height: 40px;
-  min-height: 40px;
-  padding: 8px !important;
+  width: 48px;
+  min-width: 48px;
+  height: 48px;
+
+  padding: 0 !important;
 
   color: #4a7bd9;
-  background-color: #f4faff;
+
+  background:
+    #f2f4f8 !important;
+
   border: none;
+
   border-radius: 4px;
+
+  transform:
+    translateY(-50%);
+
   box-shadow: none;
-
-  transform: translateY(-50%);
 }
 
-.hero-banner__arrow.ant-btn:hover {
-  color: #326bcf !important;
-  background-color: #ffffff !important;
-}
+.hero-banner__arrow.ant-btn:hover,
+.hero-banner__arrow.ant-btn:focus {
+  color: #4a7bd9 !important;
 
-.hero-banner__arrow .ant-btn-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
+  background:
+    #f2f4f8 !important;
 }
 
 .hero-banner__arrow svg {
@@ -64,33 +86,35 @@
   height: 24px;
 }
 
-.hero-banner__arrow--left {
-  left: 20px;
+/* LEFT */
+
+.hero-banner__arrow--left.ant-btn {
+  left: 24px;
 }
 
-.hero-banner__arrow--right {
-  right: 20px;
+/* RIGHT */
+
+.hero-banner__arrow--right.ant-btn {
+  right: 24px;
 }
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
 @media (max-width: 768px) {
-  .hero-banner {
-    border-radius: 6px;
-  }
-
   .hero-banner__arrow.ant-btn {
-    width: 32px;
-    min-width: 32px;
-    height: 32px;
-    min-height: 32px;
-    padding: 6px !important;
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
   }
 
-  .hero-banner__arrow--left {
-    left: 8px;
+  .hero-banner__arrow--left.ant-btn {
+    left: 12px;
   }
 
-  .hero-banner__arrow--right {
-    right: 8px;
+  .hero-banner__arrow--right.ant-btn {
+    right: 12px;
   }
 
   .hero-banner__arrow svg {

@@ -1,20 +1,32 @@
 import type { FormEvent } from 'react';
 
-import { Button, Flex, Image, Input } from 'antd';
+import {
+  Button,
+  Flex,
+  Image,
+  Input,
+} from 'antd';
 
-import { FiMenu, FiSearch, FiShoppingCart, FiUser } from 'react-icons/fi';
+import {
+  FiMenu,
+  FiSearch,
+  FiShoppingCart,
+  FiUser,
+} from 'react-icons/fi';
 
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import perryLogo from '../../assets/logo/perry-logo.svg';
 
 import './Header.css';
 
 interface HeaderProps {
+  onMenuClick?: () => void;
   onProfileClick?: () => void;
 }
 
 export const Header = ({
+  onMenuClick,
   onProfileClick,
 }: HeaderProps) => {
   const navigate = useNavigate();
@@ -24,27 +36,34 @@ export const Header = ({
   ) => {
     event.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData(
+      event.currentTarget,
+    );
+
     const searchValue = formData
       .get('search')
       ?.toString()
       .trim();
 
     if (!searchValue) {
+      navigate('/products');
       return;
     }
 
     navigate(
-      `/search?q=${encodeURIComponent(searchValue)}`,
+      `/products?search=${encodeURIComponent(
+        searchValue,
+      )}`,
     );
   };
 
-  const handleLogoClick = () => {
-    navigate('/');
-  };
+  const handleProfileClick = () => {
+    if (onProfileClick) {
+      onProfileClick();
+      return;
+    }
 
-  const handleCartClick = () => {
-    navigate('/cart');
+    navigate('/login');
   };
 
   return (
@@ -64,13 +83,16 @@ export const Header = ({
             type="text"
             icon={<FiMenu />}
             aria-label="Open menu"
+            onClick={onMenuClick}
           />
 
           <button
-            className="header__logo-link"
             type="button"
-            onClick={handleLogoClick}
-            aria-label="Go to Perry home page"
+            className="header__logo-link"
+            aria-label="Perry home"
+            onClick={() =>
+              navigate('/')
+            }
           >
             <Image
               className="header__logo-image"
@@ -83,7 +105,9 @@ export const Header = ({
 
         <form
           className="header__search"
-          onSubmit={handleSearchSubmit}
+          onSubmit={
+            handleSearchSubmit
+          }
         >
           <Input
             className="header__search-input"
@@ -109,16 +133,22 @@ export const Header = ({
             className="header__action-button"
             type="text"
             icon={<FiUser />}
-            aria-label="Open login form"
-            onClick={onProfileClick}
+            aria-label="Open profile"
+            onClick={
+              handleProfileClick
+            }
           />
 
           <Button
             className="header__action-button"
             type="text"
-            icon={<FiShoppingCart />}
+            icon={
+              <FiShoppingCart />
+            }
             aria-label="Open cart"
-            onClick={handleCartClick}
+            onClick={() =>
+              navigate('/cart')
+            }
           />
         </Flex>
       </Flex>
