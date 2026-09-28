@@ -1,4 +1,4 @@
-import { type FormEvent, useRef, useState } from "react";
+import { type FormEvent, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../app/AuthContext";
 import { AuthField, AuthModal } from "../../widgets/auth/AuthModal";
@@ -14,7 +14,6 @@ export function LoginPage() {
   const [stay, setStay] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const failCount = useRef(0);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -22,15 +21,15 @@ export function LoginPage() {
     setError(null);
     try {
       await login(loginName, password);
-      failCount.current = 0;
       navigate(from, { replace: true });
     } catch (err) {
-      failCount.current += 1;
-      if (failCount.current >= 3) {
+      const msg = err instanceof Error ? err.message : "Login failed";
+      // Real Auth flow: unverified email → code page. Do NOT redirect on network/CORS.
+      if (/verif|confirm.*(email|mail)|не подтвержд/i.test(msg)) {
         navigate(`/verify-code?email=${encodeURIComponent(loginName.trim())}`);
         return;
       }
-      setError(err instanceof Error ? err.message : "Login failed");
+      setError(msg);
     } finally {
       setBusy(false);
     }

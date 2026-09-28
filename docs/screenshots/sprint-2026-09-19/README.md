@@ -128,17 +128,6 @@
 
 ---
 
-## S13. Admin — Reviews: Approve (скрытый)
-
-**Файл:** [`13-admin-reviews-approve.png`](./13-admin-reviews-approve.png)  
-**URL:** `/admin/reviews`
-
-![Admin Review Approve](./13-admin-reviews-approve.png)
-
-Скрытый с витрины отзыв: **Approve** / **Delete** (`PUT …/approve`).
-
----
-
 ## S14. Account — Order details (модалка)
 
 **Файл:** [`14-account-order-details-modal.png`](./14-account-order-details-modal.png)  

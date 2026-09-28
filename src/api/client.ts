@@ -9,15 +9,40 @@ export function productApiUrl(path: string): string {
 
 /**
  * Auth Service Влада (#94/#95).
- * Dev default: prod Auth Azure. Override: VITE_AUTH_API_URL.
+ * Dev: Vite proxy `/auth-api` → Azure (обход CORS).
+ * Override: VITE_AUTH_API_URL (полный origin или `/auth-api`).
  */
 export function authApiUrl(path: string): string {
-  const base = (
-    import.meta.env.VITE_AUTH_API_URL as string | undefined
-  )?.replace(/\/$/, "")
-    || "https://perry-auth-service.orangeplant-910928aa.swedencentral.azurecontainerapps.io";
+  const configured = (import.meta.env.VITE_AUTH_API_URL as string | undefined)?.replace(
+    /\/$/,
+    "",
+  );
+  const base =
+    configured ||
+    (import.meta.env.DEV
+      ? "/auth-api"
+      : "https://perry-auth-service.orangeplant-910928aa.swedencentral.azurecontainerapps.io");
   const p = path.startsWith("/") ? path : `/${path}`;
   // Auth API paths are /api/auth/...
+  if (p.startsWith("/api/")) return `${base}${p}`;
+  return `${base}/api${p}`;
+}
+
+/**
+ * Admin Users — perry-admin-service (не Auth).
+ * Dev: Vite proxy `/users-api` → Azure.
+ */
+export function usersApiUrl(path: string): string {
+  const configured = (import.meta.env.VITE_USERS_API_URL as string | undefined)?.replace(
+    /\/$/,
+    "",
+  );
+  const base =
+    configured ||
+    (import.meta.env.DEV
+      ? "/users-api"
+      : "https://perry-admin-service.orangeplant-910928aa.swedencentral.azurecontainerapps.io");
+  const p = path.startsWith("/") ? path : `/${path}`;
   if (p.startsWith("/api/")) return `${base}${p}`;
   return `${base}/api${p}`;
 }
@@ -60,7 +85,30 @@ async function parseJson(res: Response) {
   }
 }
 
-type FetchOpts = RequestInit & { base?: "product" | "auth" };
+type FetchOpts = RequestInit & { base?: "product" | "auth" | "users" };
+
+function resolveUrl(path: string, base: "product" | "auth" | "users"): string {
+  if (path.startsWith("http")) return path;
+  if (base === "auth") return authApiUrl(path);
+  if (base === "users") return usersApiUrl(path);
+  return productApiUrl(path);
+}
+
+function friendlyStatusMessage(status: number, base: "product" | "auth" | "users"): string {
+  if (status === 401) {
+    return base === "users"
+      ? "Unauthorized — need Admin JWT (re-login)."
+      : "Unauthorized — log in again as Admin.";
+  }
+  if (status === 403) return "Forbidden — Admin role required.";
+  if (status === 404) {
+    return base === "users"
+      ? "Users API not found (perry-admin-service)."
+      : "Not found.";
+  }
+  if (status === 502 || status === 504) return "API unavailable (Bad Gateway)";
+  return "Request failed";
+}
 
 export async function apiFetch<T = unknown>(
   path: string,
@@ -79,12 +127,7 @@ export async function apiFetch<T = unknown>(
   const token = getToken();
   if (token) headers.set("Authorization", `Bearer ${token}`);
 
-  const url =
-    path.startsWith("http")
-      ? path
-      : base === "auth"
-        ? authApiUrl(path)
-        : productApiUrl(path);
+  const url = resolveUrl(path, base);
 
   let res: Response;
   try {
@@ -99,7 +142,9 @@ export async function apiFetch<T = unknown>(
       0,
       base === "auth"
         ? "Network error — Auth Service unreachable (check VITE_AUTH_API_URL / CORS)."
-        : "Network error — is Perry.Api running on :5272?",
+        : base === "users"
+          ? "Network error — Users API unreachable (perry-admin-service)."
+          : "Network error — is Perry.Api running on :5272?",
     );
   }
 
@@ -107,11 +152,11 @@ export async function apiFetch<T = unknown>(
   if (!res.ok) {
     const msg =
       (data && typeof data === "object" && "error" in data && String((data as { error: string }).error)) ||
-      (data && typeof data === "object" && "title" in data && String((data as { title: string }).title)) ||
       (data && typeof data === "object" && "message" in data && String((data as { message: string }).message)) ||
-      (res.status === 502 || res.status === 504
-        ? "API unavailable (Bad Gateway)"
-        : res.statusText || "Request failed");
+      (data && typeof data === "object" && "title" in data && String((data as { title: string }).title)) ||
+      friendlyStatusMessage(res.status, base) ||
+      res.statusText ||
+      "Request failed";
     throw new ApiError(res.status, msg, data);
   }
   return data as T;

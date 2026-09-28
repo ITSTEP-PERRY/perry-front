@@ -233,6 +233,7 @@
 **Закрыто 25.09:** #15, #16, #32, #41, #43, #62, #73.  
 **#93** — в Review: автор предложения сверяет реализацию с желаемым контрактом.  
 **Закрыто 26.09:** **#94** (Users out of Product API).  
+**#A02** — ✅ Done: merge `backend/main` (PR #13, fixed DB migrations) в `feature/categories-facets-figma-storefront` → [Teslyar75/My_Amazon2](https://github.com/Teslyar75/My_Amazon2) · [карточка](https://trello.com/c/BgOTO4i6).  
 **#95** — To Do: уточнить JWT claims / issuer / Internal API у Влада ([карточка](https://trello.com/c/T28F0b7e)). См. [AUTH-INTEGRATION.md](./AUTH-INTEGRATION.md).
 
 ---

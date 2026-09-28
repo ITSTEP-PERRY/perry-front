@@ -58,31 +58,65 @@ export const reviewsApi = {
       method: "POST",
       body: JSON.stringify(body),
     }),
-  adminList: (opts?: { status?: string; q?: string }) => {
+  /** #A04 — модерация через ReviewController (`/api/reviews`), не AdminReviewsController. */
+  adminList: async (opts?: { status?: string; q?: string }) => {
     const p = new URLSearchParams();
-    if (opts?.status) p.set("status", opts.status);
-    if (opts?.q) p.set("q", opts.q);
-    const qs = p.toString();
-    return apiFetch<
-      {
-        id: string;
-        productId: string;
-        productName: string;
-        authorName: string;
-        rating: number;
-        title: string;
-        body: string;
-        isApproved: boolean;
-        createdAtUtc: string;
-        tags: string[];
-      }[]
-    >(`/admin/reviews${qs ? `?${qs}` : ""}`);
+    p.set("CurrentPage", "1");
+    p.set("PageSize", "200");
+    p.set("OrderPropertyName", "CreatedAtUtc");
+    p.set("DescendingOrder", "true");
+    const status = (opts?.status || "all").toLowerCase();
+    if (status === "pending" || status === "hidden") {
+      p.set("FilterObjects[0].PropertyName", "IsApproved");
+      p.set("FilterObjects[0].Value", "false");
+    } else if (status === "approved" || status === "visible") {
+      p.set("FilterObjects[0].PropertyName", "IsApproved");
+      p.set("FilterObjects[0].Value", "true");
+    }
+    if (opts?.q) {
+      p.set("SearchPropertyName", "Title");
+      p.set("SearchTerm", opts.q);
+    }
+    const raw = await apiFetch<{
+      pagedList?: {
+        items?: {
+          id: string;
+          productId: string;
+          authorName?: string;
+          rating: number;
+          title?: string;
+          body?: string;
+          isApproved: boolean;
+          createdAtUtc: string;
+          tags?: { name?: string }[];
+        }[];
+      };
+    }>(`/reviews?${p}`);
+    const items = raw.pagedList?.items ?? [];
+    return items.map((r) => ({
+      id: r.id,
+      productId: r.productId,
+      productName: r.productId,
+      authorName: r.authorName || "—",
+      rating: r.rating,
+      title: r.title || "",
+      body: r.body || "",
+      isApproved: r.isApproved,
+      createdAtUtc: r.createdAtUtc,
+      tags: (r.tags ?? []).map((t) => t.name || "").filter(Boolean),
+    }));
   },
   approve: (id: string) =>
-    apiFetch<{ status: string }>(`/admin/reviews/${id}/approve`, { method: "PUT" }),
+    apiFetch<void>(`/reviews/disable-many`, {
+      method: "PATCH",
+      body: JSON.stringify({ reviewIds: [id], approved: true }),
+    }),
   reject: (id: string) =>
-    apiFetch<{ status: string }>(`/admin/reviews/${id}/reject`, { method: "PUT" }),
-  remove: (id: string) => apiFetch<void>(`/admin/reviews/${id}`, { method: "DELETE" }),
+    apiFetch<void>(`/reviews/disable-many`, {
+      method: "PATCH",
+      body: JSON.stringify({ reviewIds: [id], approved: false }),
+    }),
+  remove: (id: string) => apiFetch<void>(`/reviews/${id}`, { method: "DELETE" }),
 };
 
 export const productsApi = {
@@ -220,13 +254,18 @@ function normalizeAuthUser(raw: Record<string, unknown>): AuthUser {
     (raw.roleId as string) ||
     (Array.isArray(raw.roles) ? String(raw.roles[0]) : undefined) ||
     "User";
+  const first = String(raw.firstName ?? "").trim();
+  const last = String(raw.lastName ?? "").trim();
+  const fullFromParts = [first, last].filter(Boolean).join(" ");
   return {
     id: String(raw.id ?? raw.userId ?? ""),
-    name: String(raw.name ?? raw.fullName ?? raw.email ?? "User"),
+    name: String(raw.name ?? raw.fullName ?? (fullFromParts || raw.email) ?? "User"),
     email: String(raw.email ?? ""),
     login: String(raw.login ?? raw.email ?? ""),
     roleId: role === "Admin" || role === "admin" ? "Admin" : "User",
-    avatar: ((raw.avatar as string | null | undefined) ?? undefined) as string | undefined,
+    avatar: ((raw.avatarUrl as string | null | undefined) ??
+      (raw.avatar as string | null | undefined) ??
+      undefined) as string | undefined,
   };
 }
 
@@ -252,56 +291,85 @@ function normalizeAuthResponse(raw: Record<string, unknown>): AuthResponse {
   };
 }
 
-/** Admin users — через Auth Service (не Product API). */
+type AdminUserRow = {
+  id: string;
+  name: string;
+  email: string;
+  roleId: string;
+  login: string;
+  registeredAtUtc: string;
+  deletedAtUtc?: string | null;
+  isDeleted?: boolean;
+};
+
+function mapAdminUser(raw: Record<string, unknown>): AdminUserRow {
+  const first = String(raw.firstName ?? "").trim();
+  const last = String(raw.lastName ?? "").trim();
+  const nameFromParts = [first, last].filter(Boolean).join(" ");
+  const status = String(raw.status ?? "").toLowerCase();
+  const isDeleted =
+    Boolean(raw.isDeleted) ||
+    raw.deletedAtUtc != null ||
+    status === "deleted";
+  const roleRaw = String(raw.role ?? raw.roleId ?? "User");
+  return {
+    id: String(raw.id ?? ""),
+    name: String(raw.name ?? (nameFromParts || raw.email || "User")),
+    email: String(raw.email ?? ""),
+    roleId: roleRaw === "Admin" || roleRaw === "admin" ? "Admin" : "User",
+    login: String(raw.login ?? raw.email ?? ""),
+    registeredAtUtc: String(raw.registeredAtUtc ?? raw.createdAt ?? raw.createdAtUtc ?? ""),
+    deletedAtUtc: (raw.deletedAtUtc as string | null | undefined) ??
+      (isDeleted ? String(raw.updatedAt ?? raw.updatedAtUtc ?? "") || null : null),
+    isDeleted,
+  };
+}
+
+/** Admin users — perry-admin-service (`/api/admin/users`), не Auth. */
 export const usersApi = {
   list: (opts?: { status?: string; role?: string }) => {
     const p = new URLSearchParams();
-    if (opts?.status) p.set("status", opts.status);
-    if (opts?.role) p.set("role", opts.role);
+    p.set("Page", "1");
+    p.set("PageSize", "100");
+    // Service: Status=Active|Deleted|Blocked; omit for All
+    if (opts?.status && opts.status !== "all") {
+      const s = opts.status.toLowerCase();
+      p.set(
+        "Status",
+        s === "deleted" ? "Deleted" : s === "blocked" ? "Blocked" : "Active",
+      );
+    }
+    if (opts?.role) p.set("Role", opts.role);
     const qs = p.toString();
-    return apiFetch<
-      {
-        id: string;
-        name: string;
-        email: string;
-        roleId: string;
-        login: string;
-        registeredAtUtc: string;
-        deletedAtUtc?: string | null;
-        isDeleted?: boolean;
-      }[]
-    >(`/admin/users${qs ? `?${qs}` : ""}`, { base: "auth" }).then((list) =>
-      // Auth may return { items: [...] }
-      (Array.isArray(list)
-        ? list
-        : ((list as unknown as { items?: typeof list }).items ?? [])
-      ).map((u) => ({
-        ...u,
-        roleId: (u as { roleId?: string; role?: string }).roleId
-          ?? (u as { role?: string }).role
-          ?? "User",
-        login: u.login || u.email,
-        registeredAtUtc: u.registeredAtUtc || "",
-      })),
-    );
+    return apiFetch<{ items?: Record<string, unknown>[] } | Record<string, unknown>[]>(
+      `/admin/users?${qs}`,
+      { base: "users" },
+    ).then((raw) => {
+      const list = Array.isArray(raw)
+        ? raw
+        : Array.isArray(raw.items)
+          ? raw.items
+          : [];
+      return list.map((u) => mapAdminUser(u as Record<string, unknown>));
+    });
   },
   softDelete: (id: string) =>
     apiFetch(`/admin/users/${id}/status`, {
       method: "PATCH",
       body: JSON.stringify({ status: "Deleted" }),
-      base: "auth",
+      base: "users",
     }),
   restore: (id: string) =>
     apiFetch(`/admin/users/${id}/status`, {
       method: "PATCH",
       body: JSON.stringify({ status: "Active" }),
-      base: "auth",
+      base: "users",
     }),
   setRole: (id: string, roleId: string) =>
     apiFetch(`/admin/users/${id}/role`, {
       method: "PATCH",
-      body: JSON.stringify({ role: roleId, roleId }),
-      base: "auth",
+      body: JSON.stringify({ role: roleId }),
+      base: "users",
     }),
 };
 
@@ -322,10 +390,18 @@ export const wishlistApi = {
 export const ordersApi = {
   mine: () => apiFetch<OrderDto[]>("/orders"),
   byId: (id: string) => apiFetch<OrderDto>(`/orders/${id}`),
-  checkout: (sessionId: string) =>
+  checkout: (
+    sessionId: string,
+    opts?: { shippingAddress?: string; paymentType?: string; recipientName?: string },
+  ) =>
     apiFetch<OrderDto>("/orders/checkout", {
       method: "POST",
-      body: JSON.stringify({ sessionId }),
+      body: JSON.stringify({
+        sessionId,
+        shippingAddress: opts?.shippingAddress,
+        paymentType: opts?.paymentType ?? "Cash",
+        recipientName: opts?.recipientName,
+      }),
     }),
   admin: (opts?: { status?: string; fromUtc?: string; toUtc?: string; orderId?: string }) => {
     const p = new URLSearchParams();

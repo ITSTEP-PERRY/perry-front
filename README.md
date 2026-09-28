@@ -5,7 +5,7 @@ Vite + React 19 витрина маркетплейса **Perry**. Визуал 
 Backend: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_for_our_poroject)  
 **Хроника всей работы:** [docs/ХРОНИКА-РАБОТЫ.md](./docs/ХРОНИКА-РАБОТЫ.md) · оглавление [docs/README.md](./docs/README.md)  
 **Trello (карточки):** [docs/TRELLO-TODO.md](./docs/TRELLO-TODO.md) · доска [ITSTEP-PERRY](https://trello.com/b/bwEYs3Kq/itstep-perry)  
-**Срез 26.09 (#94 Auth / без Users):** [docs/ИЗМЕНЕНИЯ-2026-09-26.md](./docs/ИЗМЕНЕНИЯ-2026-09-26.md) · [docs/ОТЧЁТ-2026-09-26.md](./docs/ОТЧЁТ-2026-09-26.md) · [docs/AUTH-INTEGRATION.md](./docs/AUTH-INTEGRATION.md) · [docs/ВОПРОСЫ-КОМАНДЕ.md](./docs/ВОПРОСЫ-КОМАНДЕ.md)  
+**Срез 26.09 (#94 Auth / без Users):** [docs/ИЗМЕНЕНИЯ-2026-09-26.md](./docs/ИЗМЕНЕНИЯ-2026-09-26.md) · [docs/ОТЧЁТ-2026-09-26.md](./docs/ОТЧЁТ-2026-09-26.md) · [docs/AUTH-INTEGRATION.md](./docs/AUTH-INTEGRATION.md) · [docs/ВОПРОСЫ-КОМАНДЕ.md](./docs/ВОПРОСЫ-КОМАНДЕ.md) · [docs/ADMIN-КОМАНДА.md](./docs/ADMIN-КОМАНДА.md)  
 **Срез 25.09 (lightbox / auth tokens / orders stats):** [docs/ИЗМЕНЕНИЯ-2026-09-25.md](./docs/ИЗМЕНЕНИЯ-2026-09-25.md) · [docs/ИЗМЕНЕНИЯ-2026-09-25-orders-stats.md](./docs/ИЗМЕНЕНИЯ-2026-09-25-orders-stats.md)  
 **Спринт 19.09:** [docs/ИЗМЕНЕНИЯ-2026-09-19.md](./docs/ИЗМЕНЕНИЯ-2026-09-19.md) · скрины [docs/screenshots/sprint-2026-09-19/](./docs/screenshots/sprint-2026-09-19/README.md)  
 Сводка (каталог/PDP/auth): [docs/ИЗМЕНЕНИЯ-2026-09-17.md](./docs/ИЗМЕНЕНИЯ-2026-09-17.md)  
@@ -118,12 +118,6 @@ Backend-пара: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Ba
 ![My orders](./docs/screenshots/sprint-2026-09-19/12-account-my-orders.png)
 
 Кабинет: заказы Ordered / Ready for pickup.
-
-### 13 · Admin Reviews — Approve
-
-![Admin Review Approve](./docs/screenshots/sprint-2026-09-19/13-admin-reviews-approve.png)
-
-Вернуть скрытый отзыв (Approve / Delete).
 
 ### 14 · Account — Order details
 
