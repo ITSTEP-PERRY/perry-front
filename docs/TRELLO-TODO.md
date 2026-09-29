@@ -196,7 +196,7 @@
 | **86** | Актуализировать скриншоты README (уже 01–33) | Docs | ✅ | `docs/screenshots` |
 | **87** | Документ «проделанная работа» § витрина | Docs | ✅ | хроника / проделанная работа |
 | **88** | Речь на 1 мин про stub SMTP / демо-дыры | Docs P0 | ✅ | `РЕЧЬ-SMTP-ДЕМО.md` |
-| **92** | Графические слайды: обзор проекта и узлы | Docs Design P0 | ⬜ | To Do на доске |
+| **92** | Графические слайды: обзор проекта и узлы | Docs Design P0 | ✅ | Done · [`project_defense/`](../project_defense/) · [карточка](https://trello.com/c/aqjFgfcU) |
 
 ---
 
@@ -216,7 +216,7 @@
 |---------|--------|
 | **Done** | 1–5, 7–24, 26–41, 43–44, 46, 48–73, 76–78, 80, 83–84, 86–89 |
 | **Review** | 90, 91, **93** |
-| **To Do** | 92 |
+| **To Do** | — (было 92 → Done) |
 | **Backlog** | 25, 42, 45, 74, 75, 79, 81, 85 |
 | **Blocked** | 6, 47, 82 |
 | **In Progress** | — |
@@ -225,7 +225,7 @@
 
 | Tier | Задачи | Зачем |
 |------|--------|-------|
-| **P0** | **#92** слайды | Речь/демо на защите |
+| **P0** | ~~**#92** слайды~~ ✅ | `project_defense/` · [карточка](https://trello.com/c/aqjFgfcU) |
 | **P1** | **#81** / **#79** mobile (другой), **#25** фото | Полировка демо |
 | **P2** | **#74** **#75** **#45** **#42** **#85** | Не блокер |
 | **Blocked** | **#6** **#47** **#82** | Внешний доступ / зависимости |
@@ -235,7 +235,7 @@
 **Закрыто 26.09:** **#94** (Users out of Product API).  
 **#A02** — ✅ Done: merge `backend/main` (PR #13, fixed DB migrations) · [карточка](https://trello.com/c/BgOTO4i6).  
 **Закрыто 28.09:** **#A03** seed orders · **#A04** remove AdminReviewsController · **#A05** checkout shipping/payment · **#A06** `/api/health` · **#A07** popular-by-userId — см. [ИЗМЕНЕНИЯ-2026-09-28.md](./ИЗМЕНЕНИЯ-2026-09-28.md).  
-**#95** — ✅ secret HS256 получен; Product читает `.env` / валидирует подпись — [ИЗМЕНЕНИЯ-2026-09-28-auth-95.md](./ИЗМЕНЕНИЯ-2026-09-28-auth-95.md) · [AUTH-INTEGRATION.md](./AUTH-INTEGRATION.md). Осталось: plaintext service credential + подтвердить iss/aud на живом токене. **#92** — слайды (Design).  
+**#95** — ✅ secret HS256 получен; Product читает `.env` / валидирует подпись — [ИЗМЕНЕНИЯ-2026-09-28-auth-95.md](./ИЗМЕНЕНИЯ-2026-09-28-auth-95.md) · [AUTH-INTEGRATION.md](./AUTH-INTEGRATION.md). Осталось: plaintext service credential + подтвердить iss/aud на живом токене. **#92** — ✅ Done: пакет `project_defense/` (схемы PNG 01–14 + речь/Q&A) · [карточка](https://trello.com/c/aqjFgfcU).  
 **Отзывы (#99–#104)** — ✅ Done: create `POST /api/reviews`, AuthClaims UserId, unique, `/me`, Account «My reviews», tags — [ОТЗЫВЫ-ПОКУПАТЕЛЕЙ.md](./ОТЗЫВЫ-ПОКУПАТЕЛЕЙ.md).  
 **Auth follow-up (стыки):** пакет [#105](https://trello.com/c/6W4hdlT1) · Auth сдаёт [#96](https://trello.com/c/dnk4VUUk) iss/aud · [#98](https://trello.com/c/paCSfdu7) claims · [#97](https://trello.com/c/hcmCvKWF) credential · [#106](https://trello.com/c/LIL5NHlr) CORS · затем мы [#107](https://trello.com/c/zuzmLFVt) Product · [#108](https://trello.com/c/dKmess1E) Front smoke — [СТЫКИ-МИКРОСЕРВИСОВ.md](./СТЫКИ-МИКРОСЕРВИСОВ.md).
 
