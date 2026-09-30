@@ -3,6 +3,7 @@
 Vite + React 19 витрина маркетплейса **Perry**. Визуал по макету **Figma** (приоритет №1) и эталону Razor `site.css` / `auth.css`. Данные — из `Perry.Api` (proxy `/api` → `http://localhost:5272`).
 
 Backend: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_for_our_poroject)  
+**Figma-перепись 30.09 (~22 экрана):** [docs/ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md](./docs/ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md) · [чеклист](./docs/FIGMA-REWRITE-CHECKLIST.md)  
 **Хроника всей работы:** [docs/ХРОНИКА-РАБОТЫ.md](./docs/ХРОНИКА-РАБОТЫ.md) · оглавление [docs/README.md](./docs/README.md)  
 **Trello (карточки):** [docs/TRELLO-TODO.md](./docs/TRELLO-TODO.md) · доска [ITSTEP-PERRY](https://trello.com/b/bwEYs3Kq/itstep-perry)  
 **Отчёт 28.09 (весь день):** [docs/ОТЧЁТ-2026-09-28.md](./docs/ОТЧЁТ-2026-09-28.md) · срезы: [#A03–#A07](./docs/ИЗМЕНЕНИЯ-2026-09-28.md) · [#95 Auth](./docs/ИЗМЕНЕНИЯ-2026-09-28-auth-95.md) · [отзывы #99–#104](./docs/ОТЗЫВЫ-ПОКУПАТЕЛЕЙ.md)  
@@ -14,6 +15,20 @@ Backend: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_fo
 Сводка (каталог/PDP/auth): [docs/ИЗМЕНЕНИЯ-2026-09-17.md](./docs/ИЗМЕНЕНИЯ-2026-09-17.md)  
 **Account:** [docs/ACCOUNT-КАБИНЕТ.md](./docs/ACCOUNT-КАБИНЕТ.md) · [docs/ИЗМЕНЕНИЯ-Account-2026-09-17.md](./docs/ИЗМЕНЕНИЯ-Account-2026-09-17.md)  
 Скриншоты: [docs/screenshots/README.md](./docs/screenshots/README.md)
+
+---
+
+## Срез 30.09.2026 — перепись ~22 экранов под Figma
+
+Закрыта перепись витрины и админки под канон **Figma Prototype**: Home, каталог, PDP, auth-flow, cart/checkout, legal, 404, account, admin (~22 уникальных экрана + состояния/модалки). Чеклист закрыт.
+
+| Документ | О чём |
+|----------|--------|
+| **[ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md](./docs/ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md)** | **Отчёт: что сделано по 22 экранам** |
+| [FIGMA-REWRITE-CHECKLIST.md](./docs/FIGMA-REWRITE-CHECKLIST.md) | Чеклист экранов (все 🟢) |
+| [FIGMA-PAGE-INVENTORY.md](./docs/FIGMA-PAGE-INVENTORY.md) | Инвентарь node-id макета |
+
+Ветка: `feature/figma-storefront-port`.
 
 ---
 

@@ -2,6 +2,14 @@
 
 **Начни здесь:** [ХРОНИКА-РАБОТЫ.md](./ХРОНИКА-РАБОТЫ.md)
 
+## 30.09.2026 — перепись ~22 экранов под Figma
+
+Сделано: витрина + admin по канону Prototype (~22 уникальных экрана, чеклист закрыт).
+
+- **[ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md](./ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md)** — отчёт по 22 экранам
+- [FIGMA-REWRITE-CHECKLIST.md](./FIGMA-REWRITE-CHECKLIST.md) — чеклист (все 🟢)
+- [FIGMA-PAGE-INVENTORY.md](./FIGMA-PAGE-INVENTORY.md) — инвентарь node-id
+
 ## Актуальные срезы
 
 - [ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md](./ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md) — **перепись 22 экранов под Figma (чеклист закрыт)**
