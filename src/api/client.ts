@@ -8,20 +8,34 @@ export function productApiUrl(path: string): string {
 }
 
 /**
+ * In DEV always prefer same-origin Vite proxy — absolute Azure URLs in `.env`
+ * cause browser CORS ("Network error") even when the service is healthy.
+ */
+function resolveServiceBase(
+  configured: string | undefined,
+  devProxy: string,
+  prodFallback: string,
+): string {
+  const trimmed = configured?.replace(/\/$/, "") || "";
+  if (import.meta.env.DEV) {
+    if (trimmed.startsWith("/")) return trimmed;
+    return devProxy;
+  }
+  return trimmed || prodFallback;
+}
+
+/**
  * Auth Service Влада (#94/#95).
  * Dev: Vite proxy `/auth-api` → Azure (обход CORS).
  * Override: VITE_AUTH_API_URL (полный origin или `/auth-api`).
  */
 export function authApiUrl(path: string): string {
-  const configured = (import.meta.env.VITE_AUTH_API_URL as string | undefined)?.replace(
-    /\/$/,
-    "",
+  const configured = import.meta.env.VITE_AUTH_API_URL as string | undefined;
+  const base = resolveServiceBase(
+    configured,
+    "/auth-api",
+    "https://perry-auth-service.orangeplant-910928aa.swedencentral.azurecontainerapps.io",
   );
-  const base =
-    configured ||
-    (import.meta.env.DEV
-      ? "/auth-api"
-      : "https://perry-auth-service.orangeplant-910928aa.swedencentral.azurecontainerapps.io");
   const p = path.startsWith("/") ? path : `/${path}`;
   // Auth API paths are /api/auth/...
   if (p.startsWith("/api/")) return `${base}${p}`;
@@ -33,15 +47,12 @@ export function authApiUrl(path: string): string {
  * Dev: Vite proxy `/users-api` → Azure.
  */
 export function usersApiUrl(path: string): string {
-  const configured = (import.meta.env.VITE_USERS_API_URL as string | undefined)?.replace(
-    /\/$/,
-    "",
+  const configured = import.meta.env.VITE_USERS_API_URL as string | undefined;
+  const base = resolveServiceBase(
+    configured,
+    "/users-api",
+    "https://perry-admin-service.orangeplant-910928aa.swedencentral.azurecontainerapps.io",
   );
-  const base =
-    configured ||
-    (import.meta.env.DEV
-      ? "/users-api"
-      : "https://perry-admin-service.orangeplant-910928aa.swedencentral.azurecontainerapps.io");
   const p = path.startsWith("/") ? path : `/${path}`;
   if (p.startsWith("/api/")) return `${base}${p}`;
   return `${base}/api${p}`;
@@ -107,7 +118,7 @@ function friendlyStatusMessage(status: number, base: "product" | "auth" | "users
       : "Not found.";
   }
   if (status === 502 || status === 504) return "API unavailable (Bad Gateway)";
-  return "Request failed";
+  return `Request failed (HTTP ${status})`;
 }
 
 export async function apiFetch<T = unknown>(
@@ -150,13 +161,16 @@ export async function apiFetch<T = unknown>(
 
   const data = await parseJson(res);
   if (!res.ok) {
-    const msg =
+    const fromBody =
       (data && typeof data === "object" && "error" in data && String((data as { error: string }).error)) ||
       (data && typeof data === "object" && "message" in data && String((data as { message: string }).message)) ||
       (data && typeof data === "object" && "title" in data && String((data as { title: string }).title)) ||
+      "";
+    const msg =
+      (fromBody && fromBody.trim()) ||
       friendlyStatusMessage(res.status, base) ||
       res.statusText ||
-      "Request failed";
+      `Request failed (HTTP ${res.status})`;
     throw new ApiError(res.status, msg, data);
   }
   return data as T;
