@@ -7,8 +7,8 @@ import { PasswordField } from "../../widgets/auth/PasswordField";
 export function AdminLoginPage() {
   const { login, isAdmin, loading } = useAuth();
   const navigate = useNavigate();
-  const [loginName, setLoginName] = useState("Admin");
-  const [password, setPassword] = useState("Admin");
+  const [loginName, setLoginName] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -27,11 +27,11 @@ export function AdminLoginPage() {
   };
 
   return (
-    <div className="auth-shell">
+    <div className="auth-shell" data-figma="4152:5807">
       <Link className="auth-back" to="/">
         ← Back to store
       </Link>
-      <AuthModal>
+      <AuthModal data-figma="4152:5807">
         {error && <div className="auth-alert">{error}</div>}
         <form className="login-form" onSubmit={(e) => void onSubmit(e)}>
           <div className="login-form__titles">
@@ -46,7 +46,7 @@ export function AdminLoginPage() {
                 type="text"
                 value={loginName}
                 onChange={(e) => setLoginName(e.target.value)}
-                placeholder="Enter your login"
+                placeholder="Admin or Auth email"
                 autoComplete="username"
                 required
               />

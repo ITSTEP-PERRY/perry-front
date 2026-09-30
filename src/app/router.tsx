@@ -7,6 +7,8 @@ import { HomePage } from "../pages/HomePage";
 import { ProductsPage } from "../pages/ProductsPage";
 import { ProductPage } from "../pages/ProductPage";
 import { CartPage } from "../pages/CartPage";
+import { CheckoutPage } from "../pages/CheckoutPage";
+import { ContactPage, FaqPage } from "../pages/SupportPages";
 import { AccountOrdersPage } from "../pages/account/AccountOrdersPage";
 import { AccountWishlistPage } from "../pages/account/AccountWishlistPage";
 import { AccountSettingsPage } from "../pages/account/AccountSettingsPage";
@@ -40,6 +42,12 @@ export const router = createBrowserRouter([
       { path: "products", element: <ProductsPage /> },
       { path: "products/:id", element: <ProductPage /> },
       { path: "cart", element: <CartPage /> },
+      {
+        element: <RequireAuth />,
+        children: [{ path: "checkout", element: <CheckoutPage /> }],
+      },
+      { path: "contact", element: <ContactPage /> },
+      { path: "faq", element: <FaqPage /> },
       { path: "terms", element: <LegalPage kind="terms" /> },
       { path: "privacy", element: <LegalPage kind="privacy" /> },
       { path: "license", element: <LegalPage kind="license" /> },

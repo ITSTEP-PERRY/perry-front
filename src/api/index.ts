@@ -1,4 +1,5 @@
-import { apiFetch } from "./client";
+import { apiFetch, ApiError } from "./client";
+import { resolveMediaUrl } from "./media";
 import type {
   AuthResponse,
   AuthUser,
@@ -7,14 +8,44 @@ import type {
   OrderDto,
   AdminOrdersResponse,
   ProductDetail,
+  ProductListItem,
   ProductListResponse,
   WishlistItemDto,
 } from "./types";
 
+function normalizeListItem(item: ProductListItem): ProductListItem {
+  return {
+    ...item,
+    imageUrl: resolveMediaUrl(item.imageUrl),
+    status: item.status == null ? item.status : String(item.status),
+  };
+}
+
+function normalizeProductDetail(p: ProductDetail): ProductDetail {
+  return {
+    ...p,
+    status: p.status == null ? p.status : String(p.status),
+    related: (p.related ?? []).map(normalizeListItem),
+    saleRelated: (p.saleRelated ?? []).map(normalizeListItem),
+  };
+}
+
 export const categoriesApi = {
-  tree: (opts?: { includeInactive?: boolean }) => {
+  tree: async (opts?: { includeInactive?: boolean }) => {
     const qs = opts?.includeInactive ? "?includeInactive=true" : "";
-    return apiFetch<CategoryDto[]>(`/categories${qs}`);
+    try {
+      return await apiFetch<CategoryDto[]>(`/categories${qs}`);
+    } catch (e) {
+      // includeInactive требует Admin JWT; без него отдаём публичное дерево
+      if (
+        opts?.includeInactive &&
+        e instanceof ApiError &&
+        (e.status === 401 || e.status === 403)
+      ) {
+        return apiFetch<CategoryDto[]>("/categories");
+      }
+      throw e;
+    }
   },
   bySlug: (slug: string) => apiFetch<CategoryDto>(`/categories/${encodeURIComponent(slug)}`),
   create: (body: Record<string, unknown>) =>
@@ -164,7 +195,7 @@ export const reviewsApi = {
 };
 
 export const productsApi = {
-  list: (q: ProductQuery = {}) => {
+  list: async (q: ProductQuery = {}) => {
     const params = new URLSearchParams();
     Object.entries(q).forEach(([k, v]) => {
       if (v === undefined || v === null || v === "") return;
@@ -175,9 +206,10 @@ export const productsApi = {
       params.set(k, String(v));
     });
     const qs = params.toString();
-    return apiFetch<ProductListResponse>(`/products${qs ? `?${qs}` : ""}`);
+    const raw = await apiFetch<ProductListResponse>(`/products${qs ? `?${qs}` : ""}`);
+    return { ...raw, items: (raw.items ?? []).map(normalizeListItem) };
   },
-  byId: (id: string) => apiFetch<ProductDetail>(`/products/${id}`),
+  byId: async (id: string) => normalizeProductDetail(await apiFetch<ProductDetail>(`/products/${id}`)),
   create: (body: Record<string, unknown>) =>
     apiFetch<{ id: string; slug: string }>("/products", { method: "POST", body: JSON.stringify(body) }),
   update: (id: string, body: Record<string, unknown>) =>
@@ -226,9 +258,28 @@ export const cartApi = {
     }),
 };
 
+const LOCAL_ADMIN_LOGIN = "Admin";
+const LOCAL_ADMIN_PASSWORD = "Admin";
+const LOCAL_ADMIN_FLAG = "perry_local_admin";
+
 export const authApi = {
   /** Auth Service: POST /api/auth/login → accessToken + user */
   login: async (login: string, password: string) => {
+    // DEV: Admin/Admin → локальный Product API (React :3000), без Azure Auth.
+    if (
+      import.meta.env.DEV &&
+      login.trim() === LOCAL_ADMIN_LOGIN &&
+      password === LOCAL_ADMIN_PASSWORD
+    ) {
+      const raw = await apiFetch<Record<string, unknown>>("/dev/admin-login", {
+        method: "POST",
+        body: JSON.stringify({ login, password }),
+      });
+      localStorage.setItem(LOCAL_ADMIN_FLAG, "1");
+      return normalizeAuthResponse(raw);
+    }
+
+    localStorage.removeItem(LOCAL_ADMIN_FLAG);
     const raw = await apiFetch<Record<string, unknown>>("/auth/login", {
       method: "POST",
       body: JSON.stringify({ email: login, login, password }),
@@ -238,6 +289,7 @@ export const authApi = {
   },
   /** Упрощённый register → Auth multi-step; для совместимости UI отправляем на register. */
   register: async (body: { name: string; email: string; login: string; password: string }) => {
+    localStorage.removeItem(LOCAL_ADMIN_FLAG);
     const raw = await apiFetch<Record<string, unknown>>("/auth/register", {
       method: "POST",
       body: JSON.stringify({
@@ -251,6 +303,10 @@ export const authApi = {
     return normalizeAuthResponse(raw);
   },
   me: async () => {
+    if (import.meta.env.DEV && localStorage.getItem(LOCAL_ADMIN_FLAG) === "1") {
+      const raw = await apiFetch<Record<string, unknown>>("/dev/me");
+      return normalizeAuthUser(raw);
+    }
     const raw = await apiFetch<Record<string, unknown>>("/auth/me", { base: "auth" });
     return normalizeAuthUser(raw);
   },

@@ -128,7 +128,7 @@ export function AdminOrdersPage() {
   };
 
   return (
-    <div>
+    <div data-figma="2674:2644">
       {error && <div className="alert alert-error">{error}</div>}
 
       <div className="ap-toolbar">

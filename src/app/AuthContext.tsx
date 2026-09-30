@@ -50,6 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(() => {
     setToken(null);
     setUser(null);
+    localStorage.removeItem("perry_local_admin");
   }, []);
 
   const refreshUser = useCallback(async () => {

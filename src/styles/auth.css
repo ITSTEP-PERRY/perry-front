@@ -136,7 +136,7 @@
   left: 20px;
   z-index: 1;
   padding: 0 4px;
-  background: #fff;
+  background: var(--perry-objects);
   font-size: 16px;
   font-weight: 400;
   color: var(--perry-dark-text);
@@ -420,20 +420,29 @@
 
 @media (max-width: 960px) {
   .auth-modal__image img {
-    width: 320px;
+    width: min(320px, 40vw);
   }
 
   .login-form__titles h1 {
-    font-size: 32px;
+    font-size: clamp(1.75rem, 4vw, 2rem);
   }
 
   .login-form__titles h2 {
-    font-size: 20px;
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
   }
 }
 
 /* Только на узком мобильном — форма без картинки */
 @media (max-width: 720px) {
+  .auth-shell {
+    padding: 16px;
+    align-items: flex-start;
+  }
+
+  .auth-modal {
+    padding: 16px;
+  }
+
   .auth-modal__body {
     flex-direction: column;
   }
@@ -444,5 +453,10 @@
 
   .login-form {
     min-height: auto;
+    max-width: 100%;
+  }
+
+  .perry-btn {
+    width: 100%;
   }
 }

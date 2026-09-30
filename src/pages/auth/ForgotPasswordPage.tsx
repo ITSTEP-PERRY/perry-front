@@ -30,7 +30,7 @@ export function ForgotPasswordPage() {
   };
 
   return (
-    <AuthModal>
+    <AuthModal data-figma="2072:12437">
       {error && <div className="auth-alert">{error}</div>}
       {msg && (
         <div className="dev-code-hint">

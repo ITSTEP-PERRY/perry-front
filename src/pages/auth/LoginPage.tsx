@@ -36,7 +36,7 @@ export function LoginPage() {
   };
 
   return (
-    <AuthModal>
+    <AuthModal data-figma="1350:5004">
       {error && <div className="auth-alert">{error}</div>}
       <form className="login-form" onSubmit={(e) => void onSubmit(e)}>
         <div className="login-form__titles">

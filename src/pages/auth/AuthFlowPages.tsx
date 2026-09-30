@@ -60,7 +60,7 @@ export function VerifyCodePage() {
   };
 
   return (
-    <AuthModal>
+    <AuthModal data-figma="1393:2003">
       <form className="login-form" onSubmit={onSubmit} data-verify-form>
         <div className="login-form__titles">
           <h1>Send code</h1>
@@ -149,7 +149,7 @@ export function ResetPasswordPage() {
   };
 
   return (
-    <AuthModal>
+    <AuthModal data-figma="4251:8816">
       <form className="login-form" onSubmit={onSubmit} data-reset-form>
         <div className="login-form__titles">
           <h1>Reset password</h1>
@@ -199,7 +199,7 @@ export function FinishingTouchesPage() {
   };
 
   return (
-    <AuthModal>
+    <AuthModal data-figma="4251:33099">
       <form className="login-form" onSubmit={onSubmit} data-finishing-form>
         <div className="login-form__titles">
           <h1>Finishing touches</h1>

@@ -88,7 +88,7 @@ export function AppShell() {
               onChange={(e) => setSearch(e.target.value)}
             />
             <button type="submit" aria-label="Search">
-              <img src="/icons/search.svg" alt="" width={18} height={18} />
+              <img src="/icons/search.svg" alt="" width={24} height={24} />
             </button>
           </form>
 
@@ -119,7 +119,13 @@ export function AppShell() {
           </nav>
         </div>
 
-        <nav className={`mobile-nav ${menuOpen ? "is-open" : ""}`} aria-label="Catalog menu">
+        <button
+          type="button"
+          className={`site-menu-backdrop ${menuOpen ? "is-open" : ""}`}
+          aria-label="Close menu"
+          onClick={closeMenu}
+        />
+        <nav className={`mobile-nav ${menuOpen ? "is-open" : ""}`} aria-label="Catalog menu" data-figma="1860:2944">
           <NavLink to="/" onClick={closeMenu}>
             Home
           </NavLink>
@@ -161,7 +167,7 @@ export function AppShell() {
               <button
                 type="button"
                 className="header-link"
-                style={{ background: "transparent", border: 0, textAlign: "left", padding: "8px 0", cursor: "pointer", color: "#fff", fontWeight: 600 }}
+                style={{ background: "transparent", border: 0, textAlign: "left", padding: "10px 12px", cursor: "pointer", color: "inherit", fontWeight: 600 }}
                 onClick={() => {
                   logout();
                   closeMenu();
@@ -185,7 +191,7 @@ export function AppShell() {
             <button
               type="button"
               className="header-link"
-              style={{ background: "transparent", border: 0, textAlign: "left", padding: "8px 0", cursor: "pointer", color: "#b8ea48", fontWeight: 600 }}
+              style={{ background: "transparent", border: 0, textAlign: "left", padding: "10px 12px", cursor: "pointer", color: "var(--link)", fontWeight: 600 }}
               onClick={closeMenu}
             >
               Close menu
@@ -202,33 +208,33 @@ export function AppShell() {
         <div className="footer-inner">
           <div className="footer-col">
             <h4>Support</h4>
-            <a href="#">Contact us</a>
-            <a href="#">FAQ</a>
+            <Link to="/contact">Contact us</Link>
+            <Link to="/faq">FAQ</Link>
           </div>
           <div className="footer-col">
             <h4>Legal notice</h4>
             <Link to="/terms">Terms and conditions</Link>
             <Link to="/license">License agreement</Link>
-            <Link to="/privacy">Privacy policy</Link>
+            <Link to="/privacy">Privacy Policy</Link>
           </div>
           <div className="footer-col">
             <h4>Social media</h4>
             <div className="social-row">
               {(
                 [
-                  ["Instagram", "/icons/social-instagram.svg", "https://instagram.com"],
                   ["Facebook", "/icons/social-facebook.svg", "https://facebook.com"],
                   ["X", "/icons/social-x.svg", "https://x.com"],
-                  ["YouTube", "/icons/social-youtube.svg", "https://youtube.com"],
-                  ["TikTok", "/icons/social-tiktok.svg", "https://tiktok.com"],
+                  ["Instagram", "/icons/social-instagram.svg", "https://instagram.com"],
+                  ["Mail", "/icons/social-mail.svg", "mailto:support@perry.demo"],
+                  ["Telegram", "/icons/social-telegram.svg", "https://t.me"],
                 ] as const
               ).map(([label, icon, href]) => (
                 <a
                   key={label}
                   href={href}
                   className="social-row__link"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  target={href.startsWith("mailto:") ? undefined : "_blank"}
+                  rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
                   aria-label={label}
                   title={`${label} (demo)`}
                 >
@@ -240,7 +246,7 @@ export function AppShell() {
         </div>
         <div className="footer-bottom">
           <span className="logo logo-sm">PERRY</span>
-          <span>© 2024 Perry. All rights reserved.</span>
+          <span className="footer-bottom__copy">© 2024 Du Soleil. All rights reserved.</span>
         </div>
       </footer>
 

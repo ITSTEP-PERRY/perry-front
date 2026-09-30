@@ -558,7 +558,12 @@ export function LegalPage({ kind }: { kind: keyof typeof meta }) {
   const Body = page.body;
 
   return (
-    <div className="legal-page">
+    <div
+      className="legal-page"
+      data-figma={
+        kind === "terms" ? "3565:2906" : kind === "privacy" ? "3540:2754" : "3558:2294"
+      }
+    >
       <LegalNav active={kind} />
       <article className="legal-content">
         <h1 className="legal-content__title">{page.title}</h1>

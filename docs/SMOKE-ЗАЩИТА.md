@@ -17,7 +17,14 @@ npm run dev
 
 Открыть http://localhost:3000  
 Swagger: http://localhost:5272/swagger  
-Админ (Razor, опционально): http://localhost:5122/Admin/Login — `Admin` / `Admin`
+Админ (Razor, опционально): http://localhost:5122/Admin/Login — stub  
+Админ React: http://localhost:3000/admin/login  
+- Azure Auth Admin (email/пароль от команды) → Users + Product  
+- локально `Admin` / `Admin` → только Product API  
+
+Стык Auth Internal (#97): после plaintext от Влада →  
+`GET http://localhost:5272/api/dev/auth-internal-status` → `tokenOk: true`  
+Подробнее: [СТЫКИ-ЛОКАЛЬНО.md](./СТЫКИ-ЛОКАЛЬНО.md)
 
 ---
 

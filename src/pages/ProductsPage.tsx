@@ -167,7 +167,7 @@ export function ProductsPage() {
   const title = activeCategory?.name ?? (search ? `Search: ${search}` : "All products");
 
   return (
-    <div className="page-wrap catalog">
+    <div className="page-wrap catalog" data-figma="722:2370">
       <nav className="breadcrumbs" aria-label="Breadcrumb">
         <Link to="/" className="breadcrumbs__home" aria-label="Home">
           <img src="/icons/home.svg" alt="" width={16} height={16} />
@@ -374,20 +374,30 @@ export function ProductsPage() {
 
         <div className="catalog-main">
           <div className="catalog-toolbar">
-            <button type="button" className="filters-applied" disabled>
-              {applied} filters applied
-            </button>
+            {applied > 0 ? (
+              <button type="button" className="filters-applied" onClick={clearFilters}>
+                {applied} filters applied
+                <span className="filters-applied__x" aria-hidden="true">
+                  ×
+                </span>
+              </button>
+            ) : (
+              <span className="filters-applied is-empty">No filters applied</span>
+            )}
             <div className="catalog-toolbar__right">
-              <select
-                value={sort}
-                aria-label="Sort"
-                onChange={(e) => setOne("sort", e.target.value)}
-              >
-                <option value="price_desc">From expensive to cheap</option>
-                <option value="price_asc">From cheap to expensive</option>
-                <option value="rating_desc">Top rated</option>
-                <option value="newest">Newest</option>
-              </select>
+              <label className="catalog-sort">
+                <span className="visually-hidden">Sort by</span>
+                <select
+                  value={sort}
+                  aria-label="Sort"
+                  onChange={(e) => setOne("sort", e.target.value)}
+                >
+                  <option value="price_desc">From expensive to cheap</option>
+                  <option value="price_asc">From cheap to expensive</option>
+                  <option value="rating_desc">Top rated</option>
+                  <option value="newest">Newest</option>
+                </select>
+              </label>
               <div className="view-toggle" role="group" aria-label="View mode">
                 <button
                   type="button"

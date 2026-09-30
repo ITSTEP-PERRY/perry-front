@@ -8,18 +8,8 @@ import { useCart } from "../app/CartContext";
 import { useWishlist } from "../app/WishlistContext";
 import { ImageLightbox } from "../widgets/ImageLightbox";
 import { ProductCard } from "../widgets/ProductCard";
-import { PDP_INFO, PdpInfoModal, type PdpInfoKind } from "../widgets/PdpInfoModal";
-
-const REVIEW_TAG_OPTIONS = [
-  "High quality",
-  "Worth the price",
-  "Fits the description",
-  "Matches the photos",
-  "Easy to use",
-  "Great value",
-  "Comfortable",
-  "True to size",
-];
+import { CreateReviewModal } from "../widgets/CreateReviewModal";
+import { PdpInfoModal, type PdpInfoKind } from "../widgets/PdpInfoModal";
 
 function scrollTrack(el: HTMLElement | null, dir: 1 | -1) {
   if (!el) return;
@@ -33,7 +23,7 @@ function ProductCarousel({ items, title, seeAllTo }: { items: ProductListItem[];
     <section className="pdp-section">
       <div className="section-head">
         <h2>{title}</h2>
-        <Link to={seeAllTo}>See all ›</Link>
+        <Link to={seeAllTo}>See all &gt;</Link>
       </div>
       <div className="carousel">
         <button type="button" className="carousel-btn carousel-btn--prev" aria-label="Previous" onClick={() => scrollTrack(track.current, -1)}>
@@ -68,10 +58,6 @@ export function ProductPage() {
   const [error, setError] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [showReviewForm, setShowReviewForm] = useState(false);
-  const [reviewRating, setReviewRating] = useState(5);
-  const [reviewTitle, setReviewTitle] = useState("");
-  const [reviewBody, setReviewBody] = useState("");
-  const [reviewTags, setReviewTags] = useState<string[]>([]);
   const [reviewBusy, setReviewBusy] = useState(false);
   const [reviewError, setReviewError] = useState<string | null>(null);
   const [infoKind, setInfoKind] = useState<PdpInfoKind | null>(null);
@@ -229,29 +215,32 @@ export function ProductPage() {
     }
   };
 
-  const toggleTag = (tag: string) => {
-    setReviewTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag].slice(0, 5)));
-  };
-
-  const submitReview = async () => {
+  const submitReview = async (payload: {
+    rating: number;
+    title: string;
+    body: string;
+    tags: string[];
+    photos: string[];
+  }) => {
     if (!user) {
-      navigate("/login", { state: { from: { pathname: `/products/${product.id}` } } });
+      navigate("/login", { state: { from: { pathname: `/products/${product!.id}` } } });
       return;
     }
     setReviewBusy(true);
     setReviewError(null);
     try {
-      const created = await reviewsApi.create(product.id, {
-        rating: reviewRating,
-        title: reviewTitle.trim(),
-        body: reviewBody.trim(),
-        tags: reviewTags,
+      const created = await reviewsApi.create(product!.id, {
+        rating: payload.rating,
+        title: payload.title,
+        body: payload.body,
+        tags: payload.tags,
       });
       setProduct({
-        ...product,
-        reviewCount: typeof created.isApproved === "boolean" && created.isApproved
-          ? product.reviewCount + 1
-          : product.reviewCount,
+        ...product!,
+        reviewCount:
+          typeof created.isApproved === "boolean" && created.isApproved
+            ? product!.reviewCount + 1
+            : product!.reviewCount,
         reviews: [
           {
             authorName: created.authorName,
@@ -260,16 +249,12 @@ export function ProductPage() {
             body: created.body,
             createdAtUtc: created.createdAtUtc,
             tags: created.tags ?? [],
-            images: created.images ?? [],
+            images: created.images?.length ? created.images : payload.photos,
           },
-          ...(product.reviews ?? []),
+          ...(product!.reviews ?? []),
         ],
       });
       setShowReviewForm(false);
-      setReviewTitle("");
-      setReviewBody("");
-      setReviewTags([]);
-      setReviewRating(5);
       setMsg("Review published");
     } catch (e) {
       setReviewError(e instanceof Error ? e.message : "Could not submit review");
@@ -287,7 +272,7 @@ export function ProductPage() {
   };
 
   return (
-    <div className="page-wrap pdp-page">
+    <div className="page-wrap pdp-page" data-figma="2548:9286">
       <nav className="breadcrumbs breadcrumbs--pdp" aria-label="Breadcrumb">
         <Link to="/" className="breadcrumbs__home" aria-label="Home">
           <img src="/icons/home.svg" alt="" width={16} height={16} />
@@ -523,7 +508,7 @@ export function ProductPage() {
               </ul>
               <p className="reviews-confirmed">
                 <span aria-hidden="true">✓</span> All opinions confirmed by purchase{" "}
-                <a href="#">Learn more ›</a>
+                <Link to="/terms">Learn more ›</Link>
               </p>
             </div>
             {frequentTags.length > 0 && (
@@ -581,88 +566,9 @@ export function ProductPage() {
               </label>
             </div>
 
-            <button type="button" className="btn btn-create-review" onClick={() => setShowReviewForm((v) => !v)}>
+            <button type="button" className="btn btn-create-review" onClick={() => setShowReviewForm(true)}>
               + Create review
             </button>
-
-            {showReviewForm && (
-              <div className="review-form">
-                <h3>Create review</h3>
-                {!user && (
-                  <p className="muted">
-                    <Link to="/login" state={{ from: { pathname: `/products/${product.id}` } }}>
-                      Sign in
-                    </Link>{" "}
-                    to publish a review.
-                  </p>
-                )}
-                {reviewError && <div className="alert alert-error">{reviewError}</div>}
-                <label className="qty-label">
-                  Rating
-                  <select
-                    value={reviewRating}
-                    onChange={(e) => setReviewRating(Number(e.target.value))}
-                    aria-label="Rating"
-                  >
-                    {[5, 4, 3, 2, 1].map((n) => (
-                      <option key={n} value={n}>
-                        {n} ★
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="qty-label" style={{ display: "block", marginTop: 12 }}>
-                  Title
-                  <input
-                    type="text"
-                    value={reviewTitle}
-                    onChange={(e) => setReviewTitle(e.target.value)}
-                    placeholder="Sum up your experience"
-                    style={{ width: "100%", marginTop: 6 }}
-                  />
-                </label>
-                <label className="qty-label" style={{ display: "block", marginTop: 12 }}>
-                  Review
-                  <textarea
-                    value={reviewBody}
-                    onChange={(e) => setReviewBody(e.target.value)}
-                    rows={4}
-                    placeholder="What did you like or dislike?"
-                    style={{ width: "100%", marginTop: 6 }}
-                  />
-                </label>
-                <div style={{ marginTop: 12 }}>
-                  <div className="muted" style={{ marginBottom: 8 }}>
-                    Tags
-                  </div>
-                  <div className="frequent-tags__list">
-                    {REVIEW_TAG_OPTIONS.map((tag) => (
-                      <button
-                        key={tag}
-                        type="button"
-                        className={`tag tag--soft${reviewTags.includes(tag) ? " is-active" : ""}`}
-                        onClick={() => toggleTag(tag)}
-                      >
-                        {tag}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    disabled={reviewBusy || !reviewTitle.trim() || !reviewBody.trim()}
-                    onClick={() => void submitReview()}
-                  >
-                    {reviewBusy ? "Publishing…" : "Publish review"}
-                  </button>
-                  <button type="button" className="btn btn-ghost" onClick={() => setShowReviewForm(false)}>
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
 
             {filtered.length === 0 ? (
               <p className="empty-state">No reviews yet.</p>
@@ -774,9 +680,21 @@ export function ProductPage() {
       </section>
 
       {infoKind && (
-        <PdpInfoModal title={PDP_INFO[infoKind].title} onClose={() => setInfoKind(null)}>
-          {PDP_INFO[infoKind].body}
-        </PdpInfoModal>
+        <PdpInfoModal kind={infoKind} onClose={() => setInfoKind(null)} onChange={setInfoKind} />
+      )}
+
+      {showReviewForm && (
+        <CreateReviewModal
+          productId={product.id}
+          signedIn={!!user}
+          busy={reviewBusy}
+          error={reviewError}
+          onClose={() => {
+            setShowReviewForm(false);
+            setReviewError(null);
+          }}
+          onSubmit={submitReview}
+        />
       )}
 
       {lightbox && (
@@ -791,12 +709,12 @@ export function ProductPage() {
 
       <ProductCarousel
         items={product.related ?? []}
-        title="You may also like"
+        title={`More ${product.category.name.toLowerCase()}`}
         seeAllTo={`/products?categoryId=${product.category.id}`}
       />
       <ProductCarousel
         items={product.saleRelated ?? []}
-        title={`Best sellers in ${product.category.name.toLowerCase()}`}
+        title={`${product.category.name}: sale`}
         seeAllTo={`/products?categoryId=${product.category.id}&sort=rating_desc`}
       />
     </div>

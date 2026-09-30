@@ -1,15 +1,16 @@
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../app/AuthContext";
 
 export function AccountShell() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   if (!user) return null;
 
   const roleLabel = user.roleId === "Admin" ? "Admin" : "Customer";
   const initial = (user.name?.trim()?.[0] || user.login?.[0] || "?").toUpperCase();
 
   return (
-    <div className="account-page">
+    <div className="account-page" data-figma="1852:3311">
       <nav className="breadcrumbs breadcrumbs--account" aria-label="Breadcrumb">
         <Link className="breadcrumbs__home" to="/" aria-label="Home">
           <img src="/icons/home.svg" alt="" width={16} height={16} />
@@ -60,6 +61,17 @@ export function AccountShell() {
               Account settings
             </NavLink>
           </nav>
+
+          <button
+            type="button"
+            className="account-nav__logout"
+            onClick={() => {
+              logout();
+              navigate("/");
+            }}
+          >
+            Log out
+          </button>
         </aside>
 
         <div className="account-content">

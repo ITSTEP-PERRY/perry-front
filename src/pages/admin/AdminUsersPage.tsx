@@ -1,6 +1,8 @@
-import { type FormEvent, useEffect, useMemo, useState } from "react";
+import { type FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { usersApi } from "../../api";
+import { AdminConfirmModal } from "../../widgets/admin/AdminConfirmModal";
+import { AdminEmptyBlob } from "../../widgets/admin/AdminEmptyBlob";
 
 type UserRow = {
   id: string;
@@ -13,7 +15,20 @@ type UserRow = {
   isDeleted?: boolean;
 };
 
-const ROLES = ["Admin", "Editor", "Guest"];
+const ROLES = ["Admin", "User"] as const;
+
+const ALL_COLUMNS = [
+  { id: "name", label: "Name" },
+  { id: "email", label: "Email" },
+  { id: "role", label: "Role" },
+  { id: "status", label: "Status" },
+  { id: "login", label: "Login" },
+  { id: "registered", label: "Registered" },
+] as const;
+
+type ColId = (typeof ALL_COLUMNS)[number]["id"];
+
+const DEFAULT_COLS: ColId[] = ["name", "email", "role", "status"];
 
 export function AdminUsersPage() {
   const [params, setParams] = useSearchParams();
@@ -25,18 +40,39 @@ export function AdminUsersPage() {
   const [search, setSearch] = useState(q);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [cols, setCols] = useState<ColId[]>(DEFAULT_COLS);
+  const [colsOpen, setColsOpen] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const colsRef = useRef<HTMLDivElement>(null);
 
   const reload = () =>
     usersApi
       .list({ status, role: role || undefined })
-      .then(setUsers)
-      .catch((e: Error) => setError(e.message));
+      .then((rows) => {
+        setUsers(rows);
+        setError(null);
+      })
+      .catch((e: Error) =>
+        setError(
+          e.message.includes("401") || e.message.includes("Unauthorized")
+            ? "Users API (Azure) принимает только JWT от Auth Service. Локальный Admin/Admin открывает Product API, но не Users — войдите email/паролем Auth Admin."
+            : e.message,
+        ),
+      );
 
   useEffect(() => {
     void reload();
   }, [status, role]);
 
   useEffect(() => setSearch(q), [q]);
+
+  useEffect(() => {
+    const onDoc = (e: MouseEvent) => {
+      if (!colsRef.current?.contains(e.target as Node)) setColsOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
 
   const filtered = useMemo(() => {
     const qq = q.trim().toLowerCase();
@@ -59,18 +95,38 @@ export function AdminUsersPage() {
     setParams(next);
   };
 
+  const emptyText = role
+    ? "No users in the selected role"
+    : q
+      ? `Nothing found for “${q}”`
+      : "No users in the selected role";
+
   return (
-    <div>
+    <div data-figma="2720:5575">
       {error && <div className="alert alert-error">{error}</div>}
 
-      <div className="ap-toolbar">
-        <span className="ap-toolbar__label">Users</span>
+      <div className="ap-toolbar ap-toolbar--users">
+        <span className="ap-toolbar__label">Role</span>
+        <select
+          className="ap-select"
+          value={role || "all"}
+          aria-label="Filter by role"
+          onChange={(e) => setFilter("role", e.target.value === "all" ? undefined : e.target.value)}
+        >
+          <option value="all">All</option>
+          {ROLES.map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
+          ))}
+        </select>
+
         <div className="ap-chips">
           {(
             [
               ["active", "Active"],
               ["deleted", "Deleted"],
-              ["all", "All"],
+              ["all", "All status"],
             ] as const
           ).map(([value, label]) => (
             <button
@@ -83,19 +139,7 @@ export function AdminUsersPage() {
             </button>
           ))}
         </div>
-        <select
-          className="ap-select"
-          value={role}
-          aria-label="Filter by role"
-          onChange={(e) => setFilter("role", e.target.value || undefined)}
-        >
-          <option value="">All roles</option>
-          {ROLES.map((r) => (
-            <option key={r} value={r}>
-              {r}
-            </option>
-          ))}
-        </select>
+
         <form
           className="ap-search"
           role="search"
@@ -113,22 +157,53 @@ export function AdminUsersPage() {
             placeholder="Search..."
           />
         </form>
+
+        <div className="ap-cols" ref={colsRef}>
+          <button
+            type="button"
+            className="ap-cols__trigger"
+            aria-expanded={colsOpen}
+            onClick={() => setColsOpen((v) => !v)}
+          >
+            Columns
+            <span className="ap-cat__chevron" aria-hidden="true" />
+          </button>
+          {colsOpen && (
+            <div className="ap-cols__menu">
+              {ALL_COLUMNS.map((c) => (
+                <label key={c.id} className="ap-cols__item">
+                  <input
+                    type="checkbox"
+                    checked={cols.includes(c.id)}
+                    onChange={() =>
+                      setCols((prev) =>
+                        prev.includes(c.id)
+                          ? prev.filter((x) => x !== c.id)
+                          : [...prev, c.id],
+                      )
+                    }
+                  />
+                  {c.label}
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="ap-layout">
         <section className="ap-list">
           {filtered.length === 0 ? (
-            <div className="ap-empty">
-              <div className="ap-empty__ph" aria-hidden="true" />
-              <p className="ap-empty__text">{q ? `Nothing found for “${q}”` : "No users"}</p>
-            </div>
+            <AdminEmptyBlob text={emptyText} />
           ) : (
             <div className="ap-table ap-table--users">
-              <div className="ap-table__head">
-                <span>Name</span>
-                <span>Email</span>
-                <span>Role</span>
-                <span>Status</span>
+              <div
+                className="ap-table__head"
+                style={{ gridTemplateColumns: `repeat(${Math.max(cols.length, 1)}, minmax(0,1fr)) 40px` }}
+              >
+                {cols.map((id) => (
+                  <span key={id}>{ALL_COLUMNS.find((c) => c.id === id)?.label}</span>
+                ))}
                 <span />
               </div>
               {filtered.map((u) => (
@@ -136,25 +211,50 @@ export function AdminUsersPage() {
                   key={u.id}
                   type="button"
                   className={`ap-table__row ${selectedId === u.id ? "is-selected" : ""}`}
+                  style={{ gridTemplateColumns: `repeat(${Math.max(cols.length, 1)}, minmax(0,1fr)) 40px` }}
                   onClick={() => setFilter("selectedId", u.id)}
                 >
-                  <span className="ap-table__name">
-                    <strong title={u.name}>{u.name}</strong>
-                    <span className="ap-slug" title={u.login || undefined}>
-                      @{u.login || "—"}
-                    </span>
-                  </span>
-                  <span className="ap-table__cell" title={u.email}>
-                    {u.email}
-                  </span>
-                  <span className="ap-table__cell">{u.roleId}</span>
-                  <span>
-                    <span
-                      className={`ap-status ${u.isDeleted ? "ap-status--cancelled" : "ap-status--completed"}`}
-                    >
-                      {u.isDeleted ? "Deleted" : "Active"}
-                    </span>
-                  </span>
+                  {cols.map((id) => {
+                    if (id === "name")
+                      return (
+                        <span key={id} className="ap-table__name">
+                          <strong title={u.name}>{u.name}</strong>
+                        </span>
+                      );
+                    if (id === "email")
+                      return (
+                        <span key={id} className="ap-table__cell" title={u.email}>
+                          {u.email}
+                        </span>
+                      );
+                    if (id === "role")
+                      return (
+                        <span key={id} className="ap-table__cell">
+                          {u.roleId}
+                        </span>
+                      );
+                    if (id === "status")
+                      return (
+                        <span key={id}>
+                          <span
+                            className={`ap-status ${u.isDeleted ? "ap-status--cancelled" : "ap-status--completed"}`}
+                          >
+                            {u.isDeleted ? "Deleted" : "Active"}
+                          </span>
+                        </span>
+                      );
+                    if (id === "login")
+                      return (
+                        <span key={id} className="ap-table__cell">
+                          @{u.login || "—"}
+                        </span>
+                      );
+                    return (
+                      <span key={id} className="ap-table__cell">
+                        {u.registeredAtUtc ? new Date(u.registeredAtUtc).toLocaleDateString() : "—"}
+                      </span>
+                    );
+                  })}
                   <span />
                 </button>
               ))}
@@ -209,7 +309,7 @@ export function AdminUsersPage() {
                 {selected.isDeleted ? (
                   <button
                     type="button"
-                    className="ap-panel__btn"
+                    className="ap-btn ap-btn--accent"
                     disabled={busy}
                     onClick={async () => {
                       setBusy(true);
@@ -228,21 +328,11 @@ export function AdminUsersPage() {
                 ) : (
                   <button
                     type="button"
-                    className="ap-panel__btn ap-panel__btn--danger"
+                    className="ap-btn ap-btn--danger-outline"
                     disabled={busy}
-                    onClick={async () => {
-                      if (!confirm("Soft-delete this user?")) return;
-                      setBusy(true);
-                      try {
-                        await usersApi.softDelete(selected.id);
-                        await reload();
-                      } catch (err) {
-                        setError(err instanceof Error ? err.message : "Delete failed");
-                      } finally {
-                        setBusy(false);
-                      }
-                    }}
+                    onClick={() => setConfirmDeleteId(selected.id)}
                   >
+                    <img src="/icons/admin/trash.svg" alt="" width={16} height={16} />
                     Delete
                   </button>
                 )}
@@ -251,6 +341,30 @@ export function AdminUsersPage() {
           )}
         </aside>
       </div>
+
+      {confirmDeleteId && (
+        <AdminConfirmModal
+          message="You can't recover this user. Soft-delete will hide the account from the active list."
+          busy={busy}
+          onCancel={() => setConfirmDeleteId(null)}
+          onConfirm={async () => {
+            setBusy(true);
+            try {
+              await usersApi.softDelete(confirmDeleteId);
+              setConfirmDeleteId(null);
+              const next = new URLSearchParams(params);
+              next.delete("selectedId");
+              setParams(next);
+              await reload();
+            } catch (err) {
+              setError(err instanceof Error ? err.message : "Delete failed");
+              setConfirmDeleteId(null);
+            } finally {
+              setBusy(false);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { reviewsApi } from "../../api";
+import { AdminConfirmModal } from "../../widgets/admin/AdminConfirmModal";
 
 type AdminReview = {
   id: string;
@@ -24,6 +25,7 @@ export function AdminReviewsPage() {
   const [search, setSearch] = useState(q);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const reload = () =>
     reviewsApi
@@ -51,7 +53,7 @@ export function AdminReviewsPage() {
   };
 
   return (
-    <div>
+    <div data-figma="3448:3131">
       {error && <div className="alert alert-error">{error}</div>}
 
       <div className="ap-toolbar">
@@ -205,21 +207,7 @@ export function AdminReviewsPage() {
                   type="button"
                   className="ap-panel__btn ap-panel__btn--danger"
                   disabled={busy}
-                  onClick={async () => {
-                    if (!confirm("Delete review permanently?")) return;
-                    setBusy(true);
-                    try {
-                      await reviewsApi.remove(selected.id);
-                      const next = new URLSearchParams(params);
-                      next.delete("selectedId");
-                      setParams(next);
-                      await reload();
-                    } catch (e) {
-                      setError(e instanceof Error ? e.message : "Delete failed");
-                    } finally {
-                      setBusy(false);
-                    }
-                  }}
+                  onClick={() => setConfirmDeleteId(selected.id)}
                 >
                   Delete
                 </button>
@@ -228,6 +216,30 @@ export function AdminReviewsPage() {
           )}
         </aside>
       </div>
+
+      {confirmDeleteId && (
+        <AdminConfirmModal
+          message="Delete this review permanently? This cannot be undone."
+          busy={busy}
+          onCancel={() => setConfirmDeleteId(null)}
+          onConfirm={async () => {
+            setBusy(true);
+            try {
+              await reviewsApi.remove(confirmDeleteId);
+              setConfirmDeleteId(null);
+              const next = new URLSearchParams(params);
+              next.delete("selectedId");
+              setParams(next);
+              await reload();
+            } catch (e) {
+              setError(e instanceof Error ? e.message : "Delete failed");
+              setConfirmDeleteId(null);
+            } finally {
+              setBusy(false);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
