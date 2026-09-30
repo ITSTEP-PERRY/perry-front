@@ -147,7 +147,7 @@ export function AdminOrdersPage() {
             type="search"
             value={orderIdInput}
             onChange={(e) => setOrderIdInput(e.target.value)}
-            placeholder="Search by orderId…"
+            placeholder="Search by #AT456BB or orderId…"
           />
         </form>
       </div>
@@ -270,7 +270,9 @@ export function AdminOrdersPage() {
                   onClick={() => patchParams({ selectedId: o.id })}
                 >
                   <span className="ap-table__name">
-                    {new Date(o.orderDateUtc).toLocaleString()}
+                    {o.orderNumber || o.id.slice(0, 8)}
+                    <br />
+                    <small>{new Date(o.orderDateUtc).toLocaleString()}</small>
                   </span>
                   <span>{o.userName || "—"}</span>
                   <span>
@@ -292,6 +294,9 @@ export function AdminOrdersPage() {
           ) : (
             <div className="ap-panel__preview">
               <h2 className="ap-panel__title">Order information</h2>
+              <p className="ap-panel__meta">
+                <strong>{selected.orderNumber || "—"}</strong>
+              </p>
               <p className="ap-panel__meta">
                 <code>{selected.id}</code>
               </p>

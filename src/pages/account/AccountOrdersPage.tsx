@@ -97,7 +97,7 @@ export function AccountOrdersPage() {
               <article key={o.id} className="order-row">
                 <div className="order-row__main">
                   <div className="order-row__head">
-                    <strong>Order #{shortId(o.id)}</strong>
+                    <strong>Order {o.orderNumber || `#${shortId(o.id)}`}</strong>
                     <span className={`order-status ${statusClass}`}>{label}</span>
                   </div>
                   <div className="order-row__meta">Ordered on {formatOrderDate(o.orderDateUtc)}</div>

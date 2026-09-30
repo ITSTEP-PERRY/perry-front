@@ -103,6 +103,8 @@ export type AuthResponse = {
 
 export type OrderDto = {
   id: string;
+  /** #A12 short display number, e.g. #AT456BB */
+  orderNumber?: string | null;
   orderDateUtc: string;
   status: string;
   totalAmount: number;
