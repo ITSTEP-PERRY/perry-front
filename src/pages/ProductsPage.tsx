@@ -199,7 +199,7 @@ export function ProductsPage() {
       <div className="catalog-layout">
         {(filtersOpen || !isMobile) && (
           <aside className="catalog-filters" aria-label="Filters">
-            <form className="filters-form" onSubmit={(e) => e.preventDefault()}>
+            <div className="filters-form">
               <details className="filter-acc" open>
                 <summary>Brand</summary>
                 <div className="filter-acc__body">
@@ -368,7 +368,7 @@ export function ProductsPage() {
               <button type="button" className="btn btn-ghost filters-clear" onClick={clearFilters}>
                 Clear filters
               </button>
-            </form>
+            </div>
           </aside>
         )}
 

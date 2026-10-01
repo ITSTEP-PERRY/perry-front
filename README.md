@@ -1,6 +1,26 @@
 # Perry React storefront (`perry-front`)
 
+## Быстрый запуск — две иконки
+
+| Ярлык | Что запускает | URL |
+|-------|----------------|-----|
+| **Perry Desktop** | Desktop-витрина (Vite) | http://localhost:3000 |
+| **Perry Mobile** | Mobile (Expo Web) | http://localhost:8081 |
+
+После clone один раз:  
+`powershell -ExecutionPolicy Bypass -File .\Install-Perry-Shortcuts.ps1`  
+(иконки появятся в корне репо и на рабочем столе).
+
+Либо двойной клик по `start-desktop.cmd` / `start-mobile.cmd` (алиасы: `Запуск-Desktop.cmd` / `Запуск-Mobile.cmd`).  
+Нужен **Perry.Api** на `:5272`. Подробнее: [docs/КАК-ЗАПУСКАТЬ.md](./docs/КАК-ЗАПУСКАТЬ.md).
+
+**Отчёт 01.10.2026 (mobile Figma 1:1 + backend):** [docs/ОТЧЁТ-2026-10-01.md](./docs/ОТЧЁТ-2026-10-01.md)
+
+---
+
 Vite + React 19 витрина маркетплейса **Perry**. Визуал по макету **Figma** (приоритет №1) и эталону Razor `site.css` / `auth.css`. Данные — из `Perry.Api` (proxy `/api` → `http://localhost:5272`).
+
+**Mobile (Expo):** папка [`mobile/`](./mobile/) · [README](./mobile/README.md) · план [docs/МОБИЛЬНОЕ-ПРИЛОЖЕНИЕ-REACT.md](./docs/МОБИЛЬНОЕ-ПРИЛОЖЕНИЕ-REACT.md) · решение [docs/РЕШЕНИЕ-MOBILE-С-КОДОМ.md](./docs/РЕШЕНИЕ-MOBILE-С-КОДОМ.md)
 
 Backend: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_for_our_poroject)  
 **Figma-перепись 30.09 (~22 экрана):** [docs/ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md](./docs/ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md) · [чеклист](./docs/FIGMA-REWRITE-CHECKLIST.md)  

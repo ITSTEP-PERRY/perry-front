@@ -18,6 +18,15 @@ dist-ssr
 # Nested backend clone (separate repo)
 My_Amazon2/
 Back_end_for_our_poroject/
+_ref/
+
+# Local caches / tooling
+.tmp/
+.dotnet-tmp/
+.nuget-packages/
+
+# Shortcuts are machine-path specific — recreate via Install-Perry-Shortcuts.ps1
+*.lnk
 
 # Editor directories and files
 .vscode/*
