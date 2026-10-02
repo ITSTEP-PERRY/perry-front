@@ -27,32 +27,38 @@ export function AdminLoginPage() {
   };
 
   return (
-    <div className="auth-shell" data-figma="4152:5807">
+    <div className="auth-shell" data-figma="4611:53113">
       <Link className="auth-back" to="/">
         ← Back to store
       </Link>
-      <AuthModal data-figma="4152:5807">
+      <AuthModal data-figma="4611:53113">
         {error && <div className="auth-alert">{error}</div>}
         <form className="login-form" onSubmit={(e) => void onSubmit(e)}>
           <div className="login-form__titles">
-            <h1>Welcome back</h1>
-            <h2>Login into admin account</h2>
+            <h1>Welcome to admin panel</h1>
+            <h2>Login into your account</h2>
           </div>
 
           <div className="login-form__fields">
-            <AuthField label="Login">
+            <AuthField label="Email">
               <input
                 className="perry-field__input"
                 type="text"
                 value={loginName}
                 onChange={(e) => setLoginName(e.target.value)}
-                placeholder="Admin or Auth email"
+                placeholder="Enter your email"
                 autoComplete="username"
                 required
               />
             </AuthField>
 
-            <PasswordField label="Password" value={password} onChange={setPassword} required />
+            <PasswordField
+              label="Password"
+              value={password}
+              onChange={setPassword}
+              placeholder="Enter your password"
+              required
+            />
           </div>
 
           <button type="submit" className="perry-btn">
