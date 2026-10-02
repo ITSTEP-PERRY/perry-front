@@ -2102,15 +2102,17 @@ a.legal-em:hover { text-decoration: underline; }
   .legal-page { grid-template-columns: 1fr; }
   .legal-content__title { font-size: 1.75rem; }
   .carousel { grid-template-columns: 32px 1fr 32px; }
-  .category-track .category-card,
-  .product-track .product-card {
+  /* Категории могут остаться в ряд; товары — вертикальный список (см. ≤900px) */
+  .category-track .category-card {
     flex-basis: calc((100% - 14px) / 2);
   }
+  .home .product-track .product-card,
   .pdp-page .product-track .product-card {
-    flex: 0 0 calc((100% - 16px) / 2);
-    width: calc((100% - 16px) / 2);
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 0;
     aspect-ratio: auto;
-    min-height: 280px;
+    min-height: 0;
   }
   .catalog-products.is-list .product-card {
     grid-template-columns: 100px 1fr;
@@ -2307,7 +2309,7 @@ body:not(.legal-shell) {
 .home .product-track .product-card {
   flex: 0 0 var(--home-prod-w);
   width: var(--home-prod-w);
-  min-width: 0;
+  min-width: min(100%, 160px);
   max-width: none;
   scroll-snap-align: start;
 }
@@ -2315,7 +2317,7 @@ body:not(.legal-shell) {
 .pdp-page .product-track .product-card {
   flex: 0 0 calc((100% - 5 * 16px) / 6);
   width: calc((100% - 5 * 16px) / 6);
-  min-width: 0;
+  min-width: min(100%, 148px);
   max-width: none;
   scroll-snap-align: start;
   display: flex;
@@ -2325,7 +2327,7 @@ body:not(.legal-shell) {
   box-sizing: border-box;
   height: auto;
   min-height: 0;
-  aspect-ratio: 226 / 356;
+  aspect-ratio: auto;
   padding: 16px;
   box-shadow: 0 2px 10px rgba(14, 32, 66, 0.06);
   overflow: hidden;
@@ -2334,13 +2336,14 @@ body:not(.legal-shell) {
 .pdp-page .product-card__media {
   position: relative;
   width: 100%;
-  max-width: 178px;
+  max-width: 100%;
   aspect-ratio: 1;
   overflow: hidden;
   background: #f5f7fb;
   border-radius: 8px;
   margin: 0;
   flex: 0 0 auto;
+  flex-shrink: 0;
 }
 
 .pdp-page .product-card__media img {
@@ -2537,8 +2540,9 @@ body:not(.legal-shell) {
   box-sizing: border-box;
   height: auto;
   min-height: 0;
-  aspect-ratio: 226 / 356;
-  max-height: var(--figma-prod-h);
+  /* Не фиксируем 226×356 — при сжатии ширины aspect-ratio + max-height схлопывали фото */
+  aspect-ratio: auto;
+  max-height: none;
   padding: clamp(12px, 1.5vw, 24px);
   text-decoration: none !important;
   color: var(--ink);
@@ -2549,14 +2553,15 @@ body:not(.legal-shell) {
   position: relative;
   width: 100%;
   height: auto;
-  max-width: var(--figma-prod-img);
+  max-width: 100%;
   aspect-ratio: 1;
   overflow: hidden;
   background: #f5f7fb;
   border: 0;
   border-radius: 8px;
-  margin: 0 auto 0 0;
+  margin: 0;
   flex: 0 0 auto;
+  flex-shrink: 0;
 }
 
 .home .product-card__media img {
@@ -2867,21 +2872,20 @@ body:not(.legal-shell) {
 
 @media (max-width: 1100px) {
   .home { --home-cols: 4; }
-  .home .category-card,
-  .home .product-card {
+  .home .category-card {
     aspect-ratio: auto;
     max-height: none;
     min-height: 220px;
   }
-  .home .product-card { min-height: 280px; }
   .home-cta__copy { max-width: min(28rem, 60%); }
   .home-cta__bg { object-position: 70% center; }
   .footer-inner { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
+/* ≤900px: как mobile — вертикальный список карточек, без горизонтальной карусели */
 @media (max-width: 900px) {
   .carousel { grid-template-columns: 32px minmax(0, 1fr) 32px; gap: 10px; }
-  .home { --home-cols: 3; }
+  .home { --home-cols: 2; }
   :root { --home-pad: clamp(12px, 3vw, 24px); }
   .home-hero .carousel-btn {
     width: 36px;
@@ -2899,6 +2903,110 @@ body:not(.legal-shell) {
   }
   .footer-inner .footer-col:last-child {
     grid-column: 1 / -1;
+  }
+
+  /* Товары: колонка на всю ширину (как related на mobile PDP), стрелки карусели скрыты */
+  .home .carousel--products,
+  .pdp-page .carousel--products,
+  .pdp-page .carousel {
+    display: block;
+  }
+
+  .home .carousel--products > .carousel-btn,
+  .pdp-page .carousel > .carousel-btn {
+    display: none;
+  }
+
+  .home .carousel--products .carousel__viewport,
+  .pdp-page .carousel .carousel__viewport {
+    overflow: visible;
+  }
+
+  .home .carousel--products .carousel__track,
+  .home .product-track,
+  .pdp-page .carousel .carousel__track,
+  .pdp-page .product-track {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    overflow: visible;
+    overflow-x: visible;
+    scroll-snap-type: none;
+    gap: 12px;
+    padding: 0;
+  }
+
+  .home .product-track .product-card,
+  .pdp-page .product-track .product-card {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+  }
+
+  .home .product-card,
+  .pdp-page .product-card {
+    aspect-ratio: auto;
+    max-height: none;
+    min-height: 0;
+    height: auto;
+    padding: 16px;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .home .product-card__media,
+  .pdp-page .product-card__media {
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 1;
+    height: auto;
+    min-height: 0;
+    flex: 0 0 auto;
+    flex-shrink: 0;
+    border-radius: 6px;
+    margin: 0;
+  }
+
+  .home .product-card__body,
+  .pdp-page .product-card__body {
+    flex: 0 0 auto;
+    width: 100%;
+    margin-top: 8px;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .home .product-card__title,
+  .pdp-page .product-card__title {
+    width: 100%;
+    font-size: 0.875rem;
+    line-height: 1.3;
+    text-align: left;
+    min-height: 2.4em;
+    margin: 0;
+  }
+
+  .home .product-card__rating,
+  .home .product-card__price,
+  .pdp-page .product-card__rating,
+  .pdp-page .product-card__price {
+    margin-top: 0;
+    justify-content: flex-start;
+    padding-top: 0;
+  }
+
+  .home .product-card__price strong,
+  .pdp-page .product-card__price strong {
+    font-size: 1.25rem;
+  }
+
+  .home .product-card .badge-discount,
+  .pdp-page .product-card .badge-discount {
+    top: 8px;
+    right: 8px;
+    padding: 4px 8px;
+    font-size: 0.75rem;
   }
 }
 
@@ -2929,9 +3037,11 @@ body:not(.legal-shell) {
     background: linear-gradient(90deg, rgba(14, 32, 66, 0.75) 0%, rgba(14, 32, 66, 0.4) 65%, transparent 100%);
   }
   .home-cta__actions { gap: 12px; }
-  .home .category-card,
-  .home .product-card {
+  .home .category-card {
     min-height: 0;
+    padding: 12px;
+  }
+  .home .product-card {
     padding: 12px;
   }
   .btn-cta-primary,

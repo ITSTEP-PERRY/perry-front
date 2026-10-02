@@ -7,7 +7,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  useWindowDimensions,
   View,
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -57,8 +56,6 @@ const INFO_ROWS: { key: "payment" | "security" | "delivery" | "returns"; label: 
  */
 export function ProductScreen({ navigation, route }: Props) {
   const { id } = route.params;
-  const { width: windowW } = useWindowDimensions();
-  const relatedW = (windowW - PAD * 2 - 12) / 2;
   const { user } = useAuth();
   const { add } = useCart();
   const insets = useSafeAreaInsets();
@@ -432,7 +429,6 @@ export function ProductScreen({ navigation, route }: Props) {
         <RelatedBlock
           title={`More ${product.category.name}`}
           items={related}
-          cellWidth={relatedW}
           onSeeMore={() =>
             navigateShop("Products", {
               categoryId: product.category.id,
@@ -448,7 +444,6 @@ export function ProductScreen({ navigation, route }: Props) {
               ? saleRelated
               : related.filter((p) => p.oldPrice && p.oldPrice > p.price)
           }
-          cellWidth={relatedW}
           onSeeMore={() =>
             navigateShop("Products", {
               categoryId: product.category.id,
@@ -556,13 +551,11 @@ export function ProductScreen({ navigation, route }: Props) {
 function RelatedBlock({
   title,
   items,
-  cellWidth,
   onSeeMore,
   onProduct,
 }: {
   title: string;
   items: ProductListItem[];
-  cellWidth: number;
   onSeeMore: () => void;
   onProduct: (id: string) => void;
 }) {
@@ -571,11 +564,9 @@ function RelatedBlock({
   return (
     <View style={styles.relatedSection}>
       <Text style={styles.sectionHCenter}>{title}</Text>
-      <View style={styles.relatedGrid}>
+      <View style={styles.relatedList}>
         {shown.map((p) => (
-          <View key={p.id} style={{ width: cellWidth }}>
-            <ProductCard product={p} variant="related" onPress={() => onProduct(p.id)} />
-          </View>
+          <ProductCard key={p.id} product={p} variant="related" onPress={() => onProduct(p.id)} />
         ))}
       </View>
       <Pressable style={styles.seeMoreBtn} onPress={onSeeMore}>
@@ -1022,7 +1013,7 @@ const styles = StyleSheet.create({
   },
   seeMoreBtnText: { color: colors.secondary, fontWeight: "800" },
   relatedSection: { paddingHorizontal: PAD, marginBottom: 24 },
-  relatedGrid: { flexDirection: "row", flexWrap: "wrap", gap: 12, marginBottom: 8 },
+  relatedList: { flexDirection: "column", gap: 12, marginBottom: 8 },
   sheetBg: { flex: 1, backgroundColor: colors.overlay },
   sheet: {
     backgroundColor: colors.white,
