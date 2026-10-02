@@ -1,4 +1,4 @@
-# Perry Mobile (Expo)
+﻿# Perry Mobile (Expo)
 
 Клиент покупателя на **Expo / React Native** под тот же Auth + Product API, что и web-витрина.  
 Макеты: Figma iPhone frames (`cF0bKFsmenH6rrshGV0yO7`).  
