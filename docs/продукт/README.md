@@ -12,5 +12,7 @@
 | [FIGMA-REWRITE-CHECKLIST.md](../продукт/FIGMA-REWRITE-CHECKLIST.md) | Чеклист ~22 экранов |
 | [FIGMA-PAGE-INVENTORY.md](../продукт/FIGMA-PAGE-INVENTORY.md) | Инвентарь node-id |
 | [СВЕСТИ-ДВЕ-ЛИНИИ.md](./СВЕСТИ-ДВЕ-ЛИНИИ.md) | Figma-порт vs admin-front |
+| [ГОТОВНОСТЬ-ПРОЕКТА-2026-10-02.md](./ГОТОВНОСТЬ-ПРОЕКТА-2026-10-02.md) | Срез готовности + Trello |
+| [ЧТО-ЕЩЁ-СДЕЛАТЬ.md](./ЧТО-ЕЩЁ-СДЕЛАТЬ.md) | Открытый бэклог и зачем |
 
 ← [docs/README.md](../README.md)
