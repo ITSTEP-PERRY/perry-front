@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
-  Dimensions,
   Image,
   Modal,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -25,10 +25,8 @@ import { navigateShop } from "../navigation/navigationRef";
 import type { RootStackParamList } from "../navigation/types";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Product">;
-const W = Dimensions.get("window").width;
 const PAD = 16;
 const THUMB = 56;
-const RELATED_W = (W - PAD * 2 - 12) / 2;
 
 const INFO_ROWS: { key: "payment" | "security" | "delivery" | "returns"; label: string; body: string }[] = [
   {
@@ -59,6 +57,8 @@ const INFO_ROWS: { key: "payment" | "security" | "delivery" | "returns"; label: 
  */
 export function ProductScreen({ navigation, route }: Props) {
   const { id } = route.params;
+  const { width: windowW } = useWindowDimensions();
+  const relatedW = (windowW - PAD * 2 - 12) / 2;
   const { user } = useAuth();
   const { add } = useCart();
   const insets = useSafeAreaInsets();
@@ -221,11 +221,11 @@ export function ProductScreen({ navigation, route }: Props) {
           </View>
         </View>
 
-        {/* Gallery + thumbs */}
+        {/* Gallery: full width, square frame, contain — фото целиком, без crop */}
         <View style={styles.gallery}>
           <View style={styles.mainWrap}>
             {mainUri ? (
-              <Image source={{ uri: mainUri }} style={styles.mainImg} resizeMode="cover" />
+              <Image source={{ uri: mainUri }} style={styles.mainImg} resizeMode="contain" />
             ) : (
               <View style={[styles.mainImg, styles.ph]} />
             )}
@@ -432,6 +432,7 @@ export function ProductScreen({ navigation, route }: Props) {
         <RelatedBlock
           title={`More ${product.category.name}`}
           items={related}
+          cellWidth={relatedW}
           onSeeMore={() =>
             navigateShop("Products", {
               categoryId: product.category.id,
@@ -447,6 +448,7 @@ export function ProductScreen({ navigation, route }: Props) {
               ? saleRelated
               : related.filter((p) => p.oldPrice && p.oldPrice > p.price)
           }
+          cellWidth={relatedW}
           onSeeMore={() =>
             navigateShop("Products", {
               categoryId: product.category.id,
@@ -554,11 +556,13 @@ export function ProductScreen({ navigation, route }: Props) {
 function RelatedBlock({
   title,
   items,
+  cellWidth,
   onSeeMore,
   onProduct,
 }: {
   title: string;
   items: ProductListItem[];
+  cellWidth: number;
   onSeeMore: () => void;
   onProduct: (id: string) => void;
 }) {
@@ -569,7 +573,7 @@ function RelatedBlock({
       <Text style={styles.sectionHCenter}>{title}</Text>
       <View style={styles.relatedGrid}>
         {shown.map((p) => (
-          <View key={p.id} style={{ width: RELATED_W }}>
+          <View key={p.id} style={{ width: cellWidth }}>
             <ProductCard product={p} variant="related" onPress={() => onProduct(p.id)} />
           </View>
         ))}
@@ -715,12 +719,18 @@ const styles = StyleSheet.create({
   reviewsCount: { marginLeft: 6, color: colors.muted, fontSize: 13 },
   code: { paddingHorizontal: PAD, color: colors.muted, fontSize: 12, marginBottom: 12 },
   gallery: { paddingHorizontal: PAD, marginBottom: 16 },
-  mainWrap: { position: "relative" },
-  mainImg: {
-    width: W - PAD * 2,
-    height: Math.round((W - PAD * 2) * 1.15),
+  mainWrap: {
+    position: "relative",
+    width: "100%",
+    aspectRatio: 1,
     borderRadius: radii.md,
-    backgroundColor: "#E8EEF5",
+    overflow: "hidden",
+    backgroundColor: "#F4F7FB",
+  },
+  mainImg: {
+    ...StyleSheet.absoluteFillObject,
+    width: "100%",
+    height: "100%",
   },
   discBadge: {
     position: "absolute",
