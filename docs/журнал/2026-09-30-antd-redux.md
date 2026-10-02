@@ -1,10 +1,10 @@
-# Оценка миграции витрины на antd + Redux + TypeScript
+﻿# Оценка миграции витрины на antd + Redux + TypeScript
 
 **Дата:** 30.09.2026  
 **Контекст:** сообщение в чате команды — *«Нужно чтобы мы на одном писали, я предлагаю antd, redux и typescript»*.  
 **База для оценки:** рабочая линия A (Figma-порт) в `perry-front` / локально `D:\Perry`, ветка `feature/figma-storefront-port`.
 
-Связано: [СВЕСТИ-ДВЕ-ЛИНИИ.md](./СВЕСТИ-ДВЕ-ЛИНИИ.md) · [ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md](./ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md) · [FIGMA-REWRITE-CHECKLIST.md](./FIGMA-REWRITE-CHECKLIST.md) · [РЕШЕНИЕ-ФРОНТ-АДМИН.md](./РЕШЕНИЕ-ФРОНТ-АДМИН.md)
+Связано: [СВЕСТИ-ДВЕ-ЛИНИИ.md](./СВЕСТИ-ДВЕ-ЛИНИИ.md) · [ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md](./ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md) · [FIGMA-REWRITE-CHECKLIST.md](../продукт/FIGMA-REWRITE-CHECKLIST.md) · [РЕШЕНИЕ-ФРОНТ-АДМИН.md](./РЕШЕНИЕ-ФРОНТ-АДМИН.md)
 
 ---
 

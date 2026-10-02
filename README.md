@@ -1,4 +1,4 @@
-# Perry React storefront (`perry-front`)
+﻿# Perry React storefront (`perry-front`)
 
 ## Быстрый запуск — две иконки
 
@@ -12,29 +12,29 @@
 (иконки появятся в корне репо и на рабочем столе).
 
 Либо двойной клик по `start-desktop.cmd` / `start-mobile.cmd` (алиасы: `Запуск-Desktop.cmd` / `Запуск-Mobile.cmd`).  
-Нужен **Perry.Api** на `:5272`. Подробнее: [docs/КАК-ЗАПУСКАТЬ.md](./docs/КАК-ЗАПУСКАТЬ.md).
+Нужен **Perry.Api** на `:5272`. Подробнее: [docs/инструкции/КАК-ЗАПУСКАТЬ.md](./docs/инструкции/КАК-ЗАПУСКАТЬ.md).
 
-**Отчёт 01.10.2026 (mobile Figma 1:1 + backend):** [docs/ОТЧЁТ-2026-10-01.md](./docs/ОТЧЁТ-2026-10-01.md)  
-**Отчёт 02.10.2026 (DummyJSON — фото витрин):** [docs/ОТЧЁТ-2026-10-02.md](./docs/ОТЧЁТ-2026-10-02.md)
+**Отчёт 01.10.2026 (mobile Figma 1:1 + backend):** [docs/журнал/2026-10-01.md](./docs/журнал/2026-10-01.md)  
+**Отчёт 02.10.2026 (DummyJSON — фото витрин):** [docs/журнал/2026-10-02.md](./docs/журнал/2026-10-02.md)
 
 ---
 
 Vite + React 19 витрина маркетплейса **Perry**. Визуал по макету **Figma** (приоритет №1) и эталону Razor `site.css` / `auth.css`. Данные — из `Perry.Api` (proxy `/api` → `http://localhost:5272`).
 
-**Mobile (Expo):** папка [`mobile/`](./mobile/) · [README](./mobile/README.md) · план [docs/МОБИЛЬНОЕ-ПРИЛОЖЕНИЕ-REACT.md](./docs/МОБИЛЬНОЕ-ПРИЛОЖЕНИЕ-REACT.md) · решение [docs/РЕШЕНИЕ-MOBILE-С-КОДОМ.md](./docs/РЕШЕНИЕ-MOBILE-С-КОДОМ.md)
+**Mobile (Expo):** папка [`mobile/`](./mobile/) · [README](./mobile/README.md) · план [docs/продукт/МОБИЛЬНОЕ-ПРИЛОЖЕНИЕ-REACT.md](./docs/продукт/МОБИЛЬНОЕ-ПРИЛОЖЕНИЕ-REACT.md) · решение [docs/продукт/РЕШЕНИЕ-MOBILE-С-КОДОМ.md](./docs/продукт/РЕШЕНИЕ-MOBILE-С-КОДОМ.md)
 
 Backend: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_for_our_poroject)  
-**Figma-перепись 30.09 (~22 экрана):** [docs/ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md](./docs/ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md) · [чеклист](./docs/FIGMA-REWRITE-CHECKLIST.md)  
+**Figma-перепись 30.09 (~22 экрана):** [docs/журнал/2026-09-30-figma-rewrite.md](./docs/журнал/2026-09-30-figma-rewrite.md) · [чеклист](./docs/продукт/FIGMA-REWRITE-CHECKLIST.md)  
 **Хроника всей работы:** [docs/ХРОНИКА-РАБОТЫ.md](./docs/ХРОНИКА-РАБОТЫ.md) · оглавление [docs/README.md](./docs/README.md)  
-**Trello (карточки):** [docs/TRELLO-TODO.md](./docs/TRELLO-TODO.md) · доска [ITSTEP-PERRY](https://trello.com/b/bwEYs3Kq/itstep-perry)  
-**Отчёт 28.09 (весь день):** [docs/ОТЧЁТ-2026-09-28.md](./docs/ОТЧЁТ-2026-09-28.md) · срезы: [#A03–#A07](./docs/ИЗМЕНЕНИЯ-2026-09-28.md) · [#95 Auth](./docs/ИЗМЕНЕНИЯ-2026-09-28-auth-95.md) · [отзывы #99–#104](./docs/ОТЗЫВЫ-ПОКУПАТЕЛЕЙ.md)  
-**Стыки микросервисов (для команды):** [docs/СТЫКИ-МИКРОСЕРВИСОВ.md](./docs/СТЫКИ-МИКРОСЕРВИСОВ.md) · **решение с кодом:** [docs/РЕШЕНИЕ-СТЫКОВ-С-КОДОМ.md](./docs/РЕШЕНИЕ-СТЫКОВ-С-КОДОМ.md) · **в Telegram:** [docs/СООБЩЕНИЕ-В-ЧАТ-СТЫКИ.md](./docs/СООБЩЕНИЕ-В-ЧАТ-СТЫКИ.md) · [docs/AUTH-INTEGRATION.md](./docs/AUTH-INTEGRATION.md)  
-**Админка:** [docs/НАША-АДМИНКА.md](./docs/НАША-АДМИНКА.md) · [docs/РЕШЕНИЕ-ФРОНТ-АДМИН.md](./docs/РЕШЕНИЕ-ФРОНТ-АДМИН.md)  
-**Срез 26.09 (#94 Auth / без Users):** [docs/ИЗМЕНЕНИЯ-2026-09-26.md](./docs/ИЗМЕНЕНИЯ-2026-09-26.md) · [docs/ОТЧЁТ-2026-09-26.md](./docs/ОТЧЁТ-2026-09-26.md) · [docs/AUTH-INTEGRATION.md](./docs/AUTH-INTEGRATION.md) · [docs/ВОПРОСЫ-КОМАНДЕ.md](./docs/ВОПРОСЫ-КОМАНДЕ.md) · [docs/ADMIN-КОМАНДА.md](./docs/ADMIN-КОМАНДА.md)  
-**Срез 25.09 (lightbox / auth tokens / orders stats):** [docs/ИЗМЕНЕНИЯ-2026-09-25.md](./docs/ИЗМЕНЕНИЯ-2026-09-25.md) · [docs/ИЗМЕНЕНИЯ-2026-09-25-orders-stats.md](./docs/ИЗМЕНЕНИЯ-2026-09-25-orders-stats.md)  
-**Спринт 19.09:** [docs/ИЗМЕНЕНИЯ-2026-09-19.md](./docs/ИЗМЕНЕНИЯ-2026-09-19.md) · скрины [docs/screenshots/sprint-2026-09-19/](./docs/screenshots/sprint-2026-09-19/README.md)  
-Сводка (каталог/PDP/auth): [docs/ИЗМЕНЕНИЯ-2026-09-17.md](./docs/ИЗМЕНЕНИЯ-2026-09-17.md)  
-**Account:** [docs/ACCOUNT-КАБИНЕТ.md](./docs/ACCOUNT-КАБИНЕТ.md) · [docs/ИЗМЕНЕНИЯ-Account-2026-09-17.md](./docs/ИЗМЕНЕНИЯ-Account-2026-09-17.md)  
+**Trello (карточки):** [docs/инструкции/TRELLO-TODO.md](./docs/инструкции/TRELLO-TODO.md) · доска [ITSTEP-PERRY](https://trello.com/b/bwEYs3Kq/itstep-perry)  
+**Отчёт 28.09 (весь день):** [docs/журнал/2026-09-28.md](./docs/журнал/2026-09-28.md) · срезы: [#A03–#A07](./docs/журнал/2026-09-28-a03-a07.md) · [#95 Auth](./docs/журнал/2026-09-28-auth-95.md) · [отзывы #99–#104](./docs/продукт/ОТЗЫВЫ-ПОКУПАТЕЛЕЙ.md)  
+**Стыки микросервисов (для команды):** [docs/стыки/СТЫКИ-МИКРОСЕРВИСОВ.md](./docs/стыки/СТЫКИ-МИКРОСЕРВИСОВ.md) · **решение с кодом:** [docs/стыки/РЕШЕНИЕ-СТЫКОВ-С-КОДОМ.md](./docs/стыки/РЕШЕНИЕ-СТЫКОВ-С-КОДОМ.md) · **в Telegram:** [docs/стыки/СООБЩЕНИЕ-В-ЧАТ-СТЫКИ.md](./docs/стыки/СООБЩЕНИЕ-В-ЧАТ-СТЫКИ.md) · [docs/стыки/AUTH-INTEGRATION.md](./docs/стыки/AUTH-INTEGRATION.md)  
+**Админка:** [docs/продукт/НАША-АДМИНКА.md](./docs/продукт/НАША-АДМИНКА.md) · [docs/продукт/РЕШЕНИЕ-ФРОНТ-АДМИН.md](./docs/продукт/РЕШЕНИЕ-ФРОНТ-АДМИН.md)  
+**Срез 26.09 (#94 Auth / без Users):** [docs/журнал/2026-09-26.md](./docs/журнал/2026-09-26.md) · [docs/журнал/2026-09-26-срез.md](./docs/журнал/2026-09-26-срез.md) · [docs/стыки/AUTH-INTEGRATION.md](./docs/стыки/AUTH-INTEGRATION.md) · [docs/стыки/ВОПРОСЫ-КОМАНДЕ.md](./docs/стыки/ВОПРОСЫ-КОМАНДЕ.md) · [docs/продукт/ADMIN-КОМАНДА.md](./docs/продукт/ADMIN-КОМАНДА.md)  
+**Срез 25.09 (lightbox / auth tokens / orders stats):** [docs/журнал/2026-09-25.md](./docs/журнал/2026-09-25.md) · [docs/журнал/2026-09-25-orders-stats.md](./docs/журнал/2026-09-25-orders-stats.md)  
+**Спринт 19.09:** [docs/журнал/2026-09-19.md](./docs/журнал/2026-09-19.md) · скрины [docs/screenshots/sprint-2026-09-19/](./docs/screenshots/sprint-2026-09-19/README.md)  
+Сводка (каталог/PDP/auth): [docs/журнал/2026-09-17.md](./docs/журнал/2026-09-17.md)  
+**Account:** [docs/продукт/ACCOUNT-КАБИНЕТ.md](./docs/продукт/ACCOUNT-КАБИНЕТ.md) · [docs/журнал/2026-09-17-account.md](./docs/журнал/2026-09-17-account.md)  
 Скриншоты: [docs/screenshots/README.md](./docs/screenshots/README.md)
 
 ---
@@ -45,9 +45,9 @@ Backend: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_fo
 
 | Документ | О чём |
 |----------|--------|
-| **[ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md](./docs/ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md)** | **Отчёт: что сделано по 22 экранам** |
-| [FIGMA-REWRITE-CHECKLIST.md](./docs/FIGMA-REWRITE-CHECKLIST.md) | Чеклист экранов (все 🟢) |
-| [FIGMA-PAGE-INVENTORY.md](./docs/FIGMA-PAGE-INVENTORY.md) | Инвентарь node-id макета |
+| **[ОТЧЁТ-FIGMA-REWRITE-2026-09-30.md](./docs/журнал/2026-09-30-figma-rewrite.md)** | **Отчёт: что сделано по 22 экранам** |
+| [FIGMA-REWRITE-CHECKLIST.md](./docs/продукт/FIGMA-REWRITE-CHECKLIST.md) | Чеклист экранов (все 🟢) |
+| [FIGMA-PAGE-INVENTORY.md](./docs/продукт/FIGMA-PAGE-INVENTORY.md) | Инвентарь node-id макета |
 
 Ветка: `feature/figma-storefront-port`.
 
@@ -55,7 +55,7 @@ Backend: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_fo
 
 ## Срез 28.09.2026 — итог дня (#A03–#A07 · #95 · #99–#104)
 
-Полный отчёт: [ОТЧЁТ-2026-09-28.md](./docs/ОТЧЁТ-2026-09-28.md).
+Полный отчёт: [ОТЧЁТ-2026-09-28.md](./docs/журнал/2026-09-28.md).
 
 | Блок | Что |
 |------|-----|
@@ -76,13 +76,13 @@ Backend: `feature/categories-facets-figma-storefront` в [Back_end_for_our_poroj
 | **#95** | Карточка Владу: JWT claims / issuer / Internal API ([Trello](https://trello.com/c/T28F0b7e)) |
 | FE | `VITE_AUTH_API_URL` + `authApi`/`usersApi` → Auth Service; каталог/корзина — Product |
 
-Подробнее: [ОТЧЁТ-2026-09-26.md](./docs/ОТЧЁТ-2026-09-26.md), [ИЗМЕНЕНИЯ-2026-09-26.md](./docs/ИЗМЕНЕНИЯ-2026-09-26.md), [AUTH-INTEGRATION.md](./docs/AUTH-INTEGRATION.md), [ВОПРОСЫ-КОМАНДЕ.md](./docs/ВОПРОСЫ-КОМАНДЕ.md), [СВЕСТИ-ДВЕ-ЛИНИИ.md](./docs/СВЕСТИ-ДВЕ-ЛИНИИ.md).
+Подробнее: [ОТЧЁТ-2026-09-26.md](./docs/журнал/2026-09-26-срез.md), [ИЗМЕНЕНИЯ-2026-09-26.md](./docs/журнал/2026-09-26.md), [AUTH-INTEGRATION.md](./docs/стыки/AUTH-INTEGRATION.md), [ВОПРОСЫ-КОМАНДЕ.md](./docs/стыки/ВОПРОСЫ-КОМАНДЕ.md), [СВЕСТИ-ДВЕ-ЛИНИИ.md](./docs/продукт/СВЕСТИ-ДВЕ-ЛИНИИ.md).
 
 ---
 
 ## Срез 25.09.2026 — что сделано
 
-Кратко по закрытым карточкам и коду (ветка `feature/figma-storefront-port`). Полные тексты: [ИЗМЕНЕНИЯ-2026-09-25.md](./docs/ИЗМЕНЕНИЯ-2026-09-25.md), [ИЗМЕНЕНИЯ-2026-09-25-orders-stats.md](./docs/ИЗМЕНЕНИЯ-2026-09-25-orders-stats.md).
+Кратко по закрытым карточкам и коду (ветка `feature/figma-storefront-port`). Полные тексты: [ИЗМЕНЕНИЯ-2026-09-25.md](./docs/журнал/2026-09-25.md), [ИЗМЕНЕНИЯ-2026-09-25-orders-stats.md](./docs/журнал/2026-09-25-orders-stats.md).
 
 | # | Что |
 |---|-----|
@@ -103,7 +103,7 @@ Backend-пара: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Ba
 
 Закрыты оставшиеся карточки Trello (кроме Backlog #73): PDP reviews + инфо-модалки + notify + 404 · React-админка Categories / Products / Reviews / Users / Orders · Docker · Swagger · SMTP-гайд · mobile Done.
 
-Текстовая сводка: [docs/ИЗМЕНЕНИЯ-2026-09-19.md](./docs/ИЗМЕНЕНИЯ-2026-09-19.md)
+Текстовая сводка: [docs/журнал/2026-09-19.md](./docs/журнал/2026-09-19.md)
 
 ### 01 · 404 Product not found
 

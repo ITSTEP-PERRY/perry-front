@@ -1,4 +1,4 @@
-# Trello ToDo — Perry (по макету Figma)
+﻿# Trello ToDo — Perry (по макету Figma)
 
 Документ для переноса на доску **Trello**.  
 Источник макета: [Дипломна робота (Copy)](https://www.figma.com/design/cF0bKFsmenH6rrshGV0yO7/) · страница `Wireframe`.  
@@ -10,7 +10,7 @@
 3. Метки (labels): `FE` · `BE` · `Admin` · `Mobile` · `Design` · `Docs` · `P0` / `P1` / `P2`.
 4. Статус — синхронизирован с доской **ITSTEP-PERRY** на **28.09.2026**.
 Легенда статуса: ✅ Done · 🟡 Partial · ⬜ To Do / Backlog · 🚫 Blocked · 🔵 In Progress · 🟣 Review
-Срез дня: [ИЗМЕНЕНИЯ-2026-09-28.md](./ИЗМЕНЕНИЯ-2026-09-28.md) · 26.09: [ИЗМЕНЕНИЯ-2026-09-26.md](./ИЗМЕНЕНИЯ-2026-09-26.md) · Auth: [AUTH-INTEGRATION.md](./AUTH-INTEGRATION.md)
+Срез дня: [ИЗМЕНЕНИЯ-2026-09-28.md](./ИЗМЕНЕНИЯ-2026-09-28.md) · 26.09: [ИЗМЕНЕНИЯ-2026-09-26.md](./ИЗМЕНЕНИЯ-2026-09-26.md) · Auth: [AUTH-INTEGRATION.md](../стыки/AUTH-INTEGRATION.md)
 
 ---
 
@@ -235,9 +235,9 @@
 **Закрыто 26.09:** **#94** (Users out of Product API).  
 **#A02** — ✅ Done: merge `backend/main` (PR #13, fixed DB migrations) · [карточка](https://trello.com/c/BgOTO4i6).  
 **Закрыто 28.09:** **#A03** seed orders · **#A04** remove AdminReviewsController · **#A05** checkout shipping/payment · **#A06** `/api/health` · **#A07** popular-by-userId — см. [ИЗМЕНЕНИЯ-2026-09-28.md](./ИЗМЕНЕНИЯ-2026-09-28.md).  
-**#95** — ✅ secret HS256 получен; Product читает `.env` / валидирует подпись — [ИЗМЕНЕНИЯ-2026-09-28-auth-95.md](./ИЗМЕНЕНИЯ-2026-09-28-auth-95.md) · [AUTH-INTEGRATION.md](./AUTH-INTEGRATION.md). Осталось: plaintext service credential + подтвердить iss/aud на живом токене. **#92** — ✅ Done: пакет `project_defense/` (схемы PNG 01–14 + речь/Q&A) · [карточка](https://trello.com/c/aqjFgfcU).  
+**#95** — ✅ secret HS256 получен; Product читает `.env` / валидирует подпись — [ИЗМЕНЕНИЯ-2026-09-28-auth-95.md](./ИЗМЕНЕНИЯ-2026-09-28-auth-95.md) · [AUTH-INTEGRATION.md](../стыки/AUTH-INTEGRATION.md). Осталось: plaintext service credential + подтвердить iss/aud на живом токене. **#92** — ✅ Done: пакет `project_defense/` (схемы PNG 01–14 + речь/Q&A) · [карточка](https://trello.com/c/aqjFgfcU).  
 **Отзывы (#99–#104)** — ✅ Done: create `POST /api/reviews`, AuthClaims UserId, unique, `/me`, Account «My reviews», tags — [ОТЗЫВЫ-ПОКУПАТЕЛЕЙ.md](./ОТЗЫВЫ-ПОКУПАТЕЛЕЙ.md).  
-**Auth follow-up (стыки):** пакет [#105](https://trello.com/c/6W4hdlT1) · Auth сдаёт [#96](https://trello.com/c/dnk4VUUk) iss/aud · [#98](https://trello.com/c/paCSfdu7) claims · [#97](https://trello.com/c/hcmCvKWF) credential · [#106](https://trello.com/c/LIL5NHlr) CORS · затем мы [#107](https://trello.com/c/zuzmLFVt) Product · [#108](https://trello.com/c/dKmess1E) Front smoke — [СТЫКИ-МИКРОСЕРВИСОВ.md](./СТЫКИ-МИКРОСЕРВИСОВ.md).
+**Auth follow-up (стыки):** пакет [#105](https://trello.com/c/6W4hdlT1) · Auth сдаёт [#96](https://trello.com/c/dnk4VUUk) iss/aud · [#98](https://trello.com/c/paCSfdu7) claims · [#97](https://trello.com/c/hcmCvKWF) credential · [#106](https://trello.com/c/LIL5NHlr) CORS · затем мы [#107](https://trello.com/c/zuzmLFVt) Product · [#108](https://trello.com/c/dKmess1E) Front smoke — [СТЫКИ-МИКРОСЕРВИСОВ.md](../стыки/СТЫКИ-МИКРОСЕРВИСОВ.md).
 
 ---
 

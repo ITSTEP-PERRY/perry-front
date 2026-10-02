@@ -1,4 +1,4 @@
-# Мобильная версия на React под наш бэкенд
+﻿# Мобильная версия на React под наш бэкенд
 
 **Цель:** клиент для покупателя (витрина) на **React Native / Expo**, без переписывания Product API и Auth.  
 **Бэкенд остаётся:** Perry Product API + Perry Auth Service (Azure).  
@@ -7,7 +7,7 @@
 Полная копия / канон также в Product-репо:  
 [Teslyar75/My_Amazon2 — docs/МОБИЛЬНОЕ-ПРИЛОЖЕНИЕ-REACT.md](https://github.com/Teslyar75/My_Amazon2/blob/feature/categories-facets-figma-storefront/docs/МОБИЛЬНОЕ-ПРИЛОЖЕНИЕ-REACT.md)
 
-Связанные: [AUTH-INTEGRATION.md](./AUTH-INTEGRATION.md) · [СТЫКИ-ЛОКАЛЬНО.md](./СТЫКИ-ЛОКАЛЬНО.md) · [ОТЧЁТ-2026-09-29.md](./ОТЧЁТ-2026-09-29.md)
+Связанные: [AUTH-INTEGRATION.md](../стыки/AUTH-INTEGRATION.md) · [СТЫКИ-ЛОКАЛЬНО.md](./СТЫКИ-ЛОКАЛЬНО.md) · [ОТЧЁТ-2026-09-29.md](./ОТЧЁТ-2026-09-29.md)
 
 ---
 

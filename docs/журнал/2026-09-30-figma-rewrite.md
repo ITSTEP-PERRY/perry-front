@@ -1,4 +1,4 @@
-# Отчёт: перепись FE под Figma — 30.09.2026
+﻿# Отчёт: перепись FE под Figma — 30.09.2026
 
 ## Цель
 
@@ -7,7 +7,7 @@
 ## Итог
 
 **Переписано 22 уникальных экрана** (+ состояния Cart, модалки/табы PDP, Contact / FAQ).  
-Чеклист закрыт: [FIGMA-REWRITE-CHECKLIST.md](./FIGMA-REWRITE-CHECKLIST.md).
+Чеклист закрыт: [FIGMA-REWRITE-CHECKLIST.md](../продукт/FIGMA-REWRITE-CHECKLIST.md).
 
 ### Макеты (source of truth)
 
@@ -15,7 +15,7 @@
 |------|------|--------|
 | **Канон экранов** | Prototype | [xFLIIfNIIiBHaMcijSE84I · `3129:2254`](https://www.figma.com/design/xFLIIfNIIiBHaMcijSE84I/?node-id=3129-2254) |
 | Вспомогательный wireframe | структура / размеры | [cF0bKFsmenH6rrshGV0yO7](https://www.figma.com/design/cF0bKFsmenH6rrshGV0yO7/) |
-| Инвентарь нод | — | [FIGMA-PAGE-INVENTORY.md](./FIGMA-PAGE-INVENTORY.md) |
+| Инвентарь нод | — | [FIGMA-PAGE-INVENTORY.md](../продукт/FIGMA-PAGE-INVENTORY.md) |
 
 ---
 
@@ -95,4 +95,4 @@
 | Открытых страниц в чеклисте | **0** |
 | Следующий шаг по Figma-вёрстке | не требуется |
 
-Вне scope этой переписи (см. [ХРОНИКА-РАБОТЫ.md](./ХРОНИКА-РАБОТЫ.md)): JWT/#95, SMTP на защиту, variants каталога, слайды #92.
+Вне scope этой переписи (см. [ХРОНИКА-РАБОТЫ.md](../ХРОНИКА-РАБОТЫ.md)): JWT/#95, SMTP на защиту, variants каталога, слайды #92.

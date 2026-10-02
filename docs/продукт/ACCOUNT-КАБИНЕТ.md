@@ -1,4 +1,4 @@
-# Личный кабинет Account (Wishlist / My orders / Settings)
+﻿# Личный кабинет Account (Wishlist / My orders / Settings)
 
 Пользовательский сценарий: **что появляется, когда**, и **что делать** в каждом экране.  
 Ниже — макеты из [`screenshots/account/`](./screenshots/account/) рядом с описанием шагов и тем, **как это работает в коде**.
@@ -422,4 +422,4 @@ npm run dev
 
 Открыть http://localhost:3000 → Login → `/account/…`.
 
-См. также: [screenshots/README.md](./screenshots/README.md), [SMOKE-ЗАЩИТА.md](./SMOKE-ЗАЩИТА.md), [КЛИЕНТСКАЯ-ЧАСТЬ.md](./КЛИЕНТСКАЯ-ЧАСТЬ.md), [ВОССТАНОВЛЕНИЕ-ПАРОЛЯ.md](./ВОССТАНОВЛЕНИЕ-ПАРОЛЯ.md).
+См. также: [screenshots/README.md](./screenshots/README.md), [SMOKE-ЗАЩИТА.md](../инструкции/SMOKE-ЗАЩИТА.md), [КЛИЕНТСКАЯ-ЧАСТЬ.md](./КЛИЕНТСКАЯ-ЧАСТЬ.md), [ВОССТАНОВЛЕНИЕ-ПАРОЛЯ.md](./ВОССТАНОВЛЕНИЕ-ПАРОЛЯ.md).

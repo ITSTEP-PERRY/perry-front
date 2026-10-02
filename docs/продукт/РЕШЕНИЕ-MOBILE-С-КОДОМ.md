@@ -1,10 +1,10 @@
-# Решение Mobile (Expo) ↔ Auth / Product — гайд для помощи Илоне
+﻿# Решение Mobile (Expo) ↔ Auth / Product — гайд для помощи Илоне
 
 **Для кого:** мы (Product / Front), если Илона не успевает по карточкам `#M*`  
 **Карточки на Trello (не трогаем — только локальный план):**  
 [#M00](https://trello.com/c/ix5hiTSu) · [#M01](https://trello.com/c/63QzjZYo) · [#M02](https://trello.com/c/ceIOmXtY) · [#M03](https://trello.com/c/ArWBOdJJ) · [#M04](https://trello.com/c/LopRXSxI) · [#M05](https://trello.com/c/LLUi9Nek) · [#M06](https://trello.com/c/vI0plLBa) · [#M07](https://trello.com/c/lXL3TXqt) · [#M08](https://trello.com/c/vjeEXsXJ) · [#M09](https://trello.com/c/KX2tUN1q) · [#M10](https://trello.com/c/OTpA35fF)
 
-**Контекст:** [МОБИЛЬНОЕ-ПРИЛОЖЕНИЕ-REACT.md](./МОБИЛЬНОЕ-ПРИЛОЖЕНИЕ-REACT.md) · [СООБЩЕНИЕ-В-ЧАТ-MOBILE.md](./СООБЩЕНИЕ-В-ЧАТ-MOBILE.md) · [AUTH-INTEGRATION.md](./AUTH-INTEGRATION.md)  
+**Контекст:** [МОБИЛЬНОЕ-ПРИЛОЖЕНИЕ-REACT.md](./МОБИЛЬНОЕ-ПРИЛОЖЕНИЕ-REACT.md) · [СООБЩЕНИЕ-В-ЧАТ-MOBILE.md](./СООБЩЕНИЕ-В-ЧАТ-MOBILE.md) · [AUTH-INTEGRATION.md](../стыки/AUTH-INTEGRATION.md)  
 **Эталон API на web:** `D:\Perry\src\api\*` (perry-front)  
 **Figma iPhone:** [cF0bKFsmenH6rrshGV0yO7](https://www.figma.com/design/cF0bKFsmenH6rrshGV0yO7/)  
 **Репо мобилки:** [perry-mobile](https://github.com/ITSTEP-PERRY/perry-mobile) (создать/взять у Илоны)
@@ -652,4 +652,4 @@ eas build -p android --profile preview
 | Что вне скоупа? | Admin, Razor, #97, Push |
 | MVP done когда? | Login → каталог/PDP с фото → cart → checkout → My orders |
 
-Связанные: [МОБИЛЬНОЕ-ПРИЛОЖЕНИЕ-REACT.md](./МОБИЛЬНОЕ-ПРИЛОЖЕНИЕ-REACT.md) · [СООБЩЕНИЕ-В-ЧАТ-MOBILE.md](./СООБЩЕНИЕ-В-ЧАТ-MOBILE.md) · [AUTH-INTEGRATION.md](./AUTH-INTEGRATION.md)
+Связанные: [МОБИЛЬНОЕ-ПРИЛОЖЕНИЕ-REACT.md](./МОБИЛЬНОЕ-ПРИЛОЖЕНИЕ-REACT.md) · [СООБЩЕНИЕ-В-ЧАТ-MOBILE.md](./СООБЩЕНИЕ-В-ЧАТ-MOBILE.md) · [AUTH-INTEGRATION.md](../стыки/AUTH-INTEGRATION.md)
