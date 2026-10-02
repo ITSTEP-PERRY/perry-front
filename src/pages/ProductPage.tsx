@@ -20,12 +20,12 @@ function ProductCarousel({ items, title, seeAllTo }: { items: ProductListItem[];
   const track = useRef<HTMLDivElement>(null);
   if (!items.length) return null;
   return (
-    <section className="pdp-section">
+    <section className="pdp-section pdp-section--related">
       <div className="section-head">
         <h2>{title}</h2>
         <Link to={seeAllTo}>See all &gt;</Link>
       </div>
-      <div className="carousel">
+      <div className="carousel carousel--pdp-related">
         <button type="button" className="carousel-btn carousel-btn--prev" aria-label="Previous" onClick={() => scrollTrack(track.current, -1)}>
           <img src="/icons/carousel-prev.svg" alt="" width={24} height={24} />
         </button>

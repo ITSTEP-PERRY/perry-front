@@ -2102,15 +2102,8 @@ a.legal-em:hover { text-decoration: underline; }
   .legal-page { grid-template-columns: 1fr; }
   .legal-content__title { font-size: 1.75rem; }
   .carousel { grid-template-columns: 32px 1fr 32px; }
-  .category-track .category-card,
-  .product-track .product-card {
+  .category-track .category-card {
     flex-basis: calc((100% - 14px) / 2);
-  }
-  .pdp-page .product-track .product-card {
-    flex: 0 0 calc((100% - 16px) / 2);
-    width: calc((100% - 16px) / 2);
-    aspect-ratio: auto;
-    min-height: 280px;
   }
   .catalog-products.is-list .product-card {
     grid-template-columns: 100px 1fr;
@@ -2313,9 +2306,10 @@ body:not(.legal-shell) {
 }
 
 .pdp-page .product-track .product-card {
-  flex: 0 0 calc((100% - 5 * 16px) / 6);
-  width: calc((100% - 5 * 16px) / 6);
-  min-width: 0;
+  /* Фиксированная ширина Figma — не делим ряд на 6 долей (иначе фото схлопываются) */
+  flex: 0 0 var(--figma-prod-w);
+  width: var(--figma-prod-w);
+  min-width: var(--figma-prod-w);
   max-width: none;
   scroll-snap-align: start;
   display: flex;
@@ -2334,13 +2328,13 @@ body:not(.legal-shell) {
 .pdp-page .product-card__media {
   position: relative;
   width: 100%;
-  max-width: 178px;
+  max-width: var(--figma-prod-img);
   aspect-ratio: 1;
   overflow: hidden;
   background: #f5f7fb;
   border-radius: 8px;
   margin: 0;
-  flex: 0 0 auto;
+  flex: none;
 }
 
 .pdp-page .product-card__media img {
