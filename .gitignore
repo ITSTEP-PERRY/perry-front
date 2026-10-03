@@ -15,8 +15,10 @@ dist-ssr
 .env.*
 !.env.example
 
-# Nested backend clone (separate repo)
-My_Amazon2/
+# Nested backend clone (separate repo) — except defense markdown (Cursor links)
+My_Amazon2/*
+!My_Amazon2/project_defense/
+!My_Amazon2/project_defense/**
 Back_end_for_our_poroject/
 _ref/
 
@@ -24,6 +26,10 @@ _ref/
 .tmp/
 .dotnet-tmp/
 .nuget-packages/
+
+# vibe-prompts runner progress (local only)
+.vibe-sequence-state.json
+vibe-prompts/.vibe-sequence-state.json
 
 # Shortcuts are machine-path specific — recreate via Install-Perry-Shortcuts.ps1
 *.lnk
