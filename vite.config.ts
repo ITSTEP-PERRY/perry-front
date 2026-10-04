@@ -34,6 +34,13 @@ export default defineConfig({
         target: "http://localhost:5272",
         changeOrigin: true,
       },
+      // MyMemory translate (PDP review Translate → Ukrainian)
+      "/translate-api": {
+        target: "https://api.mymemory.translated.net",
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/translate-api/, ""),
+      },
     },
   },
 });
