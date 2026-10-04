@@ -18,6 +18,7 @@
 **Отчёт 02.10.2026 (DummyJSON — фото витрин):** [docs/журнал/2026-10-02.md](./docs/журнал/2026-10-02.md)  
 **Отчёт 03.10.2026 (Auth · отзывы · цены · vibe-prompts):** [docs/журнал/2026-10-03.md](./docs/журнал/2026-10-03.md)  
 **Отчёт 04.10.2026 (Translate · фото отзывов · checkout):** [docs/журнал/2026-10-04.md](./docs/журнал/2026-10-04.md)  
+**Отчёт 04.10.2026 (вечер — аватар · имя в отзывах · админ · 401):** [docs/журнал/2026-10-04-account-avatar.md](./docs/журнал/2026-10-04-account-avatar.md)  
 **Vibe-prompts (собрать Perry с нуля через ИИ):** [vibe-prompts/README.md](./vibe-prompts/README.md) · сценарий [run-vibe-sequence.cmd](./vibe-prompts/run-vibe-sequence.cmd) · [порядок агентов](./vibe-prompts/AGENTS-AND-SEQUENCE.md) · [грабли](./vibe-prompts/PITFALLS.md)  
 **Как залить фото у себя:** [docs/инструкции/НАПОЛНЕНИЕ-ФОТО-DUMMYJSON.md](./docs/инструкции/НАПОЛНЕНИЕ-ФОТО-DUMMYJSON.md)
 
