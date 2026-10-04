@@ -45,7 +45,7 @@ Backend: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Back_end_fo
 **Спринт 19.09:** [docs/журнал/2026-09-19.md](./docs/журнал/2026-09-19.md)  
 Сводка (каталог/PDP/auth): [docs/журнал/2026-09-17.md](./docs/журнал/2026-09-17.md)  
 **Account:** [docs/продукт/ACCOUNT-КАБИНЕТ.md](./docs/продукт/ACCOUNT-КАБИНЕТ.md) · [docs/журнал/2026-09-17-account.md](./docs/журнал/2026-09-17-account.md)  
-**Скриншоты (04.10.2026, 29 шт.):** [docs/screenshots/README.md](./docs/screenshots/README.md) · [полный каталог с подписями](./docs/screenshots/2026-10-04/README.md)
+**Скриншоты (04.10.2026, 43 шт.):** [docs/screenshots/README.md](./docs/screenshots/README.md) · [полный каталог с подписями](./docs/screenshots/2026-10-04/README.md)
 
 ---
 
@@ -111,7 +111,7 @@ Backend-пара: [Back_end_for_our_poroject](https://github.com/ITSTEP-PERRY/Ba
 
 ## Скриншоты витрины (04.10.2026)
 
-Актуальные кадры: главная → каталог → товар → корзина/checkout → кабинет → legal → админка.  
+Актуальные кадры (43 шт.): главная → каталог → товар → корзина/checkout → кабинет → auth → legal → админка.  
 Таблица и полный каталог: [docs/screenshots/README.md](./docs/screenshots/README.md) · [2026-10-04](./docs/screenshots/2026-10-04/README.md).
 
 ### Главная
@@ -194,107 +194,149 @@ Nike Air Jordan 1: галерея, Buy now / Add to cart.
 
 Ukraine, Card, Place order.
 
-#### 13 · Checkout — State (области)
+#### 13 · Checkout — State
 
 ![Checkout state](./docs/screenshots/2026-10-04/cart-checkout/13-checkout-state.png)
 
 Выбор области Украины.
 
-#### 14 · Checkout — City (Odesa)
+#### 14 · Checkout — City
 
-![Checkout city](./docs/screenshots/2026-10-04/cart-checkout/14-checkout-city-odesa.png)
+![Checkout city](./docs/screenshots/2026-10-04/cart-checkout/14-checkout-city.png)
 
 Города Odesa Oblast.
 
+#### 15 · Checkout — Card details
+
+![Checkout card details](./docs/screenshots/2026-10-04/cart-checkout/15-checkout-card-details.png)
+
+Номер карты, срок, CVV.
+
 ### Личный кабинет
 
-#### 15 · Wishlist
+#### 16 · Wishlist
 
-![Wishlist](./docs/screenshots/2026-10-04/account/15-account-wishlist.png)
+![Wishlist](./docs/screenshots/2026-10-04/account/16-account-wishlist.png)
 
 Избранное + аватар в сайдбаре.
 
-#### 16 · My reviews
+#### 17 · My reviews
 
-![My reviews](./docs/screenshots/2026-10-04/account/16-account-my-reviews.png)
+![My reviews](./docs/screenshots/2026-10-04/account/17-account-my-reviews.png)
 
 Отзывы пользователя.
 
-#### 17 · Edit photo
+#### 18 · Edit photo
 
-![Edit photo](./docs/screenshots/2026-10-04/account/17-account-edit-photo.png)
+![Edit photo](./docs/screenshots/2026-10-04/account/18-account-edit-photo.png)
 
 Обрезка аватара.
 
-#### 18 · Change name
+#### 19 · Change name
 
-![Change name](./docs/screenshots/2026-10-04/account/18-account-change-name.png)
+![Change name](./docs/screenshots/2026-10-04/account/19-account-change-name.png)
 
 Смена имени / фамилии.
 
+#### 20 · Change email
+
+![Change email](./docs/screenshots/2026-10-04/account/20-account-change-email.png)
+
+Новый email + код подтверждения.
+
+#### 21 · Change password
+
+![Change password](./docs/screenshots/2026-10-04/account/21-account-change-password.png)
+
+Смена пароля.
+
+### Auth
+
+#### 22 · Login
+
+![Login](./docs/screenshots/2026-10-04/auth/22-auth-login.png)
+
+#### 23 · Login — ошибки
+
+![Login errors](./docs/screenshots/2026-10-04/auth/23-auth-login-errors.png)
+
+#### 24 · Register
+
+![Register](./docs/screenshots/2026-10-04/auth/24-auth-register.png)
+
+#### 25 · Register — ошибки
+
+![Register errors](./docs/screenshots/2026-10-04/auth/25-auth-register-errors.png)
+
+#### 26–28 · Verify email
+
+![Verify empty](./docs/screenshots/2026-10-04/auth/26-auth-verify-empty.png)
+
+![Verify filled](./docs/screenshots/2026-10-04/auth/27-auth-verify-filled.png)
+
+![Verify error](./docs/screenshots/2026-10-04/auth/28-auth-verify-error.png)
+
+#### 29–30 · Forgot password
+
+![Forgot](./docs/screenshots/2026-10-04/auth/29-auth-forgot.png)
+
+![Forgot error](./docs/screenshots/2026-10-04/auth/30-auth-forgot-error.png)
+
 ### Legal
 
-#### 19 · Terms
+#### 31 · Terms
 
-![Terms](./docs/screenshots/2026-10-04/legal/19-terms.png)
+![Terms](./docs/screenshots/2026-10-04/legal/31-terms.png)
 
-#### 20 · License
+#### 32 · License
 
-![License](./docs/screenshots/2026-10-04/legal/20-license.png)
+![License](./docs/screenshots/2026-10-04/legal/32-license.png)
 
-#### 21 · Privacy
+#### 33 · Privacy
 
-![Privacy](./docs/screenshots/2026-10-04/legal/21-privacy.png)
+![Privacy](./docs/screenshots/2026-10-04/legal/33-privacy.png)
 
 ### Админка
 
-#### 22 · Products
+#### 34 · Dashboard
 
-![Admin Products](./docs/screenshots/2026-10-04/admin/22-admin-products.png)
+![Admin dashboard](./docs/screenshots/2026-10-04/admin/34-admin-dashboard.png)
 
-Список + detail с галереей.
+#### 35 · Products
 
-#### 23 · Categories
+![Admin Products](./docs/screenshots/2026-10-04/admin/35-admin-products.png)
 
-![Admin Categories](./docs/screenshots/2026-10-04/admin/23-admin-categories.png)
+#### 36 · Create product
 
-Дерево категорий + detail.
+![Admin Create product](./docs/screenshots/2026-10-04/admin/36-admin-create-product.png)
 
-#### 24 · Edit subcategory
+#### 37 · Categories
 
-![Admin Edit subcategory](./docs/screenshots/2026-10-04/admin/24-admin-categories-edit.png)
+![Admin Categories](./docs/screenshots/2026-10-04/admin/37-admin-categories.png)
 
-Модалка редактирования подкатегории.
+#### 38 · Edit subcategory
 
-#### 25 · Reviews
+![Admin Edit subcategory](./docs/screenshots/2026-10-04/admin/38-admin-categories-edit.png)
 
-![Admin Reviews](./docs/screenshots/2026-10-04/admin/25-admin-reviews.png)
+#### 39 · Reviews
 
-Модерация Approve / Delete.
+![Admin Reviews](./docs/screenshots/2026-10-04/admin/39-admin-reviews.png)
 
-#### 26 · Orders
+#### 40 · Orders
 
-![Admin Orders](./docs/screenshots/2026-10-04/admin/26-admin-orders.png)
+![Admin Orders](./docs/screenshots/2026-10-04/admin/40-admin-orders.png)
 
-Фильтры + statusCounts.
+#### 41 · Users
 
-#### 27 · Users
+![Admin Users](./docs/screenshots/2026-10-04/admin/41-admin-users.png)
 
-![Admin Users](./docs/screenshots/2026-10-04/admin/27-admin-users.png)
+#### 42 · Users — Columns
 
-Роли и статусы.
+![Admin Users Columns](./docs/screenshots/2026-10-04/admin/42-admin-users-columns.png)
 
-#### 28 · Users — Columns
+#### 43 · Users — empty
 
-![Admin Users Columns](./docs/screenshots/2026-10-04/admin/28-admin-users-columns.png)
-
-Колонки + аватар админа в шапке.
-
-#### 29 · Users — empty
-
-![Admin Users empty](./docs/screenshots/2026-10-04/admin/29-admin-users-empty.png)
-
-Empty state «No users in the selected role».
+![Admin Users empty](./docs/screenshots/2026-10-04/admin/43-admin-users-empty.png)
 
 ---
 
