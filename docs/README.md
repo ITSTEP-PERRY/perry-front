@@ -95,5 +95,5 @@ API: **`:5272`**. Ярлыки: [`../Install-Perry-Shortcuts.ps1`](../Install-Pe
 
 ## 3. Скриншоты
 
-- [screenshots/README.md](./screenshots/README.md)
-- [screenshots/sprint-2026-09-19/](./screenshots/sprint-2026-09-19/README.md)
+- [screenshots/README.md](./screenshots/README.md) — таблица «где / что» (29 шт.)
+- [screenshots/2026-10-04/](./screenshots/2026-10-04/README.md) — полный каталог с превью
