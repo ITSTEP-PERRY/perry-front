@@ -17,6 +17,7 @@ import { useCart } from "../cart/CartContext";
 import { colors, radii, space } from "../theme/colors";
 import { navigateShop } from "../navigation/navigationRef";
 import type { RootStackParamList } from "../navigation/types";
+import { UKRAINE_CITIES_BY_STATE, UKRAINE_STATES } from "../data/ukraineCheckoutLocales";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Checkout">;
 
@@ -29,7 +30,7 @@ const STATES: Record<string, string[]> = {
   "United Kingdom": ["England", "Scotland", "Wales"],
   Germany: ["Bavaria", "Berlin", "Hamburg"],
   Poland: ["Mazovia", "Lesser Poland", "Silesia"],
-  Ukraine: ["Kyiv", "Lviv", "Odesa", "Kharkiv"],
+  Ukraine: [...UKRAINE_STATES],
 };
 const CITIES: Record<string, string[]> = {
   California: ["Los Angeles", "San Francisco", "San Diego"],
@@ -49,10 +50,7 @@ const CITIES: Record<string, string[]> = {
   Mazovia: ["Warsaw"],
   "Lesser Poland": ["Kraków"],
   Silesia: ["Katowice"],
-  Kyiv: ["Kyiv"],
-  Lviv: ["Lviv"],
-  Odesa: ["Odesa"],
-  Kharkiv: ["Kharkiv"],
+  ...UKRAINE_CITIES_BY_STATE,
 };
 
 type FieldKey =
