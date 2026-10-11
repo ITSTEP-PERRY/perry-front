@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
  */
 export function NotFoundPage() {
   return (
-    <div className="page-wrap not-found">
+    <div className="page-wrap not-found" data-figma="2548:8399">
       <nav className="breadcrumbs breadcrumbs--pdp" aria-label="Breadcrumb">
         <Link className="breadcrumbs__home" to="/" aria-label="Home">
           <img src="/icons/home.svg" alt="" width={16} height={16} />

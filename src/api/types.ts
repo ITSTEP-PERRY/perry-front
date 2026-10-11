@@ -41,11 +41,17 @@ export type ProductListResponse = {
 };
 
 export type ProductReview = {
+  id?: string;
+  userId?: string;
   authorName: string;
+  /** Public URL or /uploads/… — when missing, UI shows initials (or live profile photo for own review). */
+  authorAvatarUrl?: string | null;
   rating: number;
   title: string;
   body: string;
   createdAtUtc: string;
+  /** Helpful votes from Product API (`TotalHelpful`). */
+  totalHelpful?: number;
   tags: string[];
   images: string[];
 };
@@ -103,11 +109,15 @@ export type AuthResponse = {
 
 export type OrderDto = {
   id: string;
+  /** #A12 short display number, e.g. #AT456BB */
+  orderNumber?: string | null;
   orderDateUtc: string;
   status: string;
   totalAmount: number;
   itemsCount: number;
+  userId?: string;
   userName?: string;
+  userEmail?: string | null;
   recipientName?: string | null;
   shippingAddress?: string | null;
   paymentType?: string | null;
@@ -120,6 +130,17 @@ export type OrderDto = {
     lineTotal?: number;
     imageUrl?: string | null;
   }[];
+};
+
+export type AdminOrdersResponse = {
+  items: OrderDto[];
+  totalOrders: number;
+  totalAmount: number;
+  statusCounts: Record<string, number>;
+  totalOrderCompare?: number | null;
+  totalAmountCompare?: number | null;
+  period?: { fromUtc: string; toUtc: string } | null;
+  comparePeriod?: { fromUtc: string; toUtc: string } | null;
 };
 
 export type WishlistItemDto = {

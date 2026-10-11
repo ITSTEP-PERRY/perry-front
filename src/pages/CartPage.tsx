@@ -1,46 +1,34 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ordersApi } from "../api";
 import { useAuth } from "../app/AuthContext";
 import { useCart } from "../app/CartContext";
-import { useState } from "react";
 
 export function CartPage() {
-  const { cart, setQty, remove, sessionId, refresh } = useCart();
+  const { cart, setQty, remove } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-
-  const checkout = async () => {
-    if (!user) {
-      navigate("/login", { state: { from: { pathname: "/cart" } } });
-      return;
-    }
-    setBusy(true);
-    setError(null);
-    try {
-      const order = await ordersApi.checkout(sessionId);
-      await refresh();
-      navigate(`/account/orders?open=${encodeURIComponent(order.id)}`);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Checkout failed");
-    } finally {
-      setBusy(false);
-    }
-  };
 
   if (!cart) return <div className="empty-state">Loading cart…</div>;
 
   if (cart.items.length === 0) {
     return (
-      <div className="page-wrap">
-        <h1>Shopping cart</h1>
+      <div
+        className="page-wrap cart-page"
+        data-figma={user ? "2550:12482" : "2550:12483"}
+      >
+        <h1 className="cart-page__title">Shopping cart</h1>
         <div className="empty-state cart-empty">
           <h2>Your cart is empty</h2>
           <p>Browse the catalog and add something you like.</p>
-          <Link className="btn btn-primary" to="/products">
-            Go to catalog
-          </Link>
+          <div className="cart-empty__actions">
+            <Link className="btn btn-primary" to="/products">
+              Go to catalog
+            </Link>
+            {!user && (
+              <Link className="btn btn-outline" to="/login" state={{ from: { pathname: "/cart" } }}>
+                Sign in
+              </Link>
+            )}
+          </div>
           {!user && (
             <p className="guest-hint">
               Not logged in — <Link to="/login">Sign in</Link> to keep cart across devices.
@@ -54,9 +42,8 @@ export function CartPage() {
   const itemCount = cart.items.reduce((s, i) => s + i.quantity, 0);
 
   return (
-    <div className="page-wrap">
-      <h1>Shopping cart</h1>
-      {error && <div className="alert alert-error">{error}</div>}
+    <div className="page-wrap cart-page" data-figma="2550:12481">
+      <h1 className="cart-page__title">Shopping cart</h1>
 
       <div className="cart-layout">
         <div className="cart-items">
@@ -100,31 +87,33 @@ export function CartPage() {
             <span>Items</span>
             <span>{itemCount}</span>
           </div>
-          <div className="buy-row">
+          <div className="buy-row cart-total">
             <span>Total</span>
             <strong>${cart.totalAmount.toFixed(2)}</strong>
           </div>
 
           {user ? (
             <button
-              className="btn btn-primary"
+              className="btn btn-primary cart-summary__cta"
               type="button"
-              style={{ width: "100%" }}
-              disabled={busy}
-              onClick={() => void checkout()}
+              onClick={() => navigate("/checkout")}
             >
-              {busy ? "Placing…" : "Proceed to checkout"}
+              Proceed to checkout
             </button>
           ) : (
-            <>
+            <div className="cart-summary__guest">
               <p className="guest-hint">Sign in to place an order.</p>
-              <Link className="btn btn-primary" to="/login" state={{ from: { pathname: "/cart" } }}>
+              <Link
+                className="btn btn-primary cart-summary__cta"
+                to="/login"
+                state={{ from: { pathname: "/checkout" } }}
+              >
                 Sign in
               </Link>
-              <Link className="btn btn-ghost" to="/register">
+              <Link className="btn btn-outline cart-summary__cta" to="/register">
                 Create account
               </Link>
-            </>
+            </div>
           )}
         </aside>
       </div>

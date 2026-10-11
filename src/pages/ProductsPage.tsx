@@ -139,6 +139,13 @@ export function ProductsPage() {
     setParams(next);
   };
 
+  const clearSearchAndFilters = () => {
+    const next = new URLSearchParams();
+    next.set("sort", sort);
+    next.set("view", view);
+    setParams(next);
+  };
+
   const onPrice = (e: FormEvent) => {
     e.preventDefault();
     const next = new URLSearchParams(params);
@@ -160,7 +167,7 @@ export function ProductsPage() {
   const title = activeCategory?.name ?? (search ? `Search: ${search}` : "All products");
 
   return (
-    <div className="page-wrap catalog">
+    <div className="page-wrap catalog" data-figma="722:2370">
       <nav className="breadcrumbs" aria-label="Breadcrumb">
         <Link to="/" className="breadcrumbs__home" aria-label="Home">
           <img src="/icons/home.svg" alt="" width={16} height={16} />
@@ -192,7 +199,7 @@ export function ProductsPage() {
       <div className="catalog-layout">
         {(filtersOpen || !isMobile) && (
           <aside className="catalog-filters" aria-label="Filters">
-            <form className="filters-form" onSubmit={(e) => e.preventDefault()}>
+            <div className="filters-form">
               <details className="filter-acc" open>
                 <summary>Brand</summary>
                 <div className="filter-acc__body">
@@ -361,26 +368,36 @@ export function ProductsPage() {
               <button type="button" className="btn btn-ghost filters-clear" onClick={clearFilters}>
                 Clear filters
               </button>
-            </form>
+            </div>
           </aside>
         )}
 
         <div className="catalog-main">
           <div className="catalog-toolbar">
-            <button type="button" className="filters-applied" disabled>
-              {applied} filters applied
-            </button>
+            {applied > 0 ? (
+              <button type="button" className="filters-applied" onClick={clearFilters}>
+                {applied} filters applied
+                <span className="filters-applied__x" aria-hidden="true">
+                  ×
+                </span>
+              </button>
+            ) : (
+              <span className="filters-applied is-empty">No filters applied</span>
+            )}
             <div className="catalog-toolbar__right">
-              <select
-                value={sort}
-                aria-label="Sort"
-                onChange={(e) => setOne("sort", e.target.value)}
-              >
-                <option value="price_desc">From expensive to cheap</option>
-                <option value="price_asc">From cheap to expensive</option>
-                <option value="rating_desc">Top rated</option>
-                <option value="newest">Newest</option>
-              </select>
+              <label className="catalog-sort">
+                <span className="visually-hidden">Sort by</span>
+                <select
+                  value={sort}
+                  aria-label="Sort"
+                  onChange={(e) => setOne("sort", e.target.value)}
+                >
+                  <option value="price_desc">From expensive to cheap</option>
+                  <option value="price_asc">From cheap to expensive</option>
+                  <option value="rating_desc">Top rated</option>
+                  <option value="newest">Newest</option>
+                </select>
+              </label>
               <div className="view-toggle" role="group" aria-label="View mode">
                 <button
                   type="button"
@@ -405,19 +422,31 @@ export function ProductsPage() {
           <p className="catalog-count muted">{total} results</p>
 
           {items.length === 0 ? (
-            <div className="empty-state">
+            <div className="empty-state catalog-empty">
+              <div className="catalog-empty__icon" aria-hidden="true">
+                <img src="/icons/search.svg" alt="" width={40} height={40} />
+              </div>
+              <h2 className="catalog-empty__title">
+                {search ? "No results for your search" : "No products match these filters"}
+              </h2>
               <p>
                 {search
-                  ? `No products found for “${search}”.`
-                  : "No products match these filters."}
+                  ? `We couldn’t find products for “${search}”. Try another query or clear filters.`
+                  : "Try removing some filters or browse the full catalog."}
               </p>
-              {search && (
-                <p>
-                  <Link className="btn btn-outline" to="/products">
-                    Clear search
-                  </Link>
-                </p>
-              )}
+              <div className="catalog-empty__actions">
+                {(applied > 0 || minRating) && (
+                  <button type="button" className="btn btn-outline" onClick={clearFilters}>
+                    Clear filters
+                  </button>
+                )}
+                <Link className="btn btn-primary" to="/products" onClick={(e) => {
+                  e.preventDefault();
+                  clearSearchAndFilters();
+                }}>
+                  Back to catalog
+                </Link>
+              </div>
             </div>
           ) : (
             <div className={`catalog-products ${view === "list" ? "is-list" : "is-grid"}`}>

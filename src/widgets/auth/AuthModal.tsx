@@ -1,8 +1,8 @@
-import type { ReactNode } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
 
-export function AuthModal({ children }: { children: ReactNode }) {
+export function AuthModal({ children, ...rest }: { children: ReactNode } & HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className="auth-modal">
+    <div className="auth-modal" {...rest}>
       <div className="auth-modal__body">
         <div className="auth-modal__form-col">{children}</div>
         <div className="auth-modal__image">

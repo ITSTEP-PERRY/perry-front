@@ -1,4 +1,4 @@
-import { type FormEvent, useRef, useState } from "react";
+import { type FormEvent, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../app/AuthContext";
 import { AuthField, AuthModal } from "../../widgets/auth/AuthModal";
@@ -8,13 +8,14 @@ export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = (location.state as { from?: { pathname?: string } })?.from?.pathname || "/";
+  const locState = location.state as { from?: { pathname?: string }; notice?: string } | null;
+  const from = locState?.from?.pathname || "/";
+  const notice = locState?.notice || null;
   const [loginName, setLoginName] = useState("");
   const [password, setPassword] = useState("");
   const [stay, setStay] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const failCount = useRef(0);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -22,22 +23,23 @@ export function LoginPage() {
     setError(null);
     try {
       await login(loginName, password);
-      failCount.current = 0;
       navigate(from, { replace: true });
     } catch (err) {
-      failCount.current += 1;
-      if (failCount.current >= 3) {
+      const msg = err instanceof Error ? err.message : "Login failed";
+      // Real Auth flow: unverified email → code page. Do NOT redirect on network/CORS.
+      if (/verif|confirm.*(email|mail)|не подтвержд/i.test(msg)) {
         navigate(`/verify-code?email=${encodeURIComponent(loginName.trim())}`);
         return;
       }
-      setError(err instanceof Error ? err.message : "Login failed");
+      setError(msg);
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <AuthModal>
+    <AuthModal data-figma="1350:5004">
+      {notice && !error && <div className="auth-alert auth-alert--info">{notice}</div>}
       {error && <div className="auth-alert">{error}</div>}
       <form className="login-form" onSubmit={(e) => void onSubmit(e)}>
         <div className="login-form__titles">

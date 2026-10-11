@@ -85,7 +85,7 @@ export function AdminProductsPage() {
     : "/admin/products/new";
 
   return (
-    <div>
+    <div data-figma="2145:3214">
       {error && <div className="alert alert-error">{error}</div>}
 
       <div className="ap-toolbar">

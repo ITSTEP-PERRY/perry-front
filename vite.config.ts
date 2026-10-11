@@ -10,6 +10,22 @@ export default defineConfig({
       ignored: ["**/My_Amazon2/**", "**/Back_end_for_our_poroject/**"],
     },
     proxy: {
+      // Auth Service (Azure) — same-origin, иначе браузер режет CORS с localhost
+      "/auth-api": {
+        target:
+          "https://perry-auth-service.orangeplant-910928aa.swedencentral.azurecontainerapps.io",
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/auth-api/, ""),
+      },
+      // Admin Users (perry-admin-service) — не путать с Auth /internal/users
+      "/users-api": {
+        target:
+          "https://perry-admin-service.orangeplant-910928aa.swedencentral.azurecontainerapps.io",
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/users-api/, ""),
+      },
       "/api": {
         target: "http://localhost:5272",
         changeOrigin: true,
@@ -17,6 +33,13 @@ export default defineConfig({
       "/uploads": {
         target: "http://localhost:5272",
         changeOrigin: true,
+      },
+      // MyMemory translate (PDP review Translate → Ukrainian)
+      "/translate-api": {
+        target: "https://api.mymemory.translated.net",
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/translate-api/, ""),
       },
     },
   },

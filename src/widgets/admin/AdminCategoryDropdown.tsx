@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CategoryDto } from "../../api/types";
+import { categoryIconSrc } from "./categoryIcons";
 
 type Props = {
   tree: CategoryDto[];
@@ -20,10 +21,10 @@ export function AdminCategoryDropdown({
   const root = useRef<HTMLDivElement>(null);
 
   const flat = useMemo(() => {
-    const out: { id: string; name: string; depth: number }[] = [];
+    const out: { id: string; name: string; depth: number; iconUrl?: string | null }[] = [];
     const walk = (nodes: CategoryDto[], depth: number) => {
       nodes.forEach((n) => {
-        out.push({ id: n.id, name: n.name, depth });
+        out.push({ id: n.id, name: n.name, depth, iconUrl: n.iconUrl });
         if (n.subCategories?.length) walk(n.subCategories, depth + 1);
       });
     };
@@ -31,7 +32,9 @@ export function AdminCategoryDropdown({
     return out;
   }, [tree]);
 
-  const selectedName = flat.find((c) => c.id === value)?.name;
+  const selected = flat.find((c) => c.id === value);
+  const selectedName = selected?.name;
+  const selectedIcon = categoryIconSrc(selected?.iconUrl);
 
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
@@ -50,6 +53,7 @@ export function AdminCategoryDropdown({
         onClick={() => setOpen((v) => !v)}
       >
         <span className={`ap-cat__value ${selectedName ? "" : "is-placeholder"}`}>
+          {selectedIcon && <img src={selectedIcon} alt="" width={18} height={18} />}
           {selectedName || placeholder}
         </span>
         <span className="ap-cat__chevron" aria-hidden="true" />

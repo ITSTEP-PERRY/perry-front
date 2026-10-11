@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { resolveMediaUrl } from "../api/media";
 import type { ProductListItem } from "../api/types";
 
 export function ProductCard({ product }: { product: ProductListItem }) {
@@ -7,18 +8,20 @@ export function ProductCard({ product }: { product: ProductListItem }) {
     (product.oldPrice && product.oldPrice > product.price
       ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
       : null);
-  const oos = product.status === "OutOfStock";
+  const oos = String(product.status) === "OutOfStock" || String(product.status) === "2";
+  const imageUrl = resolveMediaUrl(product.imageUrl);
+  const rating = Math.round(product.averageRating || 0);
 
   return (
     <Link className={`product-card ${oos ? "is-oos" : ""}`} to={`/products/${product.id}`}>
       <div className="product-card__media">
-        {product.imageUrl ? (
-          <img src={product.imageUrl} alt={product.name} loading="lazy" />
+        {imageUrl ? (
+          <img src={imageUrl} alt={product.name} loading="lazy" />
         ) : (
           <div className="img-placeholder" />
         )}
         {discount != null && discount > 0 && (
-          <span className="badge badge-discount">-{discount}%</span>
+          <span className="badge badge-discount">- {discount}%</span>
         )}
         {oos && (
           <>
@@ -35,14 +38,14 @@ export function ProductCard({ product }: { product: ProductListItem }) {
         <h3 className="product-card__title">{product.name}</h3>
         <div className="product-card__rating">
           <img className="rating-icon" src="/icons/star.svg" alt="" width={18} height={18} />
-          <span>{Math.round(product.averageRating)}</span>
+          <span>{rating}</span>
           <img className="rating-icon" src="/icons/reviews.svg" alt="" width={18} height={18} />
           <span>{product.reviewCount.toLocaleString()}</span>
         </div>
         <div className="product-card__price">
-          <strong>${product.price.toFixed(2)}</strong>
+          <strong>$ {product.price.toFixed(2)}</strong>
           {product.oldPrice != null && product.oldPrice > product.price && (
-            <s>${product.oldPrice.toFixed(2)}</s>
+            <span className="product-card__price-old">$ {product.oldPrice.toFixed(2)}</span>
           )}
         </div>
       </div>

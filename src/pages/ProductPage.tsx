@@ -1,24 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { productsApi, reviewsApi } from "../api";
+import { isOwnReview, resolveReviewAuthor } from "../utils/reviewAuthor";
+import { ReviewAvatar } from "../widgets/ReviewAvatar";
+import {
+  translateReviewToUkrainian,
+  type ReviewTranslation,
+} from "../utils/translateToUk";
 import { ApiError } from "../api/client";
 import type { ProductDetail, ProductListItem, ProductReview } from "../api/types";
 import { useAuth } from "../app/AuthContext";
 import { useCart } from "../app/CartContext";
 import { useWishlist } from "../app/WishlistContext";
+import { ImageLightbox } from "../widgets/ImageLightbox";
 import { ProductCard } from "../widgets/ProductCard";
-import { PDP_INFO, PdpInfoModal, type PdpInfoKind } from "../widgets/PdpInfoModal";
-
-const REVIEW_TAG_OPTIONS = [
-  "High quality",
-  "Worth the price",
-  "Fits the description",
-  "Matches the photos",
-  "Easy to use",
-  "Great value",
-  "Comfortable",
-  "True to size",
-];
+import { CreateReviewModal } from "../widgets/CreateReviewModal";
+import { PdpInfoModal, type PdpInfoKind } from "../widgets/PdpInfoModal";
 
 function scrollTrack(el: HTMLElement | null, dir: 1 | -1) {
   if (!el) return;
@@ -29,12 +26,12 @@ function ProductCarousel({ items, title, seeAllTo }: { items: ProductListItem[];
   const track = useRef<HTMLDivElement>(null);
   if (!items.length) return null;
   return (
-    <section className="pdp-section">
+    <section className="pdp-section pdp-section--related">
       <div className="section-head">
         <h2>{title}</h2>
-        <Link to={seeAllTo}>See all ›</Link>
+        <Link to={seeAllTo}>See all &gt;</Link>
       </div>
-      <div className="carousel">
+      <div className="carousel carousel--pdp-related">
         <button type="button" className="carousel-btn carousel-btn--prev" aria-label="Previous" onClick={() => scrollTrack(track.current, -1)}>
           <img src="/icons/carousel-prev.svg" alt="" width={24} height={24} />
         </button>
@@ -67,10 +64,6 @@ export function ProductPage() {
   const [error, setError] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [showReviewForm, setShowReviewForm] = useState(false);
-  const [reviewRating, setReviewRating] = useState(5);
-  const [reviewTitle, setReviewTitle] = useState("");
-  const [reviewBody, setReviewBody] = useState("");
-  const [reviewTags, setReviewTags] = useState<string[]>([]);
   const [reviewBusy, setReviewBusy] = useState(false);
   const [reviewError, setReviewError] = useState<string | null>(null);
   const [infoKind, setInfoKind] = useState<PdpInfoKind | null>(null);
@@ -78,7 +71,15 @@ export function ProductPage() {
   const [tagFilter, setTagFilter] = useState<string | null>(null);
   const [reviewsVisible, setReviewsVisible] = useState(3);
   const [helpful, setHelpful] = useState<Record<string, number>>({});
+  const [myHelpful, setMyHelpful] = useState<Record<string, boolean>>({});
+  const [helpfulBusy, setHelpfulBusy] = useState<Record<string, boolean>>({});
+  const [reviewTranslations, setReviewTranslations] = useState<
+    Record<string, ReviewTranslation>
+  >({});
+  const [reviewShowUk, setReviewShowUk] = useState<Record<string, boolean>>({});
+  const [translateBusy, setTranslateBusy] = useState<Record<string, boolean>>({});
   const [notifyBusy, setNotifyBusy] = useState(false);
+  const [lightbox, setLightbox] = useState<{ images: string[]; index: number; alt?: string } | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -89,6 +90,11 @@ export function ProductPage() {
     setTagFilter(null);
     setReviewsVisible(3);
     setHelpful({});
+    setMyHelpful({});
+    setHelpfulBusy({});
+    setReviewTranslations({});
+    setReviewShowUk({});
+    setTranslateBusy({});
     productsApi
       .byId(id)
       .then((p) => {
@@ -101,6 +107,78 @@ export function ProductPage() {
         else setError(e.message);
       });
   }, [id]);
+
+  // Hydrate "my Helpful" marks from Product API after reload (JWT).
+  useEffect(() => {
+    if (!user || !product?.reviews?.length) return;
+    let cancelled = false;
+    const reviews = product.reviews;
+    void (async () => {
+      const nextMine: Record<string, boolean> = {};
+      const nextCounts: Record<string, number> = {};
+      await Promise.all(
+        reviews.map(async (r) => {
+          const key = String(r.id);
+          nextCounts[key] = r.totalHelpful ?? 0;
+          try {
+            const mine = await reviewsApi.myGrade(r.id);
+            nextMine[key] = !!(mine.isHelpful ?? mine.IsHelpful);
+          } catch {
+            nextMine[key] = false;
+          }
+        }),
+      );
+      if (cancelled) return;
+      setHelpful((prev) => ({ ...nextCounts, ...prev }));
+      setMyHelpful((prev) => ({ ...nextMine, ...prev }));
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id, product?.id, product?.reviews]);
+
+  // If the viewer has a review without a stored avatar, push Auth photo → Product /uploads.
+  useEffect(() => {
+    if (!user || !product?.reviews?.length) return;
+    const needsSync = product.reviews.some((r) => {
+      if (!isOwnReview(r, user)) return false;
+      const author = (r.authorName || "").trim();
+      const nameBad =
+        !author ||
+        /^[0-9a-f-]{36}$/i.test(author) ||
+        author.includes("@") ||
+        (!!user.name && author.toLowerCase() !== user.name.trim().toLowerCase());
+      const avatarBad = !r.authorAvatarUrl?.startsWith("/uploads");
+      return nameBad || avatarBad;
+    });
+    if (!needsSync) return;
+    let cancelled = false;
+    void reviewsApi
+      .syncMyAvatar()
+      .then((res) => {
+        if (cancelled) return;
+        if (!res.authorAvatarUrl && !res.authorName) return;
+        setProduct((prev) => {
+          if (!prev?.reviews) return prev;
+          return {
+            ...prev,
+            reviews: prev.reviews.map((r) =>
+              isOwnReview(r, user)
+                ? {
+                    ...r,
+                    authorName: res.authorName || r.authorName,
+                    authorAvatarUrl: res.authorAvatarUrl || r.authorAvatarUrl,
+                  }
+                : r,
+            ),
+          };
+        });
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id, product?.id]);
 
   if (error) {
     const missing = /not found|404/i.test(error);
@@ -142,7 +220,10 @@ export function ProductPage() {
   if (!product) return <div className="empty-state">Loading…</div>;
 
   const images = product.images?.length ? product.images : [];
-  const main = images[active]?.url;
+  const mainItem = images[active];
+  const main = mainItem?.url;
+  const mainIsVideo = Boolean(mainItem?.isVideo);
+  const photoUrls = images.filter((img) => !img.isVideo).map((img) => img.url);
   const discount =
     product.discountPercent ??
     (product.oldPrice && product.oldPrice > product.price
@@ -227,48 +308,61 @@ export function ProductPage() {
     }
   };
 
-  const toggleTag = (tag: string) => {
-    setReviewTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag].slice(0, 5)));
-  };
-
-  const submitReview = async () => {
+  const submitReview = async (payload: {
+    rating: number;
+    title: string;
+    body: string;
+    tags: string[];
+    photos: string[];
+  }) => {
     if (!user) {
-      navigate("/login", { state: { from: { pathname: `/products/${product.id}` } } });
+      navigate("/login", { state: { from: { pathname: `/products/${product!.id}` } } });
       return;
     }
     setReviewBusy(true);
     setReviewError(null);
     try {
-      const created = await reviewsApi.create(product.id, {
-        rating: reviewRating,
-        title: reviewTitle.trim(),
-        body: reviewBody.trim(),
-        tags: reviewTags,
+      const created = await reviewsApi.create(product!.id, {
+        rating: payload.rating,
+        title: payload.title,
+        body: payload.body,
+        tags: payload.tags,
+        imageUrls: payload.photos,
       });
       setProduct({
-        ...product,
-        reviewCount: product.reviewCount + 1,
+        ...product!,
+        reviewCount:
+          typeof created.isApproved === "boolean" && created.isApproved
+            ? product!.reviewCount + 1
+            : product!.reviewCount,
         reviews: [
           {
-            authorName: created.authorName,
+            userId: created.userId,
+            authorName: resolveReviewAuthor(created.authorName, user, created.userId),
+            authorAvatarUrl:
+              created.authorAvatarUrl ||
+              (user?.avatar && !user.avatar.startsWith("/api/") ? user.avatar : null),
             rating: created.rating,
             title: created.title,
             body: created.body,
             createdAtUtc: created.createdAtUtc,
             tags: created.tags ?? [],
-            images: created.images ?? [],
+            images: created.images?.length ? created.images : payload.photos,
           },
-          ...(product.reviews ?? []),
+          ...(product!.reviews ?? []),
         ],
       });
       setShowReviewForm(false);
-      setReviewTitle("");
-      setReviewBody("");
-      setReviewTags([]);
-      setReviewRating(5);
       setMsg("Review published");
     } catch (e) {
-      setReviewError(e instanceof Error ? e.message : "Could not submit review");
+      const status = e instanceof ApiError ? e.status : 0;
+      if (status === 409) {
+        setReviewError("You already left a review for this product.");
+      } else if (status === 401) {
+        setReviewError("Please sign in again (regular account is enough — Admin is not required).");
+      } else {
+        setReviewError(e instanceof Error ? e.message : "Could not submit review");
+      }
     } finally {
       setReviewBusy(false);
     }
@@ -283,7 +377,7 @@ export function ProductPage() {
   };
 
   return (
-    <div className="page-wrap pdp-page">
+    <div className="page-wrap pdp-page" data-figma="2548:9286">
       <nav className="breadcrumbs breadcrumbs--pdp" aria-label="Breadcrumb">
         <Link to="/" className="breadcrumbs__home" aria-label="Home">
           <img src="/icons/home.svg" alt="" width={16} height={16} />
@@ -303,7 +397,39 @@ export function ProductPage() {
             <button type="button" className="pdp-gallery__nav pdp-gallery__nav--prev" aria-label="Previous image" onClick={() => shift(-1)}>
               <img src="/icons/carousel-prev.svg" alt="" width={24} height={24} />
             </button>
-            {main ? <img src={main} alt={product.name} /> : <div className="img-placeholder large" />}
+            {main ? (
+              mainIsVideo ? (
+                <div className="pdp-gallery__video-wrap">
+                  <video
+                    key={main}
+                    className="pdp-gallery__video"
+                    src={main}
+                    controls
+                    playsInline
+                    preload="metadata"
+                    aria-label={`${product.name} video`}
+                  />
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  className="pdp-gallery__open"
+                  aria-label="Open photo"
+                  onClick={() => {
+                    const photoIndex = Math.max(0, photoUrls.indexOf(main));
+                    setLightbox({
+                      images: photoUrls,
+                      index: photoIndex,
+                      alt: product.name,
+                    });
+                  }}
+                >
+                  <img src={main} alt={product.name} />
+                </button>
+              )
+            ) : (
+              <div className="img-placeholder large" />
+            )}
             <button type="button" className="pdp-gallery__nav pdp-gallery__nav--next" aria-label="Next image" onClick={() => shift(1)}>
               <img src="/icons/carousel-next.svg" alt="" width={24} height={24} />
             </button>
@@ -313,10 +439,27 @@ export function ProductPage() {
               <button
                 key={img.id}
                 type="button"
-                className={`thumb ${i === active ? "active" : ""}`}
+                className={`thumb ${i === active ? "active" : ""} ${img.isVideo ? "thumb--video" : ""}`}
                 onClick={() => setActive(i)}
+                onDoubleClick={() => {
+                  if (img.isVideo || photoUrls.length === 0) return;
+                  const photoIndex = Math.max(0, photoUrls.indexOf(img.url));
+                  setLightbox({
+                    images: photoUrls,
+                    index: photoIndex,
+                    alt: product.name,
+                  });
+                }}
               >
-                <img src={img.url} alt="" />
+                {img.isVideo ? (
+                  <span className="thumb__video" aria-label="Video">
+                    <span className="thumb__video-icon" aria-hidden>
+                      ▶
+                    </span>
+                  </span>
+                ) : (
+                  <img src={img.url} alt="" />
+                )}
               </button>
             ))}
           </div>
@@ -495,7 +638,7 @@ export function ProductPage() {
               </ul>
               <p className="reviews-confirmed">
                 <span aria-hidden="true">✓</span> All opinions confirmed by purchase{" "}
-                <a href="#">Learn more ›</a>
+                <Link to="/terms">Learn more ›</Link>
               </p>
             </div>
             {frequentTags.length > 0 && (
@@ -553,88 +696,9 @@ export function ProductPage() {
               </label>
             </div>
 
-            <button type="button" className="btn btn-create-review" onClick={() => setShowReviewForm((v) => !v)}>
+            <button type="button" className="btn btn-create-review" onClick={() => setShowReviewForm(true)}>
               + Create review
             </button>
-
-            {showReviewForm && (
-              <div className="review-form">
-                <h3>Create review</h3>
-                {!user && (
-                  <p className="muted">
-                    <Link to="/login" state={{ from: { pathname: `/products/${product.id}` } }}>
-                      Sign in
-                    </Link>{" "}
-                    to publish a review.
-                  </p>
-                )}
-                {reviewError && <div className="alert alert-error">{reviewError}</div>}
-                <label className="qty-label">
-                  Rating
-                  <select
-                    value={reviewRating}
-                    onChange={(e) => setReviewRating(Number(e.target.value))}
-                    aria-label="Rating"
-                  >
-                    {[5, 4, 3, 2, 1].map((n) => (
-                      <option key={n} value={n}>
-                        {n} ★
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="qty-label" style={{ display: "block", marginTop: 12 }}>
-                  Title
-                  <input
-                    type="text"
-                    value={reviewTitle}
-                    onChange={(e) => setReviewTitle(e.target.value)}
-                    placeholder="Sum up your experience"
-                    style={{ width: "100%", marginTop: 6 }}
-                  />
-                </label>
-                <label className="qty-label" style={{ display: "block", marginTop: 12 }}>
-                  Review
-                  <textarea
-                    value={reviewBody}
-                    onChange={(e) => setReviewBody(e.target.value)}
-                    rows={4}
-                    placeholder="What did you like or dislike?"
-                    style={{ width: "100%", marginTop: 6 }}
-                  />
-                </label>
-                <div style={{ marginTop: 12 }}>
-                  <div className="muted" style={{ marginBottom: 8 }}>
-                    Tags
-                  </div>
-                  <div className="frequent-tags__list">
-                    {REVIEW_TAG_OPTIONS.map((tag) => (
-                      <button
-                        key={tag}
-                        type="button"
-                        className={`tag tag--soft${reviewTags.includes(tag) ? " is-active" : ""}`}
-                        onClick={() => toggleTag(tag)}
-                      >
-                        {tag}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    disabled={reviewBusy || !reviewTitle.trim() || !reviewBody.trim()}
-                    onClick={() => void submitReview()}
-                  >
-                    {reviewBusy ? "Publishing…" : "Publish review"}
-                  </button>
-                  <button type="button" className="btn btn-ghost" onClick={() => setShowReviewForm(false)}>
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
 
             {filtered.length === 0 ? (
               <p className="empty-state">No reviews yet.</p>
@@ -643,15 +707,19 @@ export function ProductPage() {
                 <div className="review-list">
                   {visibleReviews.map((r, i) => {
                     const key = reviewKey(r, i);
-                    const helpfulCount = helpful[key] ?? (i === 1 ? 25 : 0);
+                    const helpfulCount = helpful[key] ?? r.totalHelpful ?? 0;
+                    const gradeBusy = !!helpfulBusy[key];
+                    const showingUk = !!reviewShowUk[key];
+                    const uk = reviewTranslations[key];
+                    const busy = !!translateBusy[key];
+                    const titleText = showingUk && uk ? uk.title || r.title : r.title;
+                    const bodyText = showingUk && uk ? uk.body || r.body : r.body;
                     return (
                       <article key={key} className="review-card">
                         <div className="review-card__head">
                           <div className="review-card__author">
-                            <span className="review-avatar" aria-hidden="true">
-                              {r.authorName.charAt(0)}
-                            </span>
-                            <strong>{r.authorName}</strong>
+                            <ReviewAvatar review={r} user={user} />
+                            <strong>{resolveReviewAuthor(r.authorName, user, r.userId)}</strong>
                           </div>
                           <time>{new Date(r.createdAtUtc).toLocaleDateString()}</time>
                         </div>
@@ -662,8 +730,11 @@ export function ProductPage() {
                             </span>
                           ))}
                         </div>
-                        <h3>{r.title}</h3>
-                        <p>{r.body}</p>
+                        <h3>{titleText}</h3>
+                        <p>{bodyText}</p>
+                        {showingUk && (
+                          <p className="review-card__lang-note">Translated to Ukrainian</p>
+                        )}
                         {r.tags.length > 0 && (
                           <div className="review-card__tags">
                             {r.tags.map((t) => (
@@ -675,8 +746,22 @@ export function ProductPage() {
                         )}
                         {r.images?.length > 0 && (
                           <div className="review-card__photos">
-                            {r.images.map((url) => (
-                              <img key={url} src={url} alt="" width={72} height={72} />
+                            {r.images.map((url, photoIdx) => (
+                              <button
+                                key={url}
+                                type="button"
+                                className="review-card__photo-btn"
+                                aria-label="Open review photo"
+                                onClick={() =>
+                                  setLightbox({
+                                    images: r.images,
+                                    index: photoIdx,
+                                    alt: `Review by ${resolveReviewAuthor(r.authorName, user, r.userId)}`,
+                                  })
+                                }
+                              >
+                                <img src={url} alt="" width={72} height={72} />
+                              </button>
                             ))}
                           </div>
                         )}
@@ -684,22 +769,95 @@ export function ProductPage() {
                           <div className="review-card__btns">
                             <button
                               type="button"
-                              className="btn btn-helpful"
-                              onClick={() =>
-                                setHelpful((prev) => ({
-                                  ...prev,
-                                  [key]: (prev[key] ?? (i === 1 ? 25 : 0)) + 1,
-                                }))
-                              }
+                              className={`btn btn-helpful${myHelpful[key] ? " is-active" : ""}`}
+                              disabled={gradeBusy}
+                              aria-busy={gradeBusy}
+                              onClick={async () => {
+                                if (!user) {
+                                  navigate("/login", { state: { from: `/products/${product.id}` } });
+                                  return;
+                                }
+                                if (!r.id) {
+                                  setMsg("Review id missing — reload the page.");
+                                  return;
+                                }
+                                setHelpfulBusy((prev) => ({ ...prev, [key]: true }));
+                                setMsg(null);
+                                const beforeVoted = !!myHelpful[key];
+                                const beforeCount = helpful[key] ?? r.totalHelpful ?? 0;
+                                try {
+                                  await reviewsApi.grade(r.id);
+                                  let voted = !beforeVoted;
+                                  try {
+                                    const mine = await reviewsApi.myGrade(r.id);
+                                    voted = !!(mine.isHelpful ?? mine.IsHelpful);
+                                  } catch {
+                                    /* 404 = no grade row; treat as not helpful */
+                                    voted = false;
+                                  }
+                                  const nextCount = Math.max(
+                                    0,
+                                    beforeCount + (voted === beforeVoted ? 0 : voted ? 1 : -1),
+                                  );
+                                  setMyHelpful((prev) => ({ ...prev, [key]: voted }));
+                                  setHelpful((prev) => ({ ...prev, [key]: nextCount }));
+                                  setProduct((prev) => {
+                                    if (!prev?.reviews) return prev;
+                                    return {
+                                      ...prev,
+                                      reviews: prev.reviews.map((rev) =>
+                                        rev.id === r.id ? { ...rev, totalHelpful: nextCount } : rev,
+                                      ),
+                                    };
+                                  });
+                                } catch (e) {
+                                  if (e instanceof ApiError && e.status === 401) {
+                                    navigate("/login", { state: { from: `/products/${product.id}` } });
+                                    return;
+                                  }
+                                  setMsg(e instanceof Error ? e.message : "Could not mark helpful");
+                                } finally {
+                                  setHelpfulBusy((prev) => ({ ...prev, [key]: false }));
+                                }
+                              }}
                             >
                               Helpful
                             </button>
                             <button
                               type="button"
-                              className="btn btn-translate"
-                              onClick={() => setMsg("Translation is a demo action")}
+                              className={`btn btn-translate${showingUk ? " is-active" : ""}`}
+                              disabled={busy}
+                              aria-busy={busy}
+                              onClick={async () => {
+                                setMsg(null);
+                                if (showingUk) {
+                                  setReviewShowUk((prev) => ({ ...prev, [key]: false }));
+                                  return;
+                                }
+                                if (uk) {
+                                  setReviewShowUk((prev) => ({ ...prev, [key]: true }));
+                                  return;
+                                }
+                                setTranslateBusy((prev) => ({ ...prev, [key]: true }));
+                                try {
+                                  const next = await translateReviewToUkrainian(
+                                    r.title ?? "",
+                                    r.body ?? "",
+                                  );
+                                  setReviewTranslations((prev) => ({ ...prev, [key]: next }));
+                                  setReviewShowUk((prev) => ({ ...prev, [key]: true }));
+                                } catch (e) {
+                                  setMsg(
+                                    e instanceof Error
+                                      ? e.message
+                                      : "Could not translate this review",
+                                  );
+                                } finally {
+                                  setTranslateBusy((prev) => ({ ...prev, [key]: false }));
+                                }
+                              }}
                             >
-                              Translate
+                              {busy ? "Translating…" : showingUk ? "Show original" : "Translate"}
                             </button>
                           </div>
                           {helpfulCount > 0 && (
@@ -732,19 +890,41 @@ export function ProductPage() {
       </section>
 
       {infoKind && (
-        <PdpInfoModal title={PDP_INFO[infoKind].title} onClose={() => setInfoKind(null)}>
-          {PDP_INFO[infoKind].body}
-        </PdpInfoModal>
+        <PdpInfoModal kind={infoKind} onClose={() => setInfoKind(null)} onChange={setInfoKind} />
+      )}
+
+      {showReviewForm && (
+        <CreateReviewModal
+          productId={product.id}
+          signedIn={!!user}
+          busy={reviewBusy}
+          error={reviewError}
+          onClose={() => {
+            setShowReviewForm(false);
+            setReviewError(null);
+          }}
+          onSubmit={submitReview}
+        />
+      )}
+
+      {lightbox && (
+        <ImageLightbox
+          images={lightbox.images}
+          index={lightbox.index}
+          alt={lightbox.alt}
+          onClose={() => setLightbox(null)}
+          onIndexChange={(i) => setLightbox((prev) => (prev ? { ...prev, index: i } : prev))}
+        />
       )}
 
       <ProductCarousel
         items={product.related ?? []}
-        title="You may also like"
+        title={`More ${product.category.name.toLowerCase()}`}
         seeAllTo={`/products?categoryId=${product.category.id}`}
       />
       <ProductCarousel
         items={product.saleRelated ?? []}
-        title={`Best sellers in ${product.category.name.toLowerCase()}`}
+        title={`${product.category.name}: sale`}
         seeAllTo={`/products?categoryId=${product.category.id}&sort=rating_desc`}
       />
     </div>

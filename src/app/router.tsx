@@ -7,9 +7,12 @@ import { HomePage } from "../pages/HomePage";
 import { ProductsPage } from "../pages/ProductsPage";
 import { ProductPage } from "../pages/ProductPage";
 import { CartPage } from "../pages/CartPage";
+import { CheckoutPage } from "../pages/CheckoutPage";
+import { ContactPage, FaqPage } from "../pages/SupportPages";
 import { AccountOrdersPage } from "../pages/account/AccountOrdersPage";
 import { AccountWishlistPage } from "../pages/account/AccountWishlistPage";
 import { AccountSettingsPage } from "../pages/account/AccountSettingsPage";
+import { AccountReviewsPage } from "../pages/account/AccountReviewsPage";
 import { LoginPage } from "../pages/auth/LoginPage";
 import { RegisterPage } from "../pages/auth/RegisterPage";
 import { ForgotPasswordPage } from "../pages/auth/ForgotPasswordPage";
@@ -24,11 +27,12 @@ import { NotFoundPage } from "../pages/NotFoundPage";
 import { AdminLoginPage } from "../pages/admin/AdminLoginPage";
 import { AdminDashboardPage } from "../pages/admin/AdminDashboardPage";
 import { AdminProductsPage } from "../pages/admin/AdminProductsPage";
+import { AdminProductEditPage } from "../pages/admin/AdminProductEditPage";
 import { AdminCategoriesPage } from "../pages/admin/AdminCategoriesPage";
+import { AdminReviewsPage } from "../pages/admin/AdminReviewsPage";
 import { AdminOrdersPage } from "../pages/admin/AdminOrdersPage";
 import { AdminUsersPage } from "../pages/admin/AdminUsersPage";
-import { AdminProductEditPage } from "../pages/admin/AdminProductEditPage";
-import { AdminReviewsPage } from "../pages/admin/AdminReviewsPage";
+import { AdminCustomerPage } from "../pages/admin/AdminCustomerPage";
 
 export const router = createBrowserRouter([
   {
@@ -39,6 +43,12 @@ export const router = createBrowserRouter([
       { path: "products", element: <ProductsPage /> },
       { path: "products/:id", element: <ProductPage /> },
       { path: "cart", element: <CartPage /> },
+      {
+        element: <RequireAuth />,
+        children: [{ path: "checkout", element: <CheckoutPage /> }],
+      },
+      { path: "contact", element: <ContactPage /> },
+      { path: "faq", element: <FaqPage /> },
       { path: "terms", element: <LegalPage kind="terms" /> },
       { path: "privacy", element: <LegalPage kind="privacy" /> },
       { path: "license", element: <LegalPage kind="license" /> },
@@ -52,6 +62,7 @@ export const router = createBrowserRouter([
               { index: true, element: <Navigate to="orders" replace /> },
               { path: "orders", element: <AccountOrdersPage /> },
               { path: "wishlist", element: <AccountWishlistPage /> },
+              { path: "reviews", element: <AccountReviewsPage /> },
               { path: "settings", element: <AccountSettingsPage /> },
             ],
           },
@@ -73,19 +84,20 @@ export const router = createBrowserRouter([
   },
   {
     element: <AuthShell backTo="/login" backLabel="← Back" />,
+    children: [{ path: "forgot-password", element: <ForgotPasswordPage /> }],
+  },
+  {
+    element: <AuthShell backTo="/register" backLabel="← Back" />,
     children: [
-      { path: "forgot-password", element: <ForgotPasswordPage /> },
       { path: "verify-code", element: <VerifyCodePage /> },
+      { path: "finishing-touches", element: <FinishingTouchesPage /> },
     ],
   },
   {
     element: <AuthShell backTo="/forgot-password" backLabel="← Back" />,
     children: [{ path: "reset-password", element: <ResetPasswordPage /> }],
   },
-  {
-    element: <AuthShell backTo="/register" backLabel="← Back" />,
-    children: [{ path: "finishing-touches", element: <FinishingTouchesPage /> }],
-  },
+  /** Прежняя админка (скрины sprint-2026-09-19) — полный функционал */
   { path: "/admin/login", element: <AdminLoginPage /> },
   {
     path: "/admin",
@@ -93,12 +105,13 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <AdminDashboardPage /> },
       { path: "products", element: <AdminProductsPage /> },
+      { path: "products/new", element: <AdminProductEditPage /> },
       { path: "products/:id", element: <AdminProductEditPage /> },
       { path: "categories", element: <AdminCategoriesPage /> },
       { path: "reviews", element: <AdminReviewsPage /> },
       { path: "orders", element: <AdminOrdersPage /> },
       { path: "users", element: <AdminUsersPage /> },
-      { path: "*", element: <Navigate to="/admin" replace /> },
+      { path: "users/:userId", element: <AdminCustomerPage /> },
     ],
   },
   {

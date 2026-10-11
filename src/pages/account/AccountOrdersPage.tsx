@@ -5,19 +5,28 @@ import type { OrderDto } from "../../api/types";
 import { OrderDetailsModal } from "../../widgets/OrderDetailsModal";
 
 const STATUS_LABEL: Record<string, string> = {
+  Ordered: "Ordered",
+  Received: "Received",
+  Shipped: "Shipped",
+  ReadyToPickup: "Ready for pickup",
+  Cancelled: "Cancelled",
+  Returned: "Returned",
+  // legacy API names
   Pending: "Ordered",
   Paid: "Received",
-  Shipped: "Shipped",
   Completed: "Ready for pickup",
-  Cancelled: "Cancelled",
 };
 
 const STATUS_CLASS: Record<string, string> = {
+  Ordered: "is-ordered",
+  Received: "is-received",
+  Shipped: "is-shipped",
+  ReadyToPickup: "is-pickup",
+  Cancelled: "is-cancelled",
+  Returned: "is-cancelled",
   Pending: "is-ordered",
   Paid: "is-received",
-  Shipped: "is-shipped",
   Completed: "is-pickup",
-  Cancelled: "is-cancelled",
 };
 
 function formatOrderDate(iso: string) {
@@ -54,7 +63,9 @@ export function AccountOrdersPage() {
           setSearchParams(next, { replace: true });
         }
       })
-      .catch((e: Error) => setError(e.message))
+      .catch((e: Error) => {
+        setError(e.message);
+      })
       .finally(() => setLoading(false));
     // open query handled once on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -88,7 +99,7 @@ export function AccountOrdersPage() {
               <article key={o.id} className="order-row">
                 <div className="order-row__main">
                   <div className="order-row__head">
-                    <strong>Order #{shortId(o.id)}</strong>
+                    <strong>Order {o.orderNumber || `#${shortId(o.id)}`}</strong>
                     <span className={`order-status ${statusClass}`}>{label}</span>
                   </div>
                   <div className="order-row__meta">Ordered on {formatOrderDate(o.orderDateUtc)}</div>
