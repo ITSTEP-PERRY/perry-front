@@ -220,14 +220,12 @@ function splitName(name: string) {
 }
 
 function citiesFor(country: string, state: string): string[] {
-  // Область выбрана → сразу полный список городов этой области (не весь список страны).
+  // Область выбрана → только города этой области.
   if (!state) {
     if ((STATES[country] ?? []).length > 0) return [];
     return CITIES_BY_COUNTRY[country] ?? [];
   }
-  if (country === "Ukraine") {
-    return UKRAINE_CITIES_BY_STATE[state] ?? [];
-  }
+  if (country === "Ukraine") return UKRAINE_CITIES_BY_STATE[state] ?? [];
   return CITIES_BY_STATE[state] ?? [];
 }
 
@@ -319,6 +317,7 @@ export function CheckoutPage() {
     setEmail((v) => v || user.email || "");
   }, [user]);
 
+  // Подтянуть номер/срок после логина / новой сессии; CVV всегда сбрасываем.
   useEffect(() => {
     if (!userKey) return;
     const card = loadSavedCard(userKey);
@@ -327,6 +326,7 @@ export function CheckoutPage() {
     setCardCvv("");
   }, [userKey]);
 
+  // Адрес запоминается — не сбрасывается при каждом заходе на checkout.
   useEffect(() => {
     saveShippingAddress({
       country,
@@ -338,6 +338,7 @@ export function CheckoutPage() {
     });
   }, [country, state, city, postcode, firstName, lastName]);
 
+  // Номер и срок — в localStorage между сессиями; CVV не пишем.
   useEffect(() => {
     if (!userKey) return;
     if (!cardNumber && !cardExp) return;
@@ -387,6 +388,14 @@ export function CheckoutPage() {
     try {
       const recipientName = `${firstName.trim()} ${lastName.trim()}`.trim();
       const shippingAddress = [city, state, postcode.trim(), country].filter(Boolean).join(", ");
+      saveShippingAddress({
+        country,
+        state,
+        city,
+        postcode: postcode.trim(),
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+      });
       const order = await ordersApi.checkout(sessionId, {
         recipientName,
         shippingAddress,
@@ -509,9 +518,7 @@ export function CheckoutPage() {
                     });
                   }}
                 >
-                  <option value="">
-                    {!state ? "Select state first" : "Select city"}
-                  </option>
+                  <option value="">{!state ? "Select state first" : "Select city"}</option>
                   {cityOptions.map((c) => (
                     <option key={c} value={c}>
                       {c}

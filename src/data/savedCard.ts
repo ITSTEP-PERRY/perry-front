@@ -43,5 +43,6 @@ export function saveSavedCard(data: SavedCard, userKey?: string | null) {
     cardExp: data.cardExp,
   });
   localStorage.setItem(storageKey(userKey), payload);
+  // Дублируем в legacy-ключ — переживает смену логики ключей между сессиями.
   localStorage.setItem(LEGACY_KEY, payload);
 }
