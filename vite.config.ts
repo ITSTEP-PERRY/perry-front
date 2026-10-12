@@ -27,20 +27,19 @@ export default defineConfig({
 
         rewrite: (path) => path.replace(/^\/users-api/, ""),
       },
-      "/api": {
+      "/core-api": {
         target: "https://api.perrydev.space",
         changeOrigin: true,
         secure: true,
-        // rewrite: (path) => path.replace(/^\/api/, ""),
+        rewrite: (path) => path.replace(/^\/core-api/, ""),
 
       },
-      // "/uploads": {
-      //   target: "https://api.perrydev.space",
-      //   changeOrigin: true,
-      //   secure: true,
-      //   // rewrite: (path) => path.replace(/^\/uploads/, ""),
-      //
-      // },
+      "/uploads": {
+        target: "https://api.perrydev.space",
+        changeOrigin: true,
+        secure: true,
+
+      },
       // MyMemory translate (PDP review Translate → Ukrainian)
       "/translate-api": {
         target: "https://api.mymemory.translated.net",

@@ -3,8 +3,16 @@ const SESSION_KEY = "perry_cart_session";
 
 /** Product API (каталог/корзина/заказы) — через Vite proxy `/api` → :5272 */
 export function productApiUrl(path: string): string {
+  const configured = import.meta.env.VITE_AUTH_API_URL as string | undefined;
+  const base = resolveServiceBase(
+      configured,
+      "/core-api",
+      "https://api.perrydev.space",
+  );
   const p = path.startsWith("/") ? path : `/${path}`;
-  return `/api${p}`;
+  // Auth API paths are /api/auth/...
+  if (p.startsWith("/api/")) return `${base}${p}`;
+  return `${base}/api${p}`;
 }
 
 /**
