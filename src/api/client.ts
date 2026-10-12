@@ -66,13 +66,78 @@ export function usersApiUrl(path: string): string {
   return `${base}/api${p}`;
 }
 
+/** #221 — JWT in cookies (Readable by SPA; Auth httpOnly would need Set-Cookie from Auth Service). */
+function readCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const prefix = `${encodeURIComponent(name)}=`;
+  for (const part of document.cookie.split(";")) {
+    const s = part.trim();
+    if (!s.startsWith(prefix)) continue;
+    try {
+      return decodeURIComponent(s.slice(prefix.length));
+    } catch {
+      return s.slice(prefix.length);
+    }
+  }
+  return null;
+}
+
+function writeCookie(name: string, value: string, maxAgeSec: number) {
+  if (typeof document === "undefined") return;
+  const secure = typeof location !== "undefined" && location.protocol === "https:" ? "; Secure" : "";
+  document.cookie =
+    `${encodeURIComponent(name)}=${encodeURIComponent(value)}` +
+    `; Path=/; Max-Age=${Math.max(60, maxAgeSec)}; SameSite=Lax${secure}`;
+}
+
+function clearCookie(name: string) {
+  if (typeof document === "undefined") return;
+  const secure = typeof location !== "undefined" && location.protocol === "https:" ? "; Secure" : "";
+  document.cookie = `${encodeURIComponent(name)}=; Path=/; Max-Age=0; SameSite=Lax${secure}`;
+}
+
+/** Max-Age from JWT `exp`, fallback 7 days. */
+function tokenMaxAgeSec(token: string): number {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return 7 * 24 * 3600;
+    const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/"))) as { exp?: number };
+    if (typeof json.exp === "number") {
+      const left = json.exp - Math.floor(Date.now() / 1000);
+      if (left > 60) return left;
+    }
+  } catch {
+    /* ignore malformed JWT */
+  }
+  return 7 * 24 * 3600;
+}
+
 export function getToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY);
+  const fromCookie = readCookie(TOKEN_KEY);
+  if (fromCookie) return fromCookie;
+
+  // One-time migrate from legacy localStorage → cookie.
+  try {
+    const legacy = localStorage.getItem(TOKEN_KEY);
+    if (legacy) {
+      writeCookie(TOKEN_KEY, legacy, tokenMaxAgeSec(legacy));
+      localStorage.removeItem(TOKEN_KEY);
+      return legacy;
+    }
+  } catch {
+    /* private mode / blocked storage */
+  }
+  return null;
 }
 
 export function setToken(token: string | null) {
-  if (token) localStorage.setItem(TOKEN_KEY, token);
-  else localStorage.removeItem(TOKEN_KEY);
+  try {
+    localStorage.removeItem(TOKEN_KEY);
+  } catch {
+    /* ignore */
+  }
+  if (token) writeCookie(TOKEN_KEY, token, tokenMaxAgeSec(token));
+  else clearCookie(TOKEN_KEY);
 }
 
 export function getCartSessionId(): string {
