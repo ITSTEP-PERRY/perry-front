@@ -31,7 +31,7 @@ export default defineConfig({
         target: "https://api.perrydev.space",
         changeOrigin: true,
         secure: true,
-        // rewrite: (path) => path.replace(/^\/api/, ""),
+        rewrite: (path) => path.replace(/^\/api\b/, ""),
 
       },
       // "/uploads": {
