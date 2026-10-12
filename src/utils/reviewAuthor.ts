@@ -1,3 +1,5 @@
+import { resolveMediaUrl } from "../api/media";
+
 const GUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -102,9 +104,12 @@ export function resolveReviewAvatar(
   review: { userId?: string; authorName?: string | null; authorAvatarUrl?: string | null },
   currentUser?: ReviewAuthorUser,
 ): string | null {
-  if (isDisplayableAvatarUrl(review.authorAvatarUrl)) return review.authorAvatarUrl!;
+  // /uploads/... must hit Product API host on prod SWA (not perrydev.space).
+  if (isDisplayableAvatarUrl(review.authorAvatarUrl)) {
+    return resolveMediaUrl(review.authorAvatarUrl) ?? review.authorAvatarUrl!;
+  }
   if (isOwnReview(review, currentUser) && isDisplayableAvatarUrl(currentUser?.avatar)) {
-    return currentUser!.avatar!;
+    return resolveMediaUrl(currentUser!.avatar) ?? currentUser!.avatar!;
   }
   return null;
 }
