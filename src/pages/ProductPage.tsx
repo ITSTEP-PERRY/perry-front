@@ -121,7 +121,7 @@ export function ProductPage() {
           const key = String(r.id);
           nextCounts[key] = r.totalHelpful ?? 0;
           try {
-            const mine = await reviewsApi.myGrade(r.id);
+            const mine = await reviewsApi.myGrade(r.id ?? "");
             nextMine[key] = !!(mine.isHelpful ?? mine.IsHelpful);
           } catch {
             nextMine[key] = false;

@@ -24,15 +24,22 @@ export default defineConfig({
           "https://perry-admin-service.orangeplant-910928aa.swedencentral.azurecontainerapps.io",
         changeOrigin: true,
         secure: true,
+
         rewrite: (path) => path.replace(/^\/users-api/, ""),
       },
-      "/api": {
-        target: "http://localhost:5272",
+      "/core-api": {
+        target: "https://api.perrydev.space",
         changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/core-api/, ""),
+
       },
       "/uploads": {
-        target: "http://localhost:5272",
+        target: "https://api.perrydev.space",
         changeOrigin: true,
+        secure: true,
+        // rewrite: (path) => path.replace(/^\/uploads/, ""),
+
       },
       // MyMemory translate (PDP review Translate → Ukrainian)
       "/translate-api": {
