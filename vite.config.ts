@@ -27,11 +27,11 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/users-api/, ""),
       },
       "/api": {
-        target: "http://localhost:5272",
+        target: "https://api.perrydev.space",
         changeOrigin: true,
       },
       "/uploads": {
-        target: "http://localhost:5272",
+        target: "https://api.perrydev.space",
         changeOrigin: true,
       },
       // MyMemory translate (PDP review Translate → Ukrainian)
