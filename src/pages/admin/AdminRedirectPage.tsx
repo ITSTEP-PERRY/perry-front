@@ -1,9 +1,8 @@
-const ADMIN_URL =
-  (import.meta.env.VITE_ADMIN_URL as string | undefined)?.replace(/\/$/, "") ||
-  "http://localhost:3001";
+import { getAdminUrl } from "../../config/adminUrl";
 
 /** Прототип /admin убран — источник правды: perry-admin-front команды. */
 export function AdminRedirectPage() {
+  const adminUrl = getAdminUrl();
   return (
     <div className="page-wrap" style={{ maxWidth: 520, margin: "4rem auto", textAlign: "center" }}>
       <h1 style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>Admin moved</h1>
@@ -13,10 +12,10 @@ export function AdminRedirectPage() {
       </p>
       <a
         className="btn btn-primary"
-        href={ADMIN_URL}
+        href={adminUrl}
         style={{ display: "inline-block", padding: "0.75rem 1.25rem" }}
       >
-        Open admin → {ADMIN_URL}
+        Open admin → {adminUrl}
       </a>
     </div>
   );
