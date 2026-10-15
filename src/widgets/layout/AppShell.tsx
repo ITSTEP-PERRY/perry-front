@@ -5,6 +5,7 @@ import { resolveMediaUrl } from "../../api/media";
 import type { CategoryDto } from "../../api/types";
 import { useAuth } from "../../app/AuthContext";
 import { useCart } from "../../app/CartContext";
+import { getAdminUrl } from "../../config/adminUrl";
 import { useIsMobile } from "../../hooks/useMediaQuery";
 
 const LEGAL_PATHS = new Set(["/privacy", "/terms", "/license"]);
@@ -127,9 +128,14 @@ export function AppShell() {
               </Link>
             )}
             {isAdmin && (
-              <Link to="/admin" className="header-link">
+              <a
+                href={getAdminUrl()}
+                className="header-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Admin
-              </Link>
+              </a>
             )}
             <Link to="/cart" className="header-icon" aria-label="Cart">
               <img src="/icons/cart.svg" alt="" width={24} height={24} />
@@ -234,10 +240,16 @@ export function AppShell() {
                 <span>Account settings</span>
               </NavLink>
               {isAdmin && (
-                <NavLink to="/admin" className="mobile-nav__row" onClick={closeMenu}>
+                <a
+                  href={getAdminUrl()}
+                  className="mobile-nav__row"
+                  onClick={closeMenu}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <img src="/icons/admin/pencil.svg" alt="" width={24} height={24} />
                   <span>Admin</span>
-                </NavLink>
+                </a>
               )}
               <button
                 type="button"

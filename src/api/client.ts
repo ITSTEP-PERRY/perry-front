@@ -66,7 +66,17 @@ export function usersApiUrl(path: string): string {
   return `${base}/api${p}`;
 }
 
-/** #221 — JWT in cookies (Readable by SPA; Auth httpOnly would need Set-Cookie from Auth Service). */
+/** #221 / #A17 — JWT in cookies. Domain from VITE_COOKIE_DOMAIN (e.g. `.perrydev.space`). */
+function cookieDomainAttr(): string {
+  const raw = (import.meta.env.VITE_COOKIE_DOMAIN as string | undefined)?.trim();
+  if (!raw) return "";
+  // Never set Domain on localhost — browsers reject / ignore it.
+  if (/localhost|127\.0\.0\.1/i.test(raw)) return "";
+  // Leading dot shares cookie across subdomains (storefront + admin).
+  const domain = raw.startsWith(".") ? raw : `.${raw}`;
+  return `; Domain=${domain}`;
+}
+
 function readCookie(name: string): string | null {
   if (typeof document === "undefined") return null;
   const prefix = `${encodeURIComponent(name)}=`;
@@ -87,13 +97,18 @@ function writeCookie(name: string, value: string, maxAgeSec: number) {
   const secure = typeof location !== "undefined" && location.protocol === "https:" ? "; Secure" : "";
   document.cookie =
     `${encodeURIComponent(name)}=${encodeURIComponent(value)}` +
-    `; Path=/; Max-Age=${Math.max(60, maxAgeSec)}; SameSite=Lax${secure}`;
+    `; Path=/; Max-Age=${Math.max(60, maxAgeSec)}; SameSite=Lax${secure}${cookieDomainAttr()}`;
 }
 
 function clearCookie(name: string) {
   if (typeof document === "undefined") return;
   const secure = typeof location !== "undefined" && location.protocol === "https:" ? "; Secure" : "";
+  // Clear with and without Domain so legacy host-only cookies die too.
   document.cookie = `${encodeURIComponent(name)}=; Path=/; Max-Age=0; SameSite=Lax${secure}`;
+  const domain = cookieDomainAttr();
+  if (domain) {
+    document.cookie = `${encodeURIComponent(name)}=; Path=/; Max-Age=0; SameSite=Lax${secure}${domain}`;
+  }
 }
 
 /** Max-Age from JWT `exp`, fallback 7 days. */
